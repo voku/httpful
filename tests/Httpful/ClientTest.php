@@ -345,7 +345,7 @@ final class ClientTest extends TestCase
             static::markTestSkipped('The remote HTTP/2 demo endpoint did not negotiate an HTTP/2 image response.');
         }
 
-        static::assertContains($response->getProtocolVersion(), ['1.1', '2']);
+        static::assertSame('2', $response->getProtocolVersion());
         static::assertSame(200, $response->getStatusCode());
 
         static::assertSame(
