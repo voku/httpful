@@ -23,7 +23,7 @@ if ($php_major < 5.4 || \stripos(\PHP_OS, 'WIN') === 0) {
     $output = [];
     \exec($command, $output, $exit_code);
 
-    // sleep for a moment to let server come up
+    // sleep for 500ms to let server come up
     \usleep(500000);
     $pid = (int) $output[0];
 
