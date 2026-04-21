@@ -47,7 +47,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.directory }}
-          key: ${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
+          key: ${{ matrix.php }}-composer-${{ hashFiles('composer.json', 'composer.lock') }}
           restore-keys: ${{ matrix.php }}-composer-
 
       - name: Validate composer configuration
@@ -69,7 +69,6 @@ jobs:
           php vendor/bin/phpunit -c phpunit.xml.dist --coverage-clover=build/logs/clover.xml
 
       - name: Run phpstan
-        if: ${{ matrix.php == '7.4' }}
         run: |
           php vendor/bin/phpstan analyse
 
