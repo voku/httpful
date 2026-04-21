@@ -43,7 +43,9 @@ if ($php_major < 5.4 || \stripos(\PHP_OS, 'WIN') === 0) {
     \register_shutdown_function(static function () {
         // cleanup after ourselves -- remove log file, shut down server
         global $pid;
-        \unlink('./server.log');
+        if (\file_exists('./server.log')) {
+            \unlink('./server.log');
+        }
         \posix_kill($pid, \SIGKILL);
     });
 }

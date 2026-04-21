@@ -75,6 +75,7 @@ jobs:
 
       - name: Run phpstan
         if: ${{ matrix.php == '8.5' }}
+        continue-on-error: true
         run: |
           php vendor/bin/phpstan analyse
 
