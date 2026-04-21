@@ -69,11 +69,12 @@ jobs:
           php vendor/bin/phpunit -c phpunit.xml.dist --coverage-clover=build/logs/clover.xml
 
       - name: Run phpstan
+        if: ${{ matrix.php == '8.2' }}
         run: |
           php vendor/bin/phpstan analyse
 
       - name: Upload coverage results to Coveralls
-        if: ${{ matrix.php == '7.4' }}
+        if: ${{ matrix.php == '8.2' }}
         env:
             COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -81,7 +82,7 @@ jobs:
             php-coveralls --coverage_clover=build/logs/clover.xml -v
 
       - name: Upload coverage results to Codecov
-        if: ${{ matrix.php == '7.4' }}
+        if: ${{ matrix.php == '8.2' }}
         uses: codecov/codecov-action@v5
         with:
           files: build/logs/clover.xml
