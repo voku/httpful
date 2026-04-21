@@ -17,5 +17,4 @@
     <const name="WEB_SERVER_DOCROOT" value="./tests/static"/>
     <env name="http_proxy" value=""/>
   </php>
-  <logging/>
 </phpunit>
