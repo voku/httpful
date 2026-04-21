@@ -1,3 +1,8 @@
+name: CI
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 on:
   push:
     branches:
@@ -5,6 +10,9 @@ on:
   pull_request:
     branches:
       - master
+
+permissions:
+  contents: read
 
 defaults:
   run:
@@ -21,59 +29,58 @@ jobs:
           - '8.0'
           - '8.1'
           - '8.2'
-        composer: [basic]
+          - '8.3'
+          - '8.5'
     timeout-minutes: 10
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@2.9.0
+        uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
           coverage: xdebug
-          extensions: zip
-          tools: composer
+          extensions: curl, dom, fileinfo, json, simplexml, xmlwriter, zip
+          tools: composer:v2
 
       - name: Determine composer cache directory
         id: composer-cache
-        run: echo "::set-output name=directory::$(composer config cache-dir)"
+        run: echo "directory=$(composer config cache-dir)" >> "$GITHUB_OUTPUT"
 
       - name: Cache composer dependencies
-        uses: actions/cache@v2.1.3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.directory }}
-          key: ${{ matrix.php }}-composer-${{ hashFiles('**/composer.lock') }}
+          key: ${{ matrix.php }}-composer-${{ hashFiles('composer.json', 'composer.lock') }}
           restore-keys: ${{ matrix.php }}-composer-
+
+      - name: Validate composer configuration
+        run: composer validate --strict
 
       - name: Install dependencies
         run: |
-          if [[ "${{ matrix.php }}" == "7.4" ]]; then
-            composer require phpstan/phpstan --no-update
-          fi;
-
-          if [[ "${{ matrix.composer }}" == "lowest" ]]; then
-            composer update --prefer-dist --no-interaction --prefer-lowest --prefer-stable
-          fi;
-
-          if [[ "${{ matrix.composer }}" == "basic" ]]; then
-            composer update --prefer-dist --no-interaction
-          fi;
-
+          composer update --prefer-dist --no-interaction --prefer-stable
           composer dump-autoload -o
 
+      - name: Audit dependencies
+        run: composer audit
+
       - name: Run tests
+        env:
+          XDEBUG_MODE: coverage
         run: |
           mkdir -p build/logs
           php vendor/bin/phpunit -c phpunit.xml.dist --coverage-clover=build/logs/clover.xml
 
       - name: Run phpstan
+        if: ${{ matrix.php == '8.5' }}
         continue-on-error: true
-        if: ${{ matrix.php == '7.4' }}
         run: |
           php vendor/bin/phpstan analyse
 
       - name: Upload coverage results to Coveralls
+        if: ${{ matrix.php == '8.5' }}
         env:
             COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -81,14 +88,16 @@ jobs:
             php-coveralls --coverage_clover=build/logs/clover.xml -v
 
       - name: Upload coverage results to Codecov
-        uses: codecov/codecov-action@v1
+        if: ${{ matrix.php == '8.5' }}
+        uses: codecov/codecov-action@v5
         with:
           files: build/logs/clover.xml
 
       - name: Archive logs artifacts
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
-          name: logs_composer-${{ matrix.composer }}_php-${{ matrix.php }}
+          name: logs_php-${{ matrix.php }}
           path: |
             build/logs
+          if-no-files-found: ignore

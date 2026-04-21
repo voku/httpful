@@ -23,8 +23,8 @@ if ($php_major < 5.4 || \stripos(\PHP_OS, 'WIN') === 0) {
     $output = [];
     \exec($command, $output, $exit_code);
 
-    // sleep for a second to let server come up
-    \usleep(500);
+    // sleep for 500ms to let server come up
+    \usleep(500000);
     $pid = (int) $output[0];
 
     // check server.log to see if it failed to start
@@ -43,7 +43,9 @@ if ($php_major < 5.4 || \stripos(\PHP_OS, 'WIN') === 0) {
     \register_shutdown_function(static function () {
         // cleanup after ourselves -- remove log file, shut down server
         global $pid;
-        \unlink('./server.log');
+        if (\file_exists('./server.log')) {
+            \unlink('./server.log');
+        }
         \posix_kill($pid, \SIGKILL);
     });
 }

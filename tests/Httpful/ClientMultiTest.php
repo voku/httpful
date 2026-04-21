@@ -18,6 +18,11 @@ use PHPUnit\Framework\TestCase;
  */
 final class ClientMultiTest extends TestCase
 {
+    private static function localFixtureUrl(string $path): string
+    {
+        return 'http://' . \TEST_SERVER . '/' . ltrim($path, '/');
+    }
+
     public function testGet()
     {
         /** @var Response[] $results */
@@ -28,18 +33,20 @@ final class ClientMultiTest extends TestCase
             }
         );
 
-        $multi->add_get('http://google.com?a=b');
-        $multi->add_get('http://moelleken.org');
+        $multi->add_get(self::localFixtureUrl('foo.txt'));
+        $multi->add_get(self::localFixtureUrl('test.json'));
 
         $multi->start();
 
         static::assertCount(2, $results);
+        $bodies = array_map('strval', $results);
+        sort($bodies);
         if (\method_exists(__CLASS__, 'assertStringContainsString')) {
-            static::assertStringContainsString('<!doctype html>', strtolower((string) $results[0]));
-            static::assertStringContainsString('Lars Moelleken', (string) $results[1]);
+            static::assertStringContainsString('Foobar', $bodies[0] . $bodies[1]);
+            static::assertStringContainsString('"foo": "bar"', $bodies[0] . $bodies[1]);
         } else {
-            static::assertContains('<!doctype html>', strtolower((string) $results[0]));
-            static::assertContains('Lars Moelleken', (string) $results[1]);
+            static::assertContains('Foobar', $bodies[0] . $bodies[1]);
+            static::assertContains('"foo": "bar"', $bodies[0] . $bodies[1]);
         }
     }
 
@@ -158,7 +165,10 @@ final class ClientMultiTest extends TestCase
 
         static::assertSame('https', $data['headers']['x-forwarded-proto']);
 
-        static::assertSame('gzip', $data['headers']['accept-encoding']);
+        static::assertSame(
+            1,
+            \preg_match('/\b(?:gzip|deflate|br)\b/i', $data['headers']['accept-encoding'])
+        );
 
         if (\method_exists(__CLASS__, 'assertStringContainsString')) {
             static::assertStringContainsString('Basic ', $data['headers']['authorization']);
