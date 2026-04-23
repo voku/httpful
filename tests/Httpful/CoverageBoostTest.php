@@ -360,12 +360,15 @@ final class CoverageBoostTest extends TestCase
 
     public function testFactoryCreateStreamFromFile(): void
     {
-        $factory  = new Factory();
-        $tmpFile  = \tempnam(\sys_get_temp_dir(), 'httpful_test_');
-        \file_put_contents($tmpFile, 'file content');
-        $stream = $factory->createStreamFromFile($tmpFile, 'rb');
-        static::assertSame('file content', (string) $stream);
-        \unlink($tmpFile);
+        $factory = new Factory();
+        $tmpFile = \tempnam(\sys_get_temp_dir(), 'httpful_test_');
+        try {
+            \file_put_contents($tmpFile, 'file content');
+            $stream = $factory->createStreamFromFile($tmpFile, 'rb');
+            static::assertSame('file content', (string) $stream);
+        } finally {
+            \unlink($tmpFile);
+        }
     }
 
     public function testFactoryCreateStreamFromFileInvalidMode(): void
@@ -783,7 +786,7 @@ final class CoverageBoostTest extends TestCase
 
     public function testSetupRegisterGlobalErrorHandlerCallable(): void
     {
-        Setup::registerGlobalErrorHandler(static function ($e) {
+        Setup::registerGlobalErrorHandler(static function ($error) {
         });
         static::assertIsCallable(Setup::getGlobalErrorHandler());
         // restore
