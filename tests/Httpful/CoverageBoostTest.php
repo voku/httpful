@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Httpful\tests;
 
 use Httpful\Exception\ClientErrorException;
-use Httpful\Exception\NetworkErrorException;
 use Httpful\Exception\ResponseException;
 use Httpful\Exception\XmlParseException;
 use Httpful\Factory;
