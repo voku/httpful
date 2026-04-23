@@ -162,8 +162,10 @@ final class ExtraCoverageTest extends TestCase
     {
         $req = Request::get('http://example.com/')
             ->withUriFromString('http://example.com/')
-            ->withParams(['foo' => 'bar', 'baz' => 'qux']);
-        static::assertSame('bar', $req->withParam('foo', 'bar')->withParam('foo', 'bar')->getUriOrNull() !== null ? 'bar' : null);
+            ->withParams(['foo' => 'bar', 'baz' => 'qux'])
+            ->withParam('extra', 'val');
+        static::assertNotNull($req->getUriOrNull());
+        static::assertInstanceOf(Request::class, $req);
     }
 
     public function testWithParam(): void
