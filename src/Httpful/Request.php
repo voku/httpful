@@ -2850,11 +2850,11 @@ class Request implements \IteratorAggregate, RequestInterface
      */
     private function _determineLength($str): int
     {
-        if ($str === null) {
+        if ($str === null || \is_array($str)) {
             return 0;
         }
 
-        return \strlen($str);
+        return \strlen((string) $str);
     }
 
     /**
