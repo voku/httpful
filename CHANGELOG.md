@@ -1,11 +1,13 @@
 # Changelog
 
-## 3.0.2 (2026-04-24)
+## [Unreleased]
 
+- chore: add Renovate configuration for automated dependency updates [#17](https://github.com/voku/httpful/pull/17)
 - CI: modernize GitHub Actions workflow (bump `actions/checkout`, `actions/cache`, `actions/upload-artifact` to supported releases; switch deprecated `set-output` to `$GITHUB_OUTPUT`) [#18](https://github.com/voku/httpful/pull/18)
 - CI: add `composer validate --strict` and `composer audit` steps; declare `phpstan/phpstan` in `require-dev` [#18](https://github.com/voku/httpful/pull/18)
-- Tests: increase line coverage from 63.88% to 72.41% (+8.53%) by adding 97 new tests for `UriResolver`, `Factory`, `FormMimeHandler`, `HtmlMimeHandler`, `XmlMimeHandler`, `CsvMimeHandler`, `Http`, `Mime`, `Request`, `Setup`, and `ClientErrorException` [#19](https://github.com/voku/httpful/pull/19)
-- Code style fixes applied via StyleCI [#20](https://github.com/voku/httpful/pull/20)
+- tests: increase line coverage from 63.88% to 72.41% (+8.53%) by adding 97 new tests for `UriResolver`, `Factory`, `FormMimeHandler`, `HtmlMimeHandler`, `XmlMimeHandler`, `CsvMimeHandler`, `Http`, `Mime`, `Request`, `Setup`, and `ClientErrorException` [#19](https://github.com/voku/httpful/pull/19)
+- code style fixes applied via StyleCI [#16](https://github.com/voku/httpful/pull/16) [#20](https://github.com/voku/httpful/pull/20)
+- examples: update `post_form.php`
 
 ## 3.0.1 (2023-07-22)
 
