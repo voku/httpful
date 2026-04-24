@@ -388,6 +388,8 @@ final class ResponseTest extends TestCase
         static::assertStringContainsString('200', $debug);
         static::assertStringContainsString('Content-Type', $debug);
         static::assertStringContainsString('hello world', $debug);
+        static::assertStringContainsString('Response Headers', $debug);
+        static::assertStringContainsString('Response Body', $debug);
     }
 
     public function testDebugInfoContainsHint()
@@ -396,5 +398,37 @@ final class ResponseTest extends TestCase
         $debug = $r->debugInfo();
         static::assertStringContainsString('503', $debug);
         static::assertStringContainsString('Hint', $debug);
+    }
+
+    public function testDebugInfoWithRequestShowsMethodAndUrl()
+    {
+        $request = \Httpful\Request::get('https://example.com/api/users?page=2');
+        $r = new Response('{"items":[]}', "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n", $request);
+        $debug = $r->debugInfo();
+
+        // Request section must be present
+        static::assertStringContainsString('--- Request ---', $debug);
+        static::assertStringContainsString('GET', $debug);
+        static::assertStringContainsString('https://example.com/api/users', $debug);
+        static::assertStringContainsString('page=2', $debug);
+    }
+
+    public function testDebugInfoWithRequestShowsRequestHeaders()
+    {
+        $request = \Httpful\Request::get('https://example.com/ping')
+            ->withHeader('Accept', 'application/json');
+        $r = new Response('ok', "HTTP/1.1 200 OK\r\n\r\n", $request);
+        $debug = $r->debugInfo();
+
+        static::assertStringContainsString('Accept', $debug);
+        static::assertStringContainsString('application/json', $debug);
+    }
+
+    public function testDebugInfoWithoutRequestHasNoRequestSection()
+    {
+        $r = new Response('ok', "HTTP/1.1 200 OK\r\n\r\n");
+        $debug = $r->debugInfo();
+
+        static::assertStringNotContainsString('--- Request ---', $debug);
     }
 }

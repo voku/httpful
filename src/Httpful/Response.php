@@ -694,9 +694,11 @@ class Response implements ResponseInterface
     }
 
     /**
-     * Returns a human-readable debug summary of the response including the
-     * status line, all response headers, and the raw body.  Useful for
-     * logging, debugging, or building descriptive exception messages.
+     * Returns a human-readable debug summary that includes the original
+     * request (method, full URL with query params, request headers, request
+     * body) as well as the response (status, hint, response headers, response
+     * body).  Useful for logging, debugging, or building descriptive exception
+     * messages.
      *
      * @return string
      */
@@ -704,18 +706,37 @@ class Response implements ResponseInterface
     {
         $lines = [];
 
+        // ---- Request section (available when the response was produced by a Request) ----
+        if ($this->request !== null) {
+            $lines[] = '--- Request ---';
+            $lines[] = $this->request->getMethod() . ' ' . (string) $this->request->getUri();
+
+            foreach ($this->request->getHeaders() as $name => $values) {
+                $lines[] = $name . ': ' . \implode(', ', (array) $values);
+            }
+
+            $requestBody = (string) $this->request->getBody();
+            if ($requestBody !== '') {
+                $lines[] = '';
+                $lines[] = $requestBody;
+            }
+
+            $lines[] = '';
+        }
+
+        // ---- Response section ----
         $lines[] = '=== Response Debug Info ===';
         $lines[] = 'Status : ' . $this->code . ' ' . $this->reason;
         $lines[] = 'Hint   : ' . $this->getErrorMessage();
         $lines[] = '';
-        $lines[] = '--- Headers ---';
+        $lines[] = '--- Response Headers ---';
 
         foreach ($this->headers->toArray() as $name => $values) {
             $lines[] = $name . ': ' . \implode(', ', (array) $values);
         }
 
         $lines[] = '';
-        $lines[] = '--- Body ---';
+        $lines[] = '--- Response Body ---';
         $lines[] = (string) $this->body;
 
         return \implode("\n", $lines);
