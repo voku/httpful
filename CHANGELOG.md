@@ -5,6 +5,7 @@
 ## 3.1.0 (2026-04-24)
 
 - test with PHP 8.3 + 8.4 + 8.5
+- update dependencies
 - increase test coverage
 - added debug method into response : `debugInfo()`
 
