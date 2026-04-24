@@ -59,9 +59,12 @@ final class ExtraCoverageExtendedTest extends TestCase
     public function testCurlSuccessErrorCompleteCallbacks(): void
     {
         $curl = $this->makeCurl();
-        $s = static function () {};
-        $e = static function () {};
-        $c = static function () {};
+        $s = static function () {
+        };
+        $e = static function () {
+        };
+        $c = static function () {
+        };
         $curl->success($s);
         $curl->error($e);
         $curl->complete($c);
@@ -73,7 +76,8 @@ final class ExtraCoverageExtendedTest extends TestCase
     public function testCurlBeforeSendCallback(): void
     {
         $curl = $this->makeCurl();
-        $cb = static function () {};
+        $cb = static function () {
+        };
         $curl->beforeSend($cb);
         static::assertSame($cb, $curl->getBeforeSendCallback());
     }
@@ -82,7 +86,9 @@ final class ExtraCoverageExtendedTest extends TestCase
     {
         $curl = $this->makeCurl();
         $called = false;
-        $cb = static function (Curl $c) use (&$called) { $called = true; };
+        $cb = static function (Curl $c) use (&$called) {
+            $called = true;
+        };
         $curl->call($cb);
         static::assertTrue($called);
     }
@@ -247,7 +253,9 @@ final class ExtraCoverageExtendedTest extends TestCase
     public function testCurlSetRetryCallable(): void
     {
         $curl = $this->makeCurl();
-        $decider = static function (Curl $c): bool { return $c->getAttempts() < 2; };
+        $decider = static function (Curl $c): bool {
+            return $c->getAttempts() < 2;
+        };
         $curl->setRetry($decider);
         static::assertSame($decider, $curl->getRetryDecider());
         static::assertSame(0, $curl->getRemainingRetries());
@@ -262,7 +270,8 @@ final class ExtraCoverageExtendedTest extends TestCase
     public function testCurlProgress(): void
     {
         $curl = $this->makeCurl();
-        $cb = static function () {};
+        $cb = static function () {
+        };
         static::assertSame($curl, $curl->progress($cb));
     }
 
@@ -335,7 +344,9 @@ final class ExtraCoverageExtendedTest extends TestCase
     {
         $curl = $this->makeCurl();
         $called = false;
-        $cb = static function () use (&$called) { $called = true; };
+        $cb = static function () use (&$called) {
+            $called = true;
+        };
         $result = $curl->download($cb);
         static::assertSame($curl, $result);
         static::assertIsResource($curl->getFileHandle());
@@ -838,8 +849,10 @@ final class ExtraCoverageExtendedTest extends TestCase
     public function testRequestBeforeSendAddsCallback(): void
     {
         $req = Request::get('http://example.com/')
-            ->beforeSend(static function () {})
-            ->beforeSend(static function () {});
+            ->beforeSend(static function () {
+            })
+            ->beforeSend(static function () {
+            });
         static::assertCount(2, $req->getSendCallback());
     }
 

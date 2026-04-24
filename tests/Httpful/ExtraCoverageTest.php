@@ -15,7 +15,6 @@ use Httpful\Handlers\XmlMimeHandler;
 use Httpful\Headers;
 use Httpful\Http;
 use Httpful\Mime;
-use Httpful\Proxy;
 use Httpful\Request;
 use Httpful\Response;
 use Httpful\Stream;
@@ -186,7 +185,9 @@ final class ExtraCoverageTest extends TestCase
 
     public function testWithParseCallback(): void
     {
-        $callback = static function ($body) { return $body; };
+        $callback = static function ($body) {
+            return $body;
+        };
         $req = Request::get('http://example.com/')->withParseCallback($callback);
         static::assertTrue($req->hasParseCallback());
         static::assertSame($callback, $req->getParseCallback());
@@ -202,14 +203,17 @@ final class ExtraCoverageTest extends TestCase
     {
         $called = false;
         $req = Request::get('http://example.com/')
-            ->beforeSend(static function () use (&$called) { $called = true; });
+            ->beforeSend(static function () use (&$called) {
+                $called = true;
+            });
         static::assertCount(1, $req->getSendCallback());
     }
 
     public function testWithSendCallback(): void
     {
         $req = Request::get('http://example.com/')
-            ->withSendCallback(static function () {});
+            ->withSendCallback(static function () {
+            });
         static::assertCount(1, $req->getSendCallback());
     }
 
@@ -221,7 +225,8 @@ final class ExtraCoverageTest extends TestCase
 
     public function testWithErrorHandler(): void
     {
-        $handler = static function ($err) {};
+        $handler = static function ($err) {
+        };
         $req = Request::get('http://example.com/')->withErrorHandler($handler);
         static::assertSame($handler, $req->getErrorHandler());
     }
@@ -379,43 +384,43 @@ final class ExtraCoverageTest extends TestCase
 
     public function testExpectsVariousTypes(): void
     {
-        static::assertSame(Mime::getFullMime(Mime::CSV),    Request::get('http://example.com/')->expectsCsv()->getExpectedType());
-        static::assertSame(Mime::getFullMime(Mime::FORM),   Request::get('http://example.com/')->expectsForm()->getExpectedType());
-        static::assertSame(Mime::getFullMime(Mime::HTML),   Request::get('http://example.com/')->expectsHtml()->getExpectedType());
-        static::assertSame(Mime::getFullMime(Mime::JS),     Request::get('http://example.com/')->expectsJavascript()->getExpectedType());
-        static::assertSame(Mime::getFullMime(Mime::JS),     Request::get('http://example.com/')->expectsJs()->getExpectedType());
-        static::assertSame(Mime::getFullMime(Mime::JSON),   Request::get('http://example.com/')->expectsJson()->getExpectedType());
-        static::assertSame(Mime::getFullMime(Mime::PLAIN),  Request::get('http://example.com/')->expectsPlain()->getExpectedType());
-        static::assertSame(Mime::getFullMime(Mime::PLAIN),  Request::get('http://example.com/')->expectsText()->getExpectedType());
+        static::assertSame(Mime::getFullMime(Mime::CSV), Request::get('http://example.com/')->expectsCsv()->getExpectedType());
+        static::assertSame(Mime::getFullMime(Mime::FORM), Request::get('http://example.com/')->expectsForm()->getExpectedType());
+        static::assertSame(Mime::getFullMime(Mime::HTML), Request::get('http://example.com/')->expectsHtml()->getExpectedType());
+        static::assertSame(Mime::getFullMime(Mime::JS), Request::get('http://example.com/')->expectsJavascript()->getExpectedType());
+        static::assertSame(Mime::getFullMime(Mime::JS), Request::get('http://example.com/')->expectsJs()->getExpectedType());
+        static::assertSame(Mime::getFullMime(Mime::JSON), Request::get('http://example.com/')->expectsJson()->getExpectedType());
+        static::assertSame(Mime::getFullMime(Mime::PLAIN), Request::get('http://example.com/')->expectsPlain()->getExpectedType());
+        static::assertSame(Mime::getFullMime(Mime::PLAIN), Request::get('http://example.com/')->expectsText()->getExpectedType());
         static::assertSame(Mime::getFullMime(Mime::UPLOAD), Request::get('http://example.com/')->expectsUpload()->getExpectedType());
-        static::assertSame(Mime::getFullMime(Mime::XHTML),  Request::get('http://example.com/')->expectsXhtml()->getExpectedType());
-        static::assertSame(Mime::getFullMime(Mime::XML),    Request::get('http://example.com/')->expectsXml()->getExpectedType());
-        static::assertSame(Mime::getFullMime(Mime::YAML),   Request::get('http://example.com/')->expectsYaml()->getExpectedType());
+        static::assertSame(Mime::getFullMime(Mime::XHTML), Request::get('http://example.com/')->expectsXhtml()->getExpectedType());
+        static::assertSame(Mime::getFullMime(Mime::XML), Request::get('http://example.com/')->expectsXml()->getExpectedType());
+        static::assertSame(Mime::getFullMime(Mime::YAML), Request::get('http://example.com/')->expectsYaml()->getExpectedType());
     }
 
     public function testSendsVariousTypes(): void
     {
-        static::assertSame(Mime::getFullMime(Mime::CSV),    Request::get('http://example.com/')->sendsCsv()->getContentType());
-        static::assertSame(Mime::getFullMime(Mime::FORM),   Request::get('http://example.com/')->sendsForm()->getContentType());
-        static::assertSame(Mime::getFullMime(Mime::HTML),   Request::get('http://example.com/')->sendsHtml()->getContentType());
-        static::assertSame(Mime::getFullMime(Mime::JS),     Request::get('http://example.com/')->sendsJavascript()->getContentType());
-        static::assertSame(Mime::getFullMime(Mime::JS),     Request::get('http://example.com/')->sendsJs()->getContentType());
-        static::assertSame(Mime::getFullMime(Mime::JSON),   Request::get('http://example.com/')->sendsJson()->getContentType());
-        static::assertSame(Mime::getFullMime(Mime::PLAIN),  Request::get('http://example.com/')->sendsPlain()->getContentType());
-        static::assertSame(Mime::getFullMime(Mime::PLAIN),  Request::get('http://example.com/')->sendsText()->getContentType());
+        static::assertSame(Mime::getFullMime(Mime::CSV), Request::get('http://example.com/')->sendsCsv()->getContentType());
+        static::assertSame(Mime::getFullMime(Mime::FORM), Request::get('http://example.com/')->sendsForm()->getContentType());
+        static::assertSame(Mime::getFullMime(Mime::HTML), Request::get('http://example.com/')->sendsHtml()->getContentType());
+        static::assertSame(Mime::getFullMime(Mime::JS), Request::get('http://example.com/')->sendsJavascript()->getContentType());
+        static::assertSame(Mime::getFullMime(Mime::JS), Request::get('http://example.com/')->sendsJs()->getContentType());
+        static::assertSame(Mime::getFullMime(Mime::JSON), Request::get('http://example.com/')->sendsJson()->getContentType());
+        static::assertSame(Mime::getFullMime(Mime::PLAIN), Request::get('http://example.com/')->sendsPlain()->getContentType());
+        static::assertSame(Mime::getFullMime(Mime::PLAIN), Request::get('http://example.com/')->sendsText()->getContentType());
         static::assertSame(Mime::getFullMime(Mime::UPLOAD), Request::get('http://example.com/')->sendsUpload()->getContentType());
-        static::assertSame(Mime::getFullMime(Mime::XHTML),  Request::get('http://example.com/')->sendsXhtml()->getContentType());
-        static::assertSame(Mime::getFullMime(Mime::XML),    Request::get('http://example.com/')->sendsXml()->getContentType());
+        static::assertSame(Mime::getFullMime(Mime::XHTML), Request::get('http://example.com/')->sendsXhtml()->getContentType());
+        static::assertSame(Mime::getFullMime(Mime::XML), Request::get('http://example.com/')->sendsXml()->getContentType());
     }
 
     public function testWithContentTypeHelpers(): void
     {
-        static::assertSame(Mime::getFullMime(Mime::CSV),  Request::get('http://example.com/')->withContentTypeCsv()->getContentType());
+        static::assertSame(Mime::getFullMime(Mime::CSV), Request::get('http://example.com/')->withContentTypeCsv()->getContentType());
         static::assertSame(Mime::getFullMime(Mime::FORM), Request::get('http://example.com/')->withContentTypeForm()->getContentType());
         static::assertSame(Mime::getFullMime(Mime::HTML), Request::get('http://example.com/')->withContentTypeHtml()->getContentType());
         static::assertSame(Mime::getFullMime(Mime::JSON), Request::get('http://example.com/')->withContentTypeJson()->getContentType());
         static::assertSame(Mime::getFullMime(Mime::PLAIN), Request::get('http://example.com/')->withContentTypePlain()->getContentType());
-        static::assertSame(Mime::getFullMime(Mime::XML),  Request::get('http://example.com/')->withContentTypeXml()->getContentType());
+        static::assertSame(Mime::getFullMime(Mime::XML), Request::get('http://example.com/')->withContentTypeXml()->getContentType());
         static::assertSame(Mime::getFullMime(Mime::YAML), Request::get('http://example.com/')->withContentTypeYaml()->getContentType());
     }
 
@@ -674,7 +679,9 @@ final class ExtraCoverageTest extends TestCase
 
     public function testRegisterPayloadSerializer(): void
     {
-        $callback = static function ($p) { return json_encode($p); };
+        $callback = static function ($p) {
+            return json_encode($p);
+        };
         $req = Request::get('http://example.com/')
             ->registerPayloadSerializer(Mime::JSON, $callback);
         static::assertInstanceOf(Request::class, $req);
@@ -682,7 +689,9 @@ final class ExtraCoverageTest extends TestCase
 
     public function testWithSerializePayload(): void
     {
-        $callback = static function ($p) { return serialize($p); };
+        $callback = static function ($p) {
+            return serialize($p);
+        };
         $req = Request::get('http://example.com/')->withSerializePayload($callback);
         static::assertInstanceOf(Request::class, $req);
     }

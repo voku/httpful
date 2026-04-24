@@ -34,10 +34,14 @@ final class ClientMultiAndPromiseTest extends TestCase
     public function testMultiCurlCallbacks(): void
     {
         $mc = new MultiCurl();
-        $s = static function () {};
-        $e = static function () {};
-        $c = static function () {};
-        $b = static function () {};
+        $s = static function () {
+        };
+        $e = static function () {
+        };
+        $c = static function () {
+        };
+        $b = static function () {
+        };
 
         static::assertSame($mc, $mc->success($s));
         static::assertSame($mc, $mc->error($e));
@@ -57,7 +61,9 @@ final class ClientMultiAndPromiseTest extends TestCase
     {
         $mc = new MultiCurl();
         static::assertSame($mc, $mc->setRetry(3));
-        static::assertSame($mc, $mc->setRetry(static function () { return false; }));
+        static::assertSame($mc, $mc->setRetry(static function () {
+            return false;
+        }));
     }
 
     public function testMultiCurlAddCurl(): void
@@ -73,7 +79,9 @@ final class ClientMultiAndPromiseTest extends TestCase
         $mc = new MultiCurl();
         $curl = new Curl();
         $called = false;
-        $result = $mc->addDownload($curl, static function () use (&$called) { $called = true; });
+        $result = $mc->addDownload($curl, static function () use (&$called) {
+            $called = true;
+        });
         static::assertSame($curl, $result);
         static::assertIsResource($curl->getFileHandle());
     }
@@ -133,8 +141,12 @@ final class ClientMultiAndPromiseTest extends TestCase
         $rejected = false;
 
         $newPromise = $promise->then(
-            static function () use (&$completed) { $completed = true; },
-            static function () use (&$rejected) { $rejected = true; }
+            static function () use (&$completed) {
+                $completed = true;
+            },
+            static function () use (&$rejected) {
+                $rejected = true;
+            }
         );
 
         static::assertInstanceOf(MultiCurlPromise::class, $newPromise);
@@ -182,8 +194,10 @@ final class ClientMultiAndPromiseTest extends TestCase
 
     public function testClientMultiConstructWithCallbacks(): void
     {
-        $onSuccess = static function () {};
-        $onComplete = static function () {};
+        $onSuccess = static function () {
+        };
+        $onComplete = static function () {
+        };
         $cm = new ClientMulti($onSuccess, $onComplete);
         static::assertInstanceOf(MultiCurl::class, $cm->curlMulti);
     }
@@ -480,7 +494,9 @@ final class ClientMultiAndPromiseTest extends TestCase
     {
         $called = false;
         $req = Request::get('http://localhost:1349/')
-            ->beforeSend(static function () use (&$called) { $called = true; });
+            ->beforeSend(static function () use (&$called) {
+                $called = true;
+            });
         $req->_curlPrep();
         static::assertTrue($called);
     }
@@ -556,22 +572,27 @@ final class ClientMultiAndPromiseTest extends TestCase
     {
         $req = Request::get('http://localhost:1349/');
         $multiCurl = $req->initMulti(
-            static function () {},
-            static function () {}
+            static function () {
+            },
+            static function () {
+            }
         );
         static::assertInstanceOf(MultiCurl::class, $multiCurl);
     }
 
     public function testRequestGetSendCallback(): void
     {
-        $cb = static function () {};
+        $cb = static function () {
+        };
         $req = Request::get('http://localhost:1349/')->beforeSend($cb);
         static::assertContains($cb, $req->getSendCallback());
     }
 
     public function testRequestGetParseCallback(): void
     {
-        $cb = static function ($body) { return $body; };
+        $cb = static function ($body) {
+            return $body;
+        };
         $req = Request::get('http://localhost:1349/')->withParseCallback($cb);
         static::assertSame($cb, $req->getParseCallback());
         static::assertTrue($req->hasParseCallback());
