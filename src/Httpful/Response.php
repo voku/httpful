@@ -596,6 +596,132 @@ class Response implements ResponseInterface
     }
 
     /**
+     * @return bool Did we receive a 1xx Informational response?
+     */
+    public function isInformational(): bool
+    {
+        return $this->code >= 100 && $this->code < 200;
+    }
+
+    /**
+     * @return bool Did we receive a 2xx Successful response?
+     */
+    public function isSuccess(): bool
+    {
+        return $this->code >= 200 && $this->code < 300;
+    }
+
+    /**
+     * @return bool Did we receive a 3xx Redirection response?
+     */
+    public function isRedirect(): bool
+    {
+        return $this->code >= 300 && $this->code < 400;
+    }
+
+    /**
+     * @return bool Did we receive a 4xx Client Error response?
+     */
+    public function isClientError(): bool
+    {
+        return $this->code >= 400 && $this->code < 500;
+    }
+
+    /**
+     * @return bool Did we receive a 5xx Server Error response?
+     */
+    public function isServerError(): bool
+    {
+        return $this->code >= 500 && $this->code < 600;
+    }
+
+    /**
+     * Returns a human-readable hint / explanation for the current HTTP status code.
+     *
+     * Useful when displaying or logging error information without having to
+     * hard-code status-code ranges in calling code.
+     *
+     * @return string
+     */
+    public function getErrorMessage(): string
+    {
+        if ($this->isSuccess()) {
+            return 'Request was successful (' . $this->code . ' ' . $this->reason . ').';
+        }
+
+        if ($this->isInformational()) {
+            return 'Informational response (' . $this->code . ' ' . $this->reason . '): the server acknowledged the request.';
+        }
+
+        if ($this->isRedirect()) {
+            return 'Redirect response (' . $this->code . ' ' . $this->reason . '): the resource has moved. Check the Location header.';
+        }
+
+        if ($this->isClientError()) {
+            $hints = [
+                400 => 'Bad Request: the server could not understand the request due to invalid syntax.',
+                401 => 'Unauthorized: authentication is required and has failed or not been provided.',
+                403 => 'Forbidden: you do not have permission to access this resource.',
+                404 => 'Not Found: the requested resource could not be found on the server.',
+                405 => 'Method Not Allowed: the HTTP method used is not supported for this endpoint.',
+                408 => 'Request Timeout: the server timed out waiting for the request.',
+                409 => 'Conflict: the request conflicts with the current state of the resource.',
+                410 => 'Gone: the resource has been permanently removed.',
+                422 => 'Unprocessable Entity: the request was well-formed but contains semantic errors.',
+                429 => 'Too Many Requests: you have exceeded the rate limit. Try again later.',
+            ];
+
+            $hint = $hints[$this->code] ?? 'Client Error: the request could not be fulfilled due to a client-side problem. Check your request parameters, headers and authentication.';
+
+            return $hint . ' (' . $this->code . ' ' . $this->reason . ')';
+        }
+
+        if ($this->isServerError()) {
+            $hints = [
+                500 => 'Internal Server Error: the server encountered an unexpected error. This is a server-side problem.',
+                501 => 'Not Implemented: the server does not support the functionality required to fulfil the request.',
+                502 => 'Bad Gateway: the server received an invalid response from an upstream server.',
+                503 => 'Service Unavailable: the server is temporarily unable to handle the request (overloaded or under maintenance).',
+                504 => 'Gateway Timeout: the upstream server did not respond in time.',
+            ];
+
+            $hint = $hints[$this->code] ?? 'Server Error: the server failed to fulfil the request. This is a server-side problem and is not caused by your request.';
+
+            return $hint . ' (' . $this->code . ' ' . $this->reason . ')';
+        }
+
+        return 'Unknown response status (' . $this->code . ' ' . $this->reason . ').';
+    }
+
+    /**
+     * Returns a human-readable debug summary of the response including the
+     * status line, all response headers, and the raw body.  Useful for
+     * logging, debugging, or building descriptive exception messages.
+     *
+     * @return string
+     */
+    public function debugInfo(): string
+    {
+        $lines = [];
+
+        $lines[] = '=== Response Debug Info ===';
+        $lines[] = 'Status : ' . $this->code . ' ' . $this->reason;
+        $lines[] = 'Hint   : ' . $this->getErrorMessage();
+        $lines[] = '';
+        $lines[] = '--- Headers ---';
+
+        foreach ($this->headers->toArray() as $name => $values) {
+            $lines[] = $name . ': ' . \implode(', ', (array) $values);
+        }
+
+        $lines[] = '';
+        $lines[] = '--- Body ---';
+        $lines[] = (string) $this->body;
+
+        return \implode("\n", $lines);
+    }
+
+    /**
      * @return bool
      */
     public function isMimePersonal(): bool

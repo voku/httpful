@@ -262,4 +262,139 @@ final class ResponseTest extends TestCase
         static::assertSame('Foo', $r->getHeaderLine('OWS'));
         static::assertSame(['Foo'], $r->getHeader('OWS'));
     }
+
+    // -----------------------------------------------------------------------
+    // Status-range helpers
+    // -----------------------------------------------------------------------
+
+    public function testIsInformational()
+    {
+        $r = (new Response())->withStatus(100);
+        static::assertTrue($r->isInformational());
+        static::assertFalse($r->isSuccess());
+        static::assertFalse($r->isRedirect());
+        static::assertFalse($r->isClientError());
+        static::assertFalse($r->isServerError());
+        static::assertFalse($r->hasErrors());
+    }
+
+    public function testIsSuccess()
+    {
+        foreach ([200, 201, 204] as $code) {
+            $r = (new Response())->withStatus($code);
+            static::assertTrue($r->isSuccess(), "Expected isSuccess() for {$code}");
+            static::assertFalse($r->isInformational());
+            static::assertFalse($r->isRedirect());
+            static::assertFalse($r->isClientError());
+            static::assertFalse($r->isServerError());
+            static::assertFalse($r->hasErrors());
+        }
+    }
+
+    public function testIsRedirect()
+    {
+        foreach ([301, 302, 307] as $code) {
+            $r = (new Response())->withStatus($code);
+            static::assertTrue($r->isRedirect(), "Expected isRedirect() for {$code}");
+            static::assertFalse($r->isSuccess());
+            static::assertFalse($r->isClientError());
+            static::assertFalse($r->isServerError());
+            static::assertFalse($r->hasErrors());
+        }
+    }
+
+    public function testIsClientError()
+    {
+        foreach ([400, 401, 403, 404, 422, 429] as $code) {
+            $r = (new Response())->withStatus($code);
+            static::assertTrue($r->isClientError(), "Expected isClientError() for {$code}");
+            static::assertTrue($r->hasErrors(), "Expected hasErrors() for {$code}");
+            static::assertFalse($r->isServerError());
+            static::assertFalse($r->isSuccess());
+        }
+    }
+
+    public function testIsServerError()
+    {
+        foreach ([500, 502, 503, 504] as $code) {
+            $r = (new Response())->withStatus($code);
+            static::assertTrue($r->isServerError(), "Expected isServerError() for {$code}");
+            static::assertTrue($r->hasErrors(), "Expected hasErrors() for {$code}");
+            static::assertFalse($r->isClientError());
+            static::assertFalse($r->isSuccess());
+        }
+    }
+
+    // -----------------------------------------------------------------------
+    // getErrorMessage()
+    // -----------------------------------------------------------------------
+
+    public function testGetErrorMessageForSuccess()
+    {
+        $r = (new Response())->withStatus(200);
+        static::assertStringContainsString('successful', \strtolower($r->getErrorMessage()));
+        static::assertStringContainsString('200', $r->getErrorMessage());
+    }
+
+    public function testGetErrorMessageForClientError()
+    {
+        $r = (new Response())->withStatus(404);
+        $msg = $r->getErrorMessage();
+        static::assertStringContainsString('404', $msg);
+        static::assertStringContainsString('Not Found', $msg);
+    }
+
+    public function testGetErrorMessageForServerError()
+    {
+        $r = (new Response())->withStatus(500);
+        $msg = $r->getErrorMessage();
+        static::assertStringContainsString('500', $msg);
+        static::assertStringContainsString('Internal Server Error', $msg);
+        static::assertStringContainsString('server', \strtolower($msg));
+    }
+
+    public function testGetErrorMessageForRedirect()
+    {
+        $r = (new Response())->withStatus(301);
+        $msg = $r->getErrorMessage();
+        static::assertStringContainsString('301', $msg);
+        static::assertStringContainsString('Redirect', $msg);
+    }
+
+    public function testGetErrorMessageFor429()
+    {
+        $r = (new Response())->withStatus(429);
+        $msg = $r->getErrorMessage();
+        static::assertStringContainsString('429', $msg);
+        static::assertStringContainsString('rate limit', \strtolower($msg));
+    }
+
+    public function testGetErrorMessageFor502()
+    {
+        $r = (new Response())->withStatus(502);
+        $msg = $r->getErrorMessage();
+        static::assertStringContainsString('502', $msg);
+        static::assertStringContainsString('Bad Gateway', $msg);
+    }
+
+    // -----------------------------------------------------------------------
+    // debugInfo()
+    // -----------------------------------------------------------------------
+
+    public function testDebugInfoContainsStatusAndBody()
+    {
+        $r = new Response('hello world', "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n");
+        $debug = $r->debugInfo();
+        static::assertStringContainsString('200', $debug);
+        static::assertStringContainsString('Content-Type', $debug);
+        static::assertStringContainsString('hello world', $debug);
+    }
+
+    public function testDebugInfoContainsHint()
+    {
+        $r = (new Response())->withStatus(503);
+        $debug = $r->debugInfo();
+        static::assertStringContainsString('503', $debug);
+        static::assertStringContainsString('Hint', $debug);
+    }
 }
