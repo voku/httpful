@@ -174,6 +174,7 @@ final class ResponseTest extends TestCase
         $r = new Response('baz');
         static::assertInstanceOf(StreamInterface::class, $r->getBody());
         static::assertSame('baz', (string) $r->getBody());
+        static::assertSame('baz', $r->getRawBody());
     }
 
     public function testConstructorPreservesGenericStreamBodyWithoutParsingContext()

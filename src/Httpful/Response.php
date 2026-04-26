@@ -131,7 +131,7 @@ class Response implements ResponseInterface
 
         $this->_interpretHeaders();
 
-        $preserveStreamBody = $bodyWasStream
+        $preserveOriginalBodyStream = $bodyWasStream
             && $this->request === null
             && (
                 $this->raw_headers === null
@@ -139,7 +139,7 @@ class Response implements ResponseInterface
                 || $this->raw_headers === []
             );
 
-        $bodyParsed = $preserveStreamBody ? $body : $this->_parse($body);
+        $bodyParsed = $preserveOriginalBodyStream ? $body : $this->_parse($body);
         $this->body = Stream::createNotNull($bodyParsed);
         $this->raw_body = $bodyParsed;
     }
