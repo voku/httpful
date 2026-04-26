@@ -145,9 +145,6 @@ final class OutputContractCoverageTest extends TestCase
         );
     }
 
-    /**
-     * @param mixed $value
-     */
     private static function setPrivateProperty(object $object, string $property, $value): void
     {
         $reflection = new \ReflectionProperty($object, $property);
@@ -155,9 +152,6 @@ final class OutputContractCoverageTest extends TestCase
         $reflection->setValue($object, $value);
     }
 
-    /**
-     * @param mixed $value
-     */
     private static function setStaticPrivateProperty(string $class, string $property, $value): void
     {
         $reflection = new \ReflectionProperty($class, $property);
