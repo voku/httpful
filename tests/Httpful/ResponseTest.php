@@ -83,6 +83,16 @@ final class ResponseTest extends TestCase
         static::assertSame('baz', (string) $r->getBody());
     }
 
+    public function testConstructorPreservesGenericStreamBodyWithoutParsingContext()
+    {
+        $body = $this->getMockBuilder(StreamInterface::class)->getMock();
+        $body->expects(static::never())
+            ->method('__toString');
+
+        $r = new Response($body);
+        static::assertSame($body, $r->getBody());
+    }
+
     public function testNullBody()
     {
         $r = new Response(null);
