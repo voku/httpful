@@ -183,6 +183,7 @@ final class ResponseTest extends TestCase
 
         $r = new Response($body);
         static::assertSame($body, $r->getBody());
+        static::assertSame($body, $r->getRawBody());
     }
 
     public function testNullBody()
