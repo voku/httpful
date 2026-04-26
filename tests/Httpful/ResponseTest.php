@@ -58,7 +58,7 @@ final class DelegatingStream implements StreamInterface
         return $this->inner->isSeekable();
     }
 
-    public function seek($offset, $whence = SEEK_SET): void
+    public function seek(int $offset, int $whence = SEEK_SET): void
     {
         $this->inner->seek($offset, $whence);
     }
@@ -73,7 +73,7 @@ final class DelegatingStream implements StreamInterface
         return $this->inner->isWritable();
     }
 
-    public function write($string): int
+    public function write(string $string): int
     {
         return $this->inner->write($string);
     }
@@ -83,7 +83,7 @@ final class DelegatingStream implements StreamInterface
         return $this->inner->isReadable();
     }
 
-    public function read($length): string
+    public function read(int $length): string
     {
         return $this->inner->read($length);
     }
@@ -93,7 +93,10 @@ final class DelegatingStream implements StreamInterface
         return $this->inner->getContents();
     }
 
-    public function getMetadata($key = null)
+    /**
+     * @return array|mixed|null
+     */
+    public function getMetadata(?string $key = null)
     {
         return $this->inner->getMetadata($key);
     }
