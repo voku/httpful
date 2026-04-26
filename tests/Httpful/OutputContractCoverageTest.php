@@ -47,6 +47,7 @@ final class OutputContractCoverageTest extends TestCase
 
         Setup::reset();
         Setup::registerMimeHandler(Mime::JSON, $handler);
+        self::setStaticPrivateProperty(Setup::class, 'mime_registered', false);
         Setup::initMimeHandlers();
 
         static::assertSame($handler, Setup::setupGlobalMimeType(Mime::JSON));
@@ -152,5 +153,15 @@ final class OutputContractCoverageTest extends TestCase
         $reflection = new \ReflectionProperty($object, $property);
         $reflection->setAccessible(true);
         $reflection->setValue($object, $value);
+    }
+
+    /**
+     * @param mixed $value
+     */
+    private static function setStaticPrivateProperty(string $class, string $property, $value): void
+    {
+        $reflection = new \ReflectionProperty($class, $property);
+        $reflection->setAccessible(true);
+        $reflection->setValue(null, $value);
     }
 }
