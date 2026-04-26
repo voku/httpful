@@ -93,11 +93,11 @@ class Response implements ResponseInterface
         array $meta_data = []
     ) {
         $bodyWasStream = $body instanceof StreamInterface;
-
-        if (!($body instanceof StreamInterface)) {
+        if (!$bodyWasStream) {
             $this->raw_body = $body;
-            $body = Stream::create($body);
         }
+
+        $body = Stream::createNotNull($body);
 
         $this->request = $request;
         $this->raw_headers = $headers;
@@ -131,7 +131,7 @@ class Response implements ResponseInterface
 
         $this->_interpretHeaders();
 
-        $preserveOriginalBodyStream = $bodyWasStream
+        $preserveStreamBody = $bodyWasStream
             && $this->request === null
             && (
                 $this->raw_headers === null
@@ -139,10 +139,8 @@ class Response implements ResponseInterface
                 || $this->raw_headers === []
             );
 
-        $bodyParsed = $preserveOriginalBodyStream ? $body : $this->_parse($body);
-        $this->body = $bodyParsed instanceof StreamInterface
-            ? $bodyParsed
-            : Stream::createNotNull($bodyParsed);
+        $bodyParsed = $preserveStreamBody ? $body : $this->_parse($body);
+        $this->body = Stream::createNotNull($bodyParsed);
         $this->raw_body = $bodyParsed;
     }
 
