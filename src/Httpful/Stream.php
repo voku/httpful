@@ -493,7 +493,7 @@ class Stream implements StreamInterface
             $stream = static::create();
         }
 
-        \assert($stream instanceof self);
+        \assert($stream instanceof StreamInterface);
 
         return $stream;
     }

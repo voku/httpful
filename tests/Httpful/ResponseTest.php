@@ -6,8 +6,101 @@ namespace Httpful\tests;
 
 use Httpful\Factory;
 use Httpful\Response;
+use Httpful\Stream;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\StreamInterface;
+
+/**
+ * @internal
+ */
+final class TestDelegatingStream implements StreamInterface
+{
+    /** @var StreamInterface */
+    private $inner;
+
+    public function __construct(StreamInterface $inner)
+    {
+        $this->inner = $inner;
+    }
+
+    public function __toString(): string
+    {
+        return $this->inner->__toString();
+    }
+
+    public function close(): void
+    {
+        $this->inner->close();
+    }
+
+    public function detach()
+    {
+        return $this->inner->detach();
+    }
+
+    public function getSize(): ?int
+    {
+        return $this->inner->getSize();
+    }
+
+    public function tell(): int
+    {
+        return $this->inner->tell();
+    }
+
+    public function eof(): bool
+    {
+        return $this->inner->eof();
+    }
+
+    public function isSeekable(): bool
+    {
+        return $this->inner->isSeekable();
+    }
+
+    public function seek(int $offset, int $whence = SEEK_SET): void
+    {
+        $this->inner->seek($offset, $whence);
+    }
+
+    public function rewind(): void
+    {
+        $this->inner->rewind();
+    }
+
+    public function isWritable(): bool
+    {
+        return $this->inner->isWritable();
+    }
+
+    public function write(string $string): int
+    {
+        return $this->inner->write($string);
+    }
+
+    public function isReadable(): bool
+    {
+        return $this->inner->isReadable();
+    }
+
+    public function read(int $length): string
+    {
+        return $this->inner->read($length);
+    }
+
+    public function getContents(): string
+    {
+        return $this->inner->getContents();
+    }
+
+    /**
+     * @return array|mixed|null
+     */
+    public function getMetadata(?string $key = null)
+    {
+        return $this->inner->getMetadata($key);
+    }
+}
 
 /**
  * @internal
@@ -81,6 +174,16 @@ final class ResponseTest extends TestCase
         $r = new Response('baz');
         static::assertInstanceOf(StreamInterface::class, $r->getBody());
         static::assertSame('baz', (string) $r->getBody());
+        static::assertSame('baz', $r->getRawBody());
+    }
+
+    public function testConstructorPreservesGenericStreamBodyWithoutParsingContext()
+    {
+        $body = new TestDelegatingStream(Stream::createNotNull('baz'));
+
+        $r = new Response($body);
+        static::assertSame($body, $r->getBody());
+        static::assertSame($body, $r->getRawBody());
     }
 
     public function testNullBody()
