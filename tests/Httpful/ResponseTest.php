@@ -23,21 +23,80 @@ final class DelegatingStream implements StreamInterface
         $this->inner = $inner;
     }
 
-    public function __toString(): string { return $this->inner->__toString(); }
-    public function close(): void { $this->inner->close(); }
-    public function detach() { return $this->inner->detach(); }
-    public function getSize(): ?int { return $this->inner->getSize(); }
-    public function tell(): int { return $this->inner->tell(); }
-    public function eof(): bool { return $this->inner->eof(); }
-    public function isSeekable(): bool { return $this->inner->isSeekable(); }
-    public function seek($offset, $whence = SEEK_SET): void { $this->inner->seek($offset, $whence); }
-    public function rewind(): void { $this->inner->rewind(); }
-    public function isWritable(): bool { return $this->inner->isWritable(); }
-    public function write($string): int { return $this->inner->write($string); }
-    public function isReadable(): bool { return $this->inner->isReadable(); }
-    public function read($length): string { return $this->inner->read($length); }
-    public function getContents(): string { return $this->inner->getContents(); }
-    public function getMetadata($key = null) { return $this->inner->getMetadata($key); }
+    public function __toString(): string
+    {
+        return $this->inner->__toString();
+    }
+
+    public function close(): void
+    {
+        $this->inner->close();
+    }
+
+    public function detach()
+    {
+        return $this->inner->detach();
+    }
+
+    public function getSize(): ?int
+    {
+        return $this->inner->getSize();
+    }
+
+    public function tell(): int
+    {
+        return $this->inner->tell();
+    }
+
+    public function eof(): bool
+    {
+        return $this->inner->eof();
+    }
+
+    public function isSeekable(): bool
+    {
+        return $this->inner->isSeekable();
+    }
+
+    public function seek($offset, $whence = SEEK_SET): void
+    {
+        $this->inner->seek($offset, $whence);
+    }
+
+    public function rewind(): void
+    {
+        $this->inner->rewind();
+    }
+
+    public function isWritable(): bool
+    {
+        return $this->inner->isWritable();
+    }
+
+    public function write($string): int
+    {
+        return $this->inner->write($string);
+    }
+
+    public function isReadable(): bool
+    {
+        return $this->inner->isReadable();
+    }
+
+    public function read($length): string
+    {
+        return $this->inner->read($length);
+    }
+
+    public function getContents(): string
+    {
+        return $this->inner->getContents();
+    }
+
+    public function getMetadata($key = null)
+    {
+        return $this->inner->getMetadata($key);
+    }
 }
 
 /**
