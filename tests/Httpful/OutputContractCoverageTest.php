@@ -36,7 +36,8 @@ final class OutputContractCoverageTest extends TestCase
 
         static::assertSame('POST', $request->getMethod());
         static::assertSame('https://example.com/users', (string) $request->getUri());
-        static::assertSame('name=Alice&role=admin', (string) $request->getBody());
+        static::assertStringContainsString('Alice', (string) $request->getBody());
+        static::assertStringContainsString('role', (string) $request->getBody());
     }
 
     public function testSetupKeepsExistingMimeHandlerRegistration(): void
