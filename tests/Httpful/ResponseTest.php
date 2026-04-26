@@ -13,7 +13,7 @@ use Psr\Http\Message\StreamInterface;
 /**
  * @internal
  */
-final class DelegatingStream implements StreamInterface
+final class TestDelegatingStream implements StreamInterface
 {
     /** @var StreamInterface */
     private $inner;
@@ -179,7 +179,7 @@ final class ResponseTest extends TestCase
 
     public function testConstructorPreservesGenericStreamBodyWithoutParsingContext()
     {
-        $body = new DelegatingStream(Stream::createNotNull('baz'));
+        $body = new TestDelegatingStream(Stream::createNotNull('baz'));
 
         $r = new Response($body);
         static::assertSame($body, $r->getBody());
