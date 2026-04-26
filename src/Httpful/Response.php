@@ -92,6 +92,8 @@ class Response implements ResponseInterface
         RequestInterface $request = null,
         array $meta_data = []
     ) {
+        $bodyWasStream = $body instanceof StreamInterface;
+
         if (!($body instanceof StreamInterface)) {
             $this->raw_body = $body;
             $body = Stream::create($body);
@@ -129,8 +131,18 @@ class Response implements ResponseInterface
 
         $this->_interpretHeaders();
 
-        $bodyParsed = $this->shouldPreserveBodyStream($body) ? $body : $this->_parse($body);
-        $this->body = Stream::createNotNull($bodyParsed);
+        $preserveOriginalBodyStream = $bodyWasStream
+            && $this->request === null
+            && (
+                $this->raw_headers === null
+                || $this->raw_headers === ''
+                || $this->raw_headers === []
+            );
+
+        $bodyParsed = $preserveOriginalBodyStream ? $body : $this->_parse($body);
+        $this->body = $bodyParsed instanceof StreamInterface
+            ? $bodyParsed
+            : Stream::createNotNull($bodyParsed);
         $this->raw_body = $bodyParsed;
     }
 
@@ -867,16 +879,5 @@ class Response implements ResponseInterface
         }
 
         return Setup::setupGlobalMimeType($parse_with)->parse((string) $body);
-    }
-
-    private function shouldPreserveBodyStream($body): bool
-    {
-        return $body instanceof StreamInterface
-            && $this->request === null
-            && (
-                $this->raw_headers === null
-                || $this->raw_headers === ''
-                || $this->raw_headers === []
-            );
     }
 }
