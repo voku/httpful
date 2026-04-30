@@ -89,7 +89,7 @@ class Response implements ResponseInterface
     public function __construct(
         $body = null,
         $headers = null,
-        RequestInterface $request = null,
+        ?RequestInterface $request = null,
         array $meta_data = []
     ) {
         $bodyWasStream = $body instanceof StreamInterface;

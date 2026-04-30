@@ -30,7 +30,7 @@ class Factory implements RequestFactoryInterface, ServerRequestFactoryInterface,
      *
      * @return Request
      */
-    public function createRequest(string $method, $uri, string $mime = null, $body = ''): RequestInterface
+    public function createRequest(string $method, $uri, ?string $mime = null, $body = ''): RequestInterface
     {
         $return = (new Request($method, $mime))
             ->withUriFromString($uri);
@@ -50,7 +50,7 @@ class Factory implements RequestFactoryInterface, ServerRequestFactoryInterface,
      *
      * @return Response
      */
-    public function createResponse(int $code = 200, string $reasonPhrase = null): ResponseInterface
+    public function createResponse(int $code = 200, ?string $reasonPhrase = null): ResponseInterface
     {
         return (new Response())->withStatus($code, $reasonPhrase);
     }
@@ -123,10 +123,10 @@ class Factory implements RequestFactoryInterface, ServerRequestFactoryInterface,
      */
     public function createUploadedFile(
         StreamInterface $stream,
-        int $size = null,
+        ?int $size = null,
         int $error = \UPLOAD_ERR_OK,
-        string $clientFilename = null,
-        string $clientMediaType = null
+        ?string $clientFilename = null,
+        ?string $clientMediaType = null
     ): UploadedFileInterface {
         if ($size === null) {
             $size = (int) $stream->getSize();

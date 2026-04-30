@@ -17,7 +17,7 @@ class Client implements ClientInterface
      *
      * @return Response
      */
-    public static function delete(string $uri, array $params = null, string $mime = Mime::JSON): Response
+    public static function delete(string $uri, ?array $params = null, string $mime = Mime::JSON): Response
     {
         return self::delete_request($uri, $params, $mime)->send();
     }
@@ -29,7 +29,7 @@ class Client implements ClientInterface
      *
      * @return Request
      */
-    public static function delete_request(string $uri, array $params = null, string $mime = Mime::JSON): Request
+    public static function delete_request(string $uri, ?array $params = null, string $mime = Mime::JSON): Request
     {
         return Request::delete($uri, $params, $mime);
     }
@@ -60,7 +60,7 @@ class Client implements ClientInterface
      *
      * @return Response
      */
-    public static function get(string $uri, array $params = null, $mime = Mime::PLAIN): Response
+    public static function get(string $uri, ?array $params = null, $mime = Mime::PLAIN): Response
     {
         return self::get_request($uri, $params, $mime)->send();
     }
@@ -71,7 +71,7 @@ class Client implements ClientInterface
      *
      * @return \voku\helper\HtmlDomParser|null
      */
-    public static function get_dom(string $uri, array $param = null)
+    public static function get_dom(string $uri, ?array $param = null)
     {
         return self::get_request($uri, $param, Mime::HTML)->send()->getRawBody();
     }
@@ -82,7 +82,7 @@ class Client implements ClientInterface
      *
      * @return array<string, mixed>
      */
-    public static function get_form(string $uri, array $param = null): array
+    public static function get_form(string $uri, ?array $param = null): array
     {
         return self::get_request($uri, $param, Mime::FORM)->send()->getRawBody();
     }
@@ -93,7 +93,7 @@ class Client implements ClientInterface
      *
      * @return mixed
      */
-    public static function get_json(string $uri, array $param = null)
+    public static function get_json(string $uri, ?array $param = null)
     {
         return self::get_request($uri, $param, Mime::JSON)->send()->getRawBody();
     }
@@ -105,7 +105,7 @@ class Client implements ClientInterface
      *
      * @return Request
      */
-    public static function get_request(string $uri, array $param = null, $mime = Mime::PLAIN): Request
+    public static function get_request(string $uri, ?array $param = null, $mime = Mime::PLAIN): Request
     {
         return Request::get($uri, $param, $mime)->followRedirects();
     }
@@ -116,7 +116,7 @@ class Client implements ClientInterface
      *
      * @return \SimpleXMLElement|null
      */
-    public static function get_xml(string $uri, array $param = null)
+    public static function get_xml(string $uri, ?array $param = null)
     {
         return self::get_request($uri, $param, Mime::XML)->send()->getRawBody();
     }

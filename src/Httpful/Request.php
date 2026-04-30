@@ -277,9 +277,9 @@ class Request implements \IteratorAggregate, RequestInterface
      * @param Request|null $template "Request"-template object
      */
     public function __construct(
-        string $method = null,
-        string $mime = null,
-        self $template = null
+        ?string $method = null,
+        ?string $mime = null,
+        ?self $template = null
     ) {
         $this->initialize();
 
@@ -739,7 +739,7 @@ class Request implements \IteratorAggregate, RequestInterface
      *
      * @return static
      */
-    public static function delete($uri, array $params = null, string $mime = null): self
+    public static function delete($uri, ?array $params = null, ?string $mime = null): self
     {
         if ($uri instanceof UriInterface) {
             $uri = (string) $uri;
@@ -1002,7 +1002,7 @@ class Request implements \IteratorAggregate, RequestInterface
      *
      * @return static
      */
-    public static function get($uri, array $params = null, string $mime = null): self
+    public static function get($uri, ?array $params = null, ?string $mime = null): self
     {
         if ($uri instanceof UriInterface) {
             $uri = (string) $uri;
@@ -1796,7 +1796,7 @@ class Request implements \IteratorAggregate, RequestInterface
      *
      * @return static
      */
-    public static function patch($uri, $payload = null, string $mime = null): self
+    public static function patch($uri, $payload = null, ?string $mime = null): self
     {
         if ($uri instanceof UriInterface) {
             $uri = (string) $uri;
@@ -1818,7 +1818,7 @@ class Request implements \IteratorAggregate, RequestInterface
      *
      * @return static
      */
-    public static function post($uri, $payload = null, string $mime = null): self
+    public static function post($uri, $payload = null, ?string $mime = null): self
     {
         if ($uri instanceof UriInterface) {
             $uri = (string) $uri;
@@ -1840,7 +1840,7 @@ class Request implements \IteratorAggregate, RequestInterface
      *
      * @return static
      */
-    public static function put($uri, $payload = null, string $mime = null): self
+    public static function put($uri, $payload = null, ?string $mime = null): self
     {
         if ($uri instanceof UriInterface) {
             $uri = (string) $uri;
@@ -2566,7 +2566,7 @@ class Request implements \IteratorAggregate, RequestInterface
      *
      * @return static
      */
-    public function withContentType($mime, string $fallback = null): self
+    public function withContentType($mime, ?string $fallback = null): self
     {
         return (clone $this)->_withContentType($mime, $fallback);
     }
@@ -2764,7 +2764,7 @@ class Request implements \IteratorAggregate, RequestInterface
      *
      * @return static
      */
-    public function withExpectedType($mime, string $fallback = null): self
+    public function withExpectedType($mime, ?string $fallback = null): self
     {
         return (clone $this)->_withExpectedType($mime, $fallback);
     }
@@ -3068,7 +3068,7 @@ class Request implements \IteratorAggregate, RequestInterface
      *
      * @internal
      */
-    public function _buildResponse($result, Curl $curl = null): Response
+    public function _buildResponse($result, ?Curl $curl = null): Response
     {
         // fallback
         if ($curl === null) {
@@ -3579,7 +3579,7 @@ class Request implements \IteratorAggregate, RequestInterface
      *
      * @return static
      */
-    private function _setBody($payload, $key = null, string $mimeType = null): self
+    private function _setBody($payload, $key = null, ?string $mimeType = null): self
     {
         $this->_withMimeType($mimeType);
 
@@ -3721,7 +3721,7 @@ class Request implements \IteratorAggregate, RequestInterface
      *
      * @return static
      */
-    private function _withContentType($mime, string $fallback = null): self
+    private function _withContentType($mime, ?string $fallback = null): self
     {
         if (empty($mime) && empty($fallback)) {
             return $this;
@@ -3746,7 +3746,7 @@ class Request implements \IteratorAggregate, RequestInterface
      *
      * @return static
      */
-    private function _withExpectedType($mime, string $fallback = null): self
+    private function _withExpectedType($mime, ?string $fallback = null): self
     {
         if (empty($mime) && empty($fallback)) {
             return $this;
