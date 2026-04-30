@@ -2639,7 +2639,7 @@ class Request implements \IteratorAggregate, RequestInterface
     }
 
     /**
-     * @param string     $minimum_version
+     * @param string|int $minimum_version
      * @param string|int $maximum_version
      *
      * @return static
@@ -3353,7 +3353,11 @@ class Request implements \IteratorAggregate, RequestInterface
      */
     public function downloadTo($file_path): self
     {
-        return $this->withDownload($file_path);
+        $new = clone $this;
+
+        $new->file_path_for_download = $file_path;
+
+        return $new;
     }
 
     /**
