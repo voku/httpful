@@ -6,8 +6,8 @@ namespace Httpful\tests;
 
 use Httpful\Client;
 use Httpful\ClientMulti;
-use Httpful\Curl\MultiCurlPromise;
 use Httpful\Curl\MultiCurl;
+use Httpful\Curl\MultiCurlPromise;
 use Httpful\Handlers\CsvMimeHandler;
 use Httpful\Handlers\XmlMimeHandler;
 use Httpful\Headers;
