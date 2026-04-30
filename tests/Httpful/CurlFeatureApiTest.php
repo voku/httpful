@@ -114,15 +114,27 @@ final class CurlFeatureApiTest extends TestCase
         static::assertSame(['example.com:443:backend.internal:8443'], $opts[\CURLOPT_CONNECT_TO]);
         static::assertArrayHasKey(\CURLOPT_SSLVERSION, $opts);
 
+        $expectedOptionCount = 10;
         if (\defined('CURLOPT_ALTSVC') && \defined('CURLOPT_ALTSVC_CTRL')) {
             static::assertSame('/tmp/altsvc.cache', $opts[\CURLOPT_ALTSVC]);
             static::assertArrayHasKey(\CURLOPT_ALTSVC_CTRL, $opts);
+            $expectedOptionCount += 2;
         }
 
         if (\defined('CURLOPT_HSTS') && \defined('CURLOPT_HSTS_CTRL')) {
             static::assertSame('/tmp/hsts.cache', $opts[\CURLOPT_HSTS]);
             static::assertArrayHasKey(\CURLOPT_HSTS_CTRL, $opts);
+            $expectedOptionCount += 2;
         }
+
+        static::assertCount($expectedOptionCount, $opts);
+    }
+
+    public function testUseTlsVersionAliasAcceptsIntegerOptions(): void
+    {
+        $req = Request::get('http://example.com/')->useTlsVersion(\CURL_SSLVERSION_TLSv1_2);
+
+        static::assertSame(\CURL_SSLVERSION_TLSv1_2, $req->getIterator()['additional_curl_opts'][\CURLOPT_SSLVERSION]);
     }
 
     public function testWithRetryRejectsInvalidCount(): void
