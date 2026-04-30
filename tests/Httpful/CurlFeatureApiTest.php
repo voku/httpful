@@ -47,6 +47,84 @@ final class CurlFeatureApiTest extends TestCase
         static::assertTrue($iter['retry_connection_refused']);
     }
 
+    public function testFeatureAliasHelpersStoreConfiguration(): void
+    {
+        $req = Request::get('http://example.com/')
+            ->authenticateWithBasicAuth('user', 'pass')
+            ->authenticateWithBearerToken('abc123')
+            ->withClientSideCertificateAuth('/tmp/cert.pem', '/tmp/key.pem', 'secret')
+            ->alwaysSerializePayload()
+            ->retry(3)
+            ->retryAfter(0.25)
+            ->retryForAtMost(4)
+            ->retryOnAllErrors()
+            ->doNotRetryOnAllErrors()
+            ->retryOnConnectionRefused()
+            ->doNotRetryOnConnectionRefused()
+            ->useCookieFile('/tmp/cookies.in')
+            ->useCookieJar('/tmp/cookies.out')
+            ->useCaBundle('/tmp/ca.pem')
+            ->useCaPath('/tmp/certs')
+            ->pinPublicKey('sha256//abc')
+            ->useProxyTunnel()
+            ->doNotUseProxyTunnel()
+            ->noProxy(['localhost', '127.0.0.1'])
+            ->resolve('example.com:443:127.0.0.1')
+            ->connectTo('example.com:443:backend.internal:8443')
+            ->downloadTo('/tmp/file.zip')
+            ->useHttp2PriorKnowledge()
+            ->useHttp3()
+            ->useHttp3Only()
+            ->useTlsVersion('1.2');
+
+        if (\defined('CURLOPT_ALTSVC') && \defined('CURLOPT_ALTSVC_CTRL')) {
+            $req = $req->useAltSvcCache('/tmp/altsvc.cache', true);
+        }
+
+        if (\defined('CURLOPT_HSTS') && \defined('CURLOPT_HSTS_CTRL')) {
+            $req = $req->useHstsCache('/tmp/hsts.cache', true);
+        }
+
+        $iter = $req->getIterator();
+        $opts = $iter['additional_curl_opts'];
+
+        static::assertSame('user', $iter['username']);
+        static::assertSame('pass', $iter['password']);
+        static::assertSame('Bearer abc123', $req->getHeaderLine('Authorization'));
+        static::assertSame('/tmp/cert.pem', $iter['ssl_cert']);
+        static::assertSame('/tmp/key.pem', $iter['ssl_key']);
+        static::assertSame('secret', $iter['ssl_passphrase']);
+        static::assertSame(Request::SERIALIZE_PAYLOAD_ALWAYS, $iter['serialize_payload_method']);
+        static::assertSame(3, $iter['retry']);
+        static::assertSame(0.25, $iter['retry_delay']);
+        static::assertSame(4, $iter['retry_max_time']);
+        static::assertFalse($iter['retry_all_errors']);
+        static::assertFalse($iter['retry_connection_refused']);
+        static::assertSame('/tmp/file.zip', $iter['file_path_for_download']);
+        static::assertSame(Http::HTTP_3, $iter['protocol_version']);
+        static::assertSame('CURL_HTTP_VERSION_3ONLY', $iter['curl_http_version']);
+        static::assertSame('/tmp/cookies.in', $opts[\CURLOPT_COOKIEFILE]);
+        static::assertSame('/tmp/cookies.out', $opts[\CURLOPT_COOKIEJAR]);
+        static::assertSame('/tmp/ca.pem', $opts[\CURLOPT_CAINFO]);
+        static::assertSame('/tmp/certs', $opts[\CURLOPT_CAPATH]);
+        static::assertSame('sha256//abc', $opts[\CURLOPT_PINNEDPUBLICKEY]);
+        static::assertFalse($opts[\CURLOPT_HTTPPROXYTUNNEL]);
+        static::assertSame('localhost,127.0.0.1', $opts[\CURLOPT_NOPROXY]);
+        static::assertSame(['example.com:443:127.0.0.1'], $opts[\CURLOPT_RESOLVE]);
+        static::assertSame(['example.com:443:backend.internal:8443'], $opts[\CURLOPT_CONNECT_TO]);
+        static::assertArrayHasKey(\CURLOPT_SSLVERSION, $opts);
+
+        if (\defined('CURLOPT_ALTSVC') && \defined('CURLOPT_ALTSVC_CTRL')) {
+            static::assertSame('/tmp/altsvc.cache', $opts[\CURLOPT_ALTSVC]);
+            static::assertArrayHasKey(\CURLOPT_ALTSVC_CTRL, $opts);
+        }
+
+        if (\defined('CURLOPT_HSTS') && \defined('CURLOPT_HSTS_CTRL')) {
+            static::assertSame('/tmp/hsts.cache', $opts[\CURLOPT_HSTS]);
+            static::assertArrayHasKey(\CURLOPT_HSTS_CTRL, $opts);
+        }
+    }
+
     public function testWithRetryRejectsInvalidCount(): void
     {
         $this->expectException(\InvalidArgumentException::class);

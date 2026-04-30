@@ -355,6 +355,22 @@ Transfer-Encoding: chunked\r\n";
         static::assertSame(Mime::PLAIN, $r->getContentType());
     }
 
+    public function testFromTemplate()
+    {
+        $template = (new Request())
+            ->withMethod(Http::GET)
+            ->enableStrictSSL()
+            ->withExpectedType(Mime::PLAIN)
+            ->withContentType(Mime::PLAIN);
+
+        $r = Request::fromTemplate($template);
+
+        static::assertTrue($r->isStrictSSL());
+        static::assertSame(Http::GET, $r->getHttpMethod());
+        static::assertSame(Mime::PLAIN, $r->getExpectedType());
+        static::assertSame(Mime::PLAIN, $r->getContentType());
+    }
+
     /**
      * init
      */
