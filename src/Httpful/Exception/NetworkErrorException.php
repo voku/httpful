@@ -41,9 +41,9 @@ class NetworkErrorException extends \Exception implements \Psr\Http\Client\Netwo
     public function __construct(
         $message,
         $code = 0,
-        \Exception $previous = null,
-        \Httpful\Curl\Curl $curl_object = null,
-        RequestInterface $request = null
+        ?\Exception $previous = null,
+        ?\Httpful\Curl\Curl $curl_object = null,
+        ?RequestInterface $request = null
     ) {
         $this->curl_object = $curl_object;
         $this->request = $request;

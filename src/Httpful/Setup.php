@@ -149,11 +149,11 @@ class Setup
      *
      * @return MimeHandlerInterface
      */
-    public static function setupGlobalMimeType($mimeType = null): MimeHandlerInterface
+    public static function setupGlobalMimeType(?string $mimeType = null): MimeHandlerInterface
     {
         self::initMimeHandlers();
 
-        if (isset(self::$mime_registrar[$mimeType])) {
+        if ($mimeType !== null && isset(self::$mime_registrar[$mimeType])) {
             return self::$mime_registrar[$mimeType];
         }
 

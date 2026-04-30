@@ -112,21 +112,12 @@ final class ExtraCoverageTest extends TestCase
         static::assertTrue($req->hasDigestAuth());
     }
 
-    /**
-     * Regression: withNtlmAuth discards the withCurlOption return value,
-     * so CURLOPT_HTTPAUTH is NOT actually set on the returned object.
-     *
-     * Uncomment the assertion below once the bug is fixed.
-     */
     public function testWithNtlmAuthSetsBasicAuthCredentials(): void
     {
         $req = Request::get('http://example.com/')->withNtlmAuth('user', 'pass');
-        // Credentials ARE carried through withBasicAuth (last call in the method)
         static::assertTrue($req->hasBasicAuth());
-        // BUG EXPOSED: CURLOPT_HTTPAUTH is silently discarded in withNtlmAuth
-        // because the result of withCurlOption() is never assigned.
-        // The following assertion documents the bug (it will fail once fixed).
-        // static::assertFalse($req->hasDigestAuth()); // should be true for NTLM equiv check
+        $iter = $req->getIterator();
+        static::assertSame(\CURLAUTH_NTLM, $iter['additional_curl_opts'][\CURLOPT_HTTPAUTH]);
     }
 
     public function testWithProxy(): void

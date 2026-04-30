@@ -7,6 +7,9 @@ namespace Httpful;
 use Psr\Http\Message\StreamInterface;
 use voku\helper\UTF8;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 class Stream implements StreamInterface
 {
     /**
@@ -98,7 +101,7 @@ class Stream implements StreamInterface
     private $uri;
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     private $customMetadata;
 

@@ -16,7 +16,7 @@ class CsvMimeHandler implements MimeHandlerInterface
      *
      * @throws \Exception
      *
-     * @return array|null
+     * @return list<list<string|null>>|null
      */
     public function parse($body)
     {

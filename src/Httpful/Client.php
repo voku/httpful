@@ -11,25 +11,25 @@ use Psr\Http\Message\ResponseInterface;
 class Client implements ClientInterface
 {
     /**
-     * @param string     $uri
-     * @param array|null $params
-     * @param string     $mime
+     * @param string                       $uri
+     * @param array<string|int, mixed>|null $params
+     * @param string                       $mime
      *
      * @return Response
      */
-    public static function delete(string $uri, array $params = null, string $mime = Mime::JSON): Response
+    public static function delete(string $uri, ?array $params = null, string $mime = Mime::JSON): Response
     {
         return self::delete_request($uri, $params, $mime)->send();
     }
 
     /**
-     * @param string     $uri
-     * @param array|null $params
-     * @param string     $mime
+     * @param string                       $uri
+     * @param array<string|int, mixed>|null $params
+     * @param string                       $mime
      *
      * @return Request
      */
-    public static function delete_request(string $uri, array $params = null, string $mime = Mime::JSON): Request
+    public static function delete_request(string $uri, ?array $params = null, string $mime = Mime::JSON): Request
     {
         return Request::delete($uri, $params, $mime);
     }
@@ -54,69 +54,69 @@ class Client implements ClientInterface
     }
 
     /**
-     * @param string      $uri
-     * @param array|null  $params
-     * @param string|null $mime
+     * @param string                       $uri
+     * @param array<string|int, mixed>|null $params
+     * @param string|null                  $mime
      *
      * @return Response
      */
-    public static function get(string $uri, array $params = null, $mime = Mime::PLAIN): Response
+    public static function get(string $uri, ?array $params = null, ?string $mime = Mime::PLAIN): Response
     {
         return self::get_request($uri, $params, $mime)->send();
     }
 
     /**
-     * @param string     $uri
-     * @param array|null $param
+     * @param string                       $uri
+     * @param array<string|int, mixed>|null $param
      *
      * @return \voku\helper\HtmlDomParser|null
      */
-    public static function get_dom(string $uri, array $param = null)
+    public static function get_dom(string $uri, ?array $param = null)
     {
         return self::get_request($uri, $param, Mime::HTML)->send()->getRawBody();
     }
 
     /**
-     * @param string     $uri
-     * @param array|null $param
+     * @param string                       $uri
+     * @param array<string|int, mixed>|null $param
      *
-     * @return array
+     * @return array<string, mixed>
      */
-    public static function get_form(string $uri, array $param = null): array
+    public static function get_form(string $uri, ?array $param = null): array
     {
         return self::get_request($uri, $param, Mime::FORM)->send()->getRawBody();
     }
 
     /**
-     * @param string     $uri
-     * @param array|null $param
+     * @param string                       $uri
+     * @param array<string|int, mixed>|null $param
      *
      * @return mixed
      */
-    public static function get_json(string $uri, array $param = null)
+    public static function get_json(string $uri, ?array $param = null)
     {
         return self::get_request($uri, $param, Mime::JSON)->send()->getRawBody();
     }
 
     /**
-     * @param string      $uri
-     * @param array|null  $param
-     * @param string|null $mime
+     * @param string                       $uri
+     * @param array<string|int, mixed>|null $param
+     * @param string|null                  $mime
      *
      * @return Request
      */
-    public static function get_request(string $uri, array $param = null, $mime = Mime::PLAIN): Request
+    public static function get_request(string $uri, ?array $param = null, ?string $mime = Mime::PLAIN): Request
     {
         return Request::get($uri, $param, $mime)->followRedirects();
     }
 
     /**
-     * @param string     $uri
-     * @param array|null $param
+     * @param string                       $uri
+     * @param array<string|int, mixed>|null $param
      *
      * @return \SimpleXMLElement|null
      */
-    public static function get_xml(string $uri, array $param = null)
+    public static function get_xml(string $uri, ?array $param = null)
     {
         return self::get_request($uri, $param, Mime::XML)->send()->getRawBody();
     }
@@ -212,7 +212,7 @@ class Client implements ClientInterface
      * @param string     $uri
      * @param mixed|null $payload
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public static function post_form(string $uri, $payload = null): array
     {

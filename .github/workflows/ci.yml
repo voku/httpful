@@ -25,7 +25,6 @@ jobs:
       fail-fast: false
       matrix:
         php:
-          - '7.4'
           - '8.0'
           - '8.1'
           - '8.2'
@@ -76,7 +75,6 @@ jobs:
 
       - name: Run phpstan
         if: ${{ matrix.php == '8.5' }}
-        continue-on-error: true
         run: |
           php vendor/bin/phpstan analyse
 

@@ -14,7 +14,7 @@ class FormMimeHandler implements MimeHandlerInterface
     /**
      * @param string $body
      *
-     * @return array
+     * @return array<int|string, mixed>
      */
     public function parse($body)
     {

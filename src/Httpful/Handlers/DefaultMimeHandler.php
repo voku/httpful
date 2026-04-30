@@ -14,7 +14,7 @@ class DefaultMimeHandler extends AbstractMimeHandler
     /**
      * MimeHandlerAdapter constructor.
      *
-     * @param array $args
+     * @param array<string, mixed> $args
      */
     public function __construct(array $args = [])
     {
@@ -22,7 +22,7 @@ class DefaultMimeHandler extends AbstractMimeHandler
     }
 
     /**
-     * @param array $args
+     * @param array<string, mixed> $args
      *
      * @return void
      */

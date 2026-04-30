@@ -17,7 +17,7 @@ class JsonMimeHandler extends DefaultMimeHandler
     private $decode_as_array = true;
 
     /**
-     * @param array $args
+     * @param array<string, mixed> $args
      *
      * @return void
      */

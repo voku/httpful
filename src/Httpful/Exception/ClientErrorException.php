@@ -29,7 +29,7 @@ class ClientErrorException extends \Exception implements \Psr\Http\Client\Client
      * @param \Exception|null         $previous
      * @param \Httpful\Curl\Curl|null $curl_object
      */
-    public function __construct($message, $code = 0, \Exception $previous = null, $curl_object = null)
+    public function __construct($message, $code = 0, ?\Exception $previous = null, $curl_object = null)
     {
         $this->curl_object = $curl_object;
 
