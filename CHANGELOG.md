@@ -2,10 +2,13 @@
 
 ## [Unreleased]
 
-- drop support for PHP versions below 8.0
+- breaking change: require PHP 8.0+ and drop the old PHP 7.x compatibility shims
+- no additional public API removals from 3.1.0 to HEAD; the request/response API changes in this range are additive
 - upgrade phpstan to the current 2.x line and clean up PHP 8-only typing/fallbacks
-- add curl-inspired request helpers for bearer auth, retries/backoff, TLS trust controls, cookie persistence, Alt-Svc/HSTS caches, proxy routing, and HTTP/2 + HTTP/3 selection
+- add curl-inspired request helpers for bearer auth, retries/backoff, TLS trust controls, cookie persistence, Alt-Svc/HSTS caches, proxy routing, HTTP/2 + HTTP/3 selection, and async dispatch via `sendAsync()`
+- add missing curl-style helper aliases such as `authenticateWithBearerToken()`, `authenticateWithBasicAuth()`, `downloadTo()`, and `useHttp*()`
 - add response transfer-info helpers for effective URL, IPs, timings, redirect count, and negotiated HTTP version
+- preserve direct response stream bodies when `Response` is built from an existing stream without request/header parsing context
 - fix `withNtlmAuth()` so the curl auth option is preserved correctly
 - fix `retry_max_time` so the retry budget starts with the first retry decision instead of request preparation
 - add tests and phpstan-safe handle/type narrowing so the local CI pipeline is green again
