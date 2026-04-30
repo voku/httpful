@@ -239,10 +239,11 @@ class Response implements ResponseInterface
     public function getHeader($name): array
     {
         if ($this->headers->offsetExists($name)) {
+            /** @var mixed $value */
             $value = $this->headers->offsetGet($name);
 
             if (!\is_array($value)) {
-                return [\trim($value, " \t")];
+                return [\trim((string) $value, " \t")];
             }
 
             foreach ($value as $keyInner => $valueInner) {
@@ -377,7 +378,12 @@ class Response implements ResponseInterface
         }
 
         if ($new->headers->offsetExists($name)) {
-            $new->headers->forceSet($name, \array_merge_recursive($new->headers->offsetGet($name), $value));
+            /** @var mixed $currentValues */
+            $currentValues = $new->headers->offsetGet($name);
+            if (!\is_array($currentValues)) {
+                $currentValues = [$currentValues];
+            }
+            $new->headers->forceSet($name, \array_merge_recursive($currentValues, $value));
         } else {
             $new->headers->forceSet($name, $value);
         }
@@ -952,6 +958,7 @@ class Response implements ResponseInterface
     private function _interpretHeaders()
     {
         // Parse the Content-Type and charset
+        /** @var mixed $content_type */
         $content_type = $this->headers['Content-Type'] ?? [];
         if (!\is_array($content_type)) {
             $content_type = [$content_type];

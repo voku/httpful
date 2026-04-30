@@ -1056,10 +1056,11 @@ class Request implements \IteratorAggregate, RequestInterface
     public function getHeader($name): array
     {
         if ($this->headers->offsetExists($name)) {
+            /** @var mixed $value */
             $value = $this->headers->offsetGet($name);
 
             if (!\is_array($value)) {
-                return [\trim($value, " \t")];
+                return [\trim((string) $value, " \t")];
             }
 
             foreach ($value as $keyInner => $valueInner) {
@@ -1216,7 +1217,7 @@ class Request implements \IteratorAggregate, RequestInterface
      */
     public function withAddedHeader($name, $value): MessageInterface
     {
-        if (!\is_string($name) || $name === '') {
+        if ($name === '') {
             throw new \InvalidArgumentException('Header name must be an RFC 7230 compatible string.');
         }
 
@@ -1227,7 +1228,12 @@ class Request implements \IteratorAggregate, RequestInterface
         }
 
         if ($new->headers->offsetExists($name)) {
-            $new->headers->forceSet($name, \array_merge_recursive($new->headers->offsetGet($name), $value));
+            /** @var mixed $currentValues */
+            $currentValues = $new->headers->offsetGet($name);
+            if (!\is_array($currentValues)) {
+                $currentValues = [$currentValues];
+            }
+            $new->headers->forceSet($name, \array_merge_recursive($currentValues, $value));
         } else {
             $new->headers->forceSet($name, $value);
         }
@@ -1655,7 +1661,7 @@ class Request implements \IteratorAggregate, RequestInterface
      */
     public function hasParseCallback(): bool
     {
-        return $this->parse_callback !== null && \is_callable($this->parse_callback);
+        return $this->parse_callback !== null;
     }
 
     /**
