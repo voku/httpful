@@ -1217,7 +1217,9 @@ class Request implements \IteratorAggregate, RequestInterface
      */
     public function withAddedHeader($name, $value): MessageInterface
     {
-        if ($name === '') {
+        /** @var mixed $headerName */
+        $headerName = $name;
+        if (!\is_string($headerName) || $headerName === '') {
             throw new \InvalidArgumentException('Header name must be an RFC 7230 compatible string.');
         }
 
@@ -1227,15 +1229,15 @@ class Request implements \IteratorAggregate, RequestInterface
             $value = [$value];
         }
 
-        if ($new->headers->offsetExists($name)) {
+        if ($new->headers->offsetExists($headerName)) {
             /** @var mixed $currentValues */
-            $currentValues = $new->headers->offsetGet($name);
+            $currentValues = $new->headers->offsetGet($headerName);
             if (!\is_array($currentValues)) {
                 $currentValues = [$currentValues];
             }
-            $new->headers->forceSet($name, \array_merge_recursive($currentValues, $value));
+            $new->headers->forceSet($headerName, \array_merge_recursive($currentValues, $value));
         } else {
-            $new->headers->forceSet($name, $value);
+            $new->headers->forceSet($headerName, $value);
         }
 
         return $new;
