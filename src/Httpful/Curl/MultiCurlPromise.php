@@ -40,11 +40,11 @@ class MultiCurlPromise implements Promise
     /**
      * Add behavior for when the promise is resolved or rejected.
      *
-     * If you do not care about one of the cases, you can set the corresponding callable to null
+     * If you do not care about one of the cases, you can set the corresponding callable to null.
      * The callback will be called when the response or exception arrived and never more than once.
      *
-     * @param callable $onComplete Called when a response will be available
-     * @param callable $onRejected Called when an error happens.
+     * @param callable|null $onComplete Called when a response will be available, or null to ignore completion.
+     * @param callable|null $onRejected Called when an error happens, or null to ignore rejection.
      *
      * You must always return the Response in the interface or throw an Exception
      *

@@ -60,7 +60,7 @@ class Client implements ClientInterface
      *
      * @return Response
      */
-    public static function get(string $uri, ?array $params = null, $mime = Mime::PLAIN): Response
+    public static function get(string $uri, ?array $params = null, ?string $mime = Mime::PLAIN): Response
     {
         return self::get_request($uri, $params, $mime)->send();
     }
@@ -105,7 +105,7 @@ class Client implements ClientInterface
      *
      * @return Request
      */
-    public static function get_request(string $uri, ?array $param = null, $mime = Mime::PLAIN): Request
+    public static function get_request(string $uri, ?array $param = null, ?string $mime = Mime::PLAIN): Request
     {
         return Request::get($uri, $param, $mime)->followRedirects();
     }
