@@ -114,7 +114,18 @@ final class CurlFeatureApiTest extends TestCase
         static::assertSame(['example.com:443:backend.internal:8443'], $opts[\CURLOPT_CONNECT_TO]);
         static::assertArrayHasKey(\CURLOPT_SSLVERSION, $opts);
 
-        $expectedOptionCount = 10;
+        $expectedOptionCount = \count([
+            \CURLOPT_COOKIEFILE,
+            \CURLOPT_COOKIEJAR,
+            \CURLOPT_CAINFO,
+            \CURLOPT_CAPATH,
+            \CURLOPT_PINNEDPUBLICKEY,
+            \CURLOPT_HTTPPROXYTUNNEL,
+            \CURLOPT_NOPROXY,
+            \CURLOPT_RESOLVE,
+            \CURLOPT_CONNECT_TO,
+            \CURLOPT_SSLVERSION,
+        ]);
         if (\defined('CURLOPT_ALTSVC') && \defined('CURLOPT_ALTSVC_CTRL')) {
             static::assertSame('/tmp/altsvc.cache', $opts[\CURLOPT_ALTSVC]);
             static::assertArrayHasKey(\CURLOPT_ALTSVC_CTRL, $opts);
