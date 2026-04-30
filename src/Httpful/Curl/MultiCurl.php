@@ -411,7 +411,12 @@ final class MultiCurl
             throw new \ErrorException('cURL multi add handle error: ' . \curl_multi_strerror($curlm_error_code));
         }
 
-        $this->activeCurls[$curl->getId()] = $curl;
+        $curlId = $curl->getId();
+        if ($curlId === null) {
+            throw new \ErrorException('cURL multi add handle error: curl id === null');
+        }
+
+        $this->activeCurls[$curlId] = $curl;
         $curl->call($curl->beforeSendCallback);
     }
 

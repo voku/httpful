@@ -45,7 +45,7 @@ class Headers implements \ArrayAccess, \Countable, \Iterator
      *
      * @param mixed[] $initial (optional) Existing Array to convert
      */
-    public function __construct(array $initial = null)
+    public function __construct(?array $initial = null)
     {
         if ($initial !== null) {
             foreach ($initial as $key => $value) {
@@ -89,6 +89,10 @@ class Headers implements \ArrayAccess, \Countable, \Iterator
     public function key()
     {
         $key = \key($this->data);
+
+        if ($key === null) {
+            return null;
+        }
 
         return $this->keys[$key] ?? $key;
     }

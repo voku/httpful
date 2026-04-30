@@ -39,7 +39,7 @@ class ClientMulti
      *
      * @return $this
      */
-    public function add_delete(string $uri, array $params = null, string $mime = Mime::JSON)
+    public function add_delete(string $uri, ?array $params = null, string $mime = Mime::JSON)
     {
         $request = Request::delete($uri, $params, $mime);
         $curl = $request->_curlPrep()->_curl();
@@ -78,7 +78,7 @@ class ClientMulti
      *
      * @return $this
      */
-    public function add_html(string $uri, array $params = null, $mime = Mime::HTML)
+    public function add_html(string $uri, ?array $params = null, $mime = Mime::HTML)
     {
         $request = Request::get($uri, $params, $mime)->followRedirects();
         $curl = $request->_curlPrep()->_curl();
@@ -98,7 +98,7 @@ class ClientMulti
      *
      * @return $this
      */
-    public function add_get(string $uri, array $params = null, $mime = Mime::PLAIN)
+    public function add_get(string $uri, ?array $params = null, $mime = Mime::PLAIN)
     {
         $request = Request::get($uri, $params, $mime)->followRedirects();
         $curl = $request->_curlPrep()->_curl();
@@ -117,7 +117,7 @@ class ClientMulti
      *
      * @return $this
      */
-    public function add_get_dom(string $uri, array $params = null)
+    public function add_get_dom(string $uri, ?array $params = null)
     {
         $request = Request::get($uri, $params, Mime::HTML)->followRedirects();
         $curl = $request->_curlPrep()->_curl();
@@ -136,7 +136,7 @@ class ClientMulti
      *
      * @return $this
      */
-    public function add_get_form(string $uri, array $params = null)
+    public function add_get_form(string $uri, ?array $params = null)
     {
         $request = Request::get($uri, $params, Mime::FORM)->followRedirects();
         $curl = $request->_curlPrep()->_curl();
@@ -155,7 +155,7 @@ class ClientMulti
      *
      * @return $this
      */
-    public function add_get_json(string $uri, array $params = null)
+    public function add_get_json(string $uri, ?array $params = null)
     {
         $request = Request::get($uri, $params, Mime::JSON)->followRedirects();
         $curl = $request->_curlPrep()->_curl();
@@ -174,7 +174,7 @@ class ClientMulti
      *
      * @return $this
      */
-    public function get_xml(string $uri, array $params = null)
+    public function get_xml(string $uri, ?array $params = null)
     {
         $request = Request::get($uri, $params, Mime::XML)->followRedirects();
         $curl = $request->_curlPrep()->_curl();

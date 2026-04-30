@@ -22,7 +22,7 @@ class RequestException extends \Exception implements \Psr\Http\Client\RequestExc
      * @param Throwable|null   $previous
      * @param RequestInterface $request
      */
-    public function __construct(RequestInterface $request, $message = '', $code = 0, Throwable $previous = null)
+    public function __construct(RequestInterface $request, $message = '', $code = 0, ?Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
 
