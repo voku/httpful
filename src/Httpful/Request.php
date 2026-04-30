@@ -2639,8 +2639,8 @@ class Request implements \IteratorAggregate, RequestInterface
     }
 
     /**
-     * @param string|int $minimum_version
-     * @param string|int $maximum_version
+     * @param int|string $minimum_version
+     * @param int|string $maximum_version
      *
      * @return static
      */
@@ -2669,8 +2669,8 @@ class Request implements \IteratorAggregate, RequestInterface
     }
 
     /**
-     * @param string|int $minimum_version
-     * @param string|int $maximum_version
+     * @param int|string $minimum_version
+     * @param int|string $maximum_version
      *
      * @return static
      *
