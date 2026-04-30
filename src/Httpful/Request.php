@@ -690,8 +690,8 @@ class Request implements \IteratorAggregate, RequestInterface
     }
 
     /**
-     * @param string      $key
      * @param string      $cert
+     * @param string      $key
      * @param string|null $passphrase
      * @param string      $ssl_key_type
      *
@@ -3353,11 +3353,10 @@ class Request implements \IteratorAggregate, RequestInterface
      */
     public function downloadTo($file_path): self
     {
-        $new = clone $this;
+        /** @var static $request */
+        $request = $this->withDownload($file_path);
 
-        $new->file_path_for_download = $file_path;
-
-        return $new;
+        return $request;
     }
 
     /**
