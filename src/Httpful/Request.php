@@ -690,6 +690,21 @@ class Request implements \IteratorAggregate, RequestInterface
     }
 
     /**
+     * @param string      $cert
+     * @param string      $key
+     * @param string|null $passphrase
+     * @param string      $ssl_key_type
+     *
+     * @return static
+     *
+     * @see Request::clientSideCertAuth()
+     */
+    public function withClientSideCertificateAuth($cert, $key, $passphrase = null, $ssl_key_type = 'PEM'): self
+    {
+        return $this->clientSideCertAuth($cert, $key, $passphrase, $ssl_key_type);
+    }
+
+    /**
      * @see Request::initialize()
      *
      * @return void
@@ -1384,6 +1399,16 @@ class Request implements \IteratorAggregate, RequestInterface
 
     /**
      * @return static
+     *
+     * @see Request::withHttp2PriorKnowledge()
+     */
+    public function useHttp2PriorKnowledge(): self
+    {
+        return $this->withHttp2PriorKnowledge();
+    }
+
+    /**
+     * @return static
      */
     public function withHttp3(): self
     {
@@ -1392,10 +1417,30 @@ class Request implements \IteratorAggregate, RequestInterface
 
     /**
      * @return static
+     *
+     * @see Request::withHttp3()
+     */
+    public function useHttp3(): self
+    {
+        return $this->withHttp3();
+    }
+
+    /**
+     * @return static
      */
     public function withHttp3Only(): self
     {
         return $this->_withCurlHttpVersion(Http::HTTP_3, 'CURL_HTTP_VERSION_3ONLY');
+    }
+
+    /**
+     * @return static
+     *
+     * @see Request::withHttp3Only()
+     */
+    public function useHttp3Only(): self
+    {
+        return $this->withHttp3Only();
     }
 
     /**
@@ -1774,6 +1819,16 @@ class Request implements \IteratorAggregate, RequestInterface
     public function neverSerializePayload(): self
     {
         return $this->serializePayloadMode(static::SERIALIZE_PAYLOAD_NEVER);
+    }
+
+    /**
+     * @return static
+     *
+     * @see Request::serializePayloadMode()
+     */
+    public function alwaysSerializePayload(): self
+    {
+        return $this->serializePayloadMode(static::SERIALIZE_PAYLOAD_ALWAYS);
     }
 
     /**
@@ -2212,6 +2267,18 @@ class Request implements \IteratorAggregate, RequestInterface
     }
 
     /**
+     * @param int|string $maximum_number_of_retries
+     *
+     * @return static
+     *
+     * @see Request::withRetry()
+     */
+    public function retry($maximum_number_of_retries): self
+    {
+        return $this->withRetry($maximum_number_of_retries);
+    }
+
+    /**
      * @param float|int $delay seconds between retry attempts
      *
      * @return static
@@ -2222,6 +2289,18 @@ class Request implements \IteratorAggregate, RequestInterface
         $new->retry_delay = $this->_normalizeDurationValue($delay, 'retry delay');
 
         return $new;
+    }
+
+    /**
+     * @param float|int $delay
+     *
+     * @return static
+     *
+     * @see Request::withRetryDelay()
+     */
+    public function retryAfter($delay): self
+    {
+        return $this->withRetryDelay($delay);
     }
 
     /**
@@ -2238,6 +2317,18 @@ class Request implements \IteratorAggregate, RequestInterface
     }
 
     /**
+     * @param float|int $max_time
+     *
+     * @return static
+     *
+     * @see Request::withRetryMaxTime()
+     */
+    public function retryForAtMost($max_time): self
+    {
+        return $this->withRetryMaxTime($max_time);
+    }
+
+    /**
      * @return static
      */
     public function withRetryAllErrors(bool $retry_all_errors = true): self
@@ -2250,6 +2341,26 @@ class Request implements \IteratorAggregate, RequestInterface
 
     /**
      * @return static
+     *
+     * @see Request::withRetryAllErrors()
+     */
+    public function retryOnAllErrors(): self
+    {
+        return $this->withRetryAllErrors(true);
+    }
+
+    /**
+     * @return static
+     *
+     * @see Request::withRetryAllErrors()
+     */
+    public function doNotRetryOnAllErrors(): self
+    {
+        return $this->withRetryAllErrors(false);
+    }
+
+    /**
+     * @return static
      */
     public function withRetryConnectionRefused(bool $retry_connection_refused = true): self
     {
@@ -2257,6 +2368,26 @@ class Request implements \IteratorAggregate, RequestInterface
         $new->retry_connection_refused = $retry_connection_refused;
 
         return $new;
+    }
+
+    /**
+     * @return static
+     *
+     * @see Request::withRetryConnectionRefused()
+     */
+    public function retryOnConnectionRefused(): self
+    {
+        return $this->withRetryConnectionRefused(true);
+    }
+
+    /**
+     * @return static
+     *
+     * @see Request::withRetryConnectionRefused()
+     */
+    public function doNotRetryOnConnectionRefused(): self
+    {
+        return $this->withRetryConnectionRefused(false);
     }
 
     /**
@@ -2383,6 +2514,19 @@ class Request implements \IteratorAggregate, RequestInterface
     }
 
     /**
+     * @param string $username
+     * @param string $password
+     *
+     * @return static
+     *
+     * @see Request::withBasicAuth()
+     */
+    public function authenticateWithBasicAuth($username, $password): self
+    {
+        return $this->withBasicAuth($username, $password);
+    }
+
+    /**
      * @param string $token
      *
      * @return static
@@ -2390,6 +2534,18 @@ class Request implements \IteratorAggregate, RequestInterface
     public function withBearerToken(string $token): self
     {
         return $this->withHeader('Authorization', 'Bearer ' . $token);
+    }
+
+    /**
+     * @param string $token
+     *
+     * @return static
+     *
+     * @see Request::withBearerToken()
+     */
+    public function authenticateWithBearerToken(string $token): self
+    {
+        return $this->withBearerToken($token);
     }
 
     /**
@@ -2449,6 +2605,18 @@ class Request implements \IteratorAggregate, RequestInterface
     }
 
     /**
+     * @param string $ca_bundle_path
+     *
+     * @return static
+     *
+     * @see Request::withCaBundle()
+     */
+    public function useCaBundle(string $ca_bundle_path): self
+    {
+        return $this->withCaBundle($ca_bundle_path);
+    }
+
+    /**
      * @param string $ca_path
      *
      * @return static
@@ -2459,8 +2627,20 @@ class Request implements \IteratorAggregate, RequestInterface
     }
 
     /**
-     * @param string     $minimum_version
-     * @param string|int $maximum_version
+     * @param string $ca_path
+     *
+     * @return static
+     *
+     * @see Request::withCaPath()
+     */
+    public function useCaPath(string $ca_path): self
+    {
+        return $this->withCaPath($ca_path);
+    }
+
+    /**
+     * @param int|string $minimum_version
+     * @param int|string $maximum_version
      *
      * @return static
      */
@@ -2489,6 +2669,19 @@ class Request implements \IteratorAggregate, RequestInterface
     }
 
     /**
+     * @param int|string $minimum_version
+     * @param int|string $maximum_version
+     *
+     * @return static
+     *
+     * @see Request::withTlsVersion()
+     */
+    public function useTlsVersion($minimum_version, $maximum_version = null): self
+    {
+        return $this->withTlsVersion($minimum_version, $maximum_version);
+    }
+
+    /**
      * @param string $pinned_public_key
      *
      * @return static
@@ -2496,6 +2689,18 @@ class Request implements \IteratorAggregate, RequestInterface
     public function withPinnedPublicKey(string $pinned_public_key): self
     {
         return $this->_withNamedCurlOption('CURLOPT_PINNEDPUBLICKEY', $pinned_public_key);
+    }
+
+    /**
+     * @param string $pinned_public_key
+     *
+     * @return static
+     *
+     * @see Request::withPinnedPublicKey()
+     */
+    public function pinPublicKey(string $pinned_public_key): self
+    {
+        return $this->withPinnedPublicKey($pinned_public_key);
     }
 
     /**
@@ -2675,6 +2880,18 @@ class Request implements \IteratorAggregate, RequestInterface
     }
 
     /**
+     * @param string $cookie_file
+     *
+     * @return static
+     *
+     * @see Request::withCookieFile()
+     */
+    public function useCookieFile(string $cookie_file): self
+    {
+        return $this->withCookieFile($cookie_file);
+    }
+
+    /**
      * @param string $cookie_jar
      *
      * @return static
@@ -2682,6 +2899,18 @@ class Request implements \IteratorAggregate, RequestInterface
     public function withCookieJar(string $cookie_jar): self
     {
         return $this->_withNamedCurlOption('CURLOPT_COOKIEJAR', $cookie_jar);
+    }
+
+    /**
+     * @param string $cookie_jar
+     *
+     * @return static
+     *
+     * @see Request::withCookieJar()
+     */
+    public function useCookieJar(string $cookie_jar): self
+    {
+        return $this->withCookieJar($cookie_jar);
     }
 
     /**
@@ -2718,6 +2947,16 @@ class Request implements \IteratorAggregate, RequestInterface
     }
 
     /**
+     * @return static
+     *
+     * @see Request::withAltSvcCache()
+     */
+    public function useAltSvcCache(string $filename = '', bool $read_only = false): self
+    {
+        return $this->withAltSvcCache($filename, $read_only);
+    }
+
+    /**
      * @param string|null $filename
      *
      * @return static
@@ -2730,6 +2969,18 @@ class Request implements \IteratorAggregate, RequestInterface
             'CURLOPT_HSTS_CTRL',
             $this->_buildHstsControlValue($read_only)
         );
+    }
+
+    /**
+     * @param string|null $filename
+     *
+     * @return static
+     *
+     * @see Request::withHstsCache()
+     */
+    public function useHstsCache($filename = null, bool $read_only = false): self
+    {
+        return $this->withHstsCache($filename, $read_only);
     }
 
     /**
@@ -2922,6 +3173,26 @@ class Request implements \IteratorAggregate, RequestInterface
     }
 
     /**
+     * @return static
+     *
+     * @see Request::withProxyTunnel()
+     */
+    public function useProxyTunnel(): self
+    {
+        return $this->withProxyTunnel(true);
+    }
+
+    /**
+     * @return static
+     *
+     * @see Request::withProxyTunnel()
+     */
+    public function doNotUseProxyTunnel(): self
+    {
+        return $this->withProxyTunnel(false);
+    }
+
+    /**
      * @param string[]|string $hosts
      *
      * @return static
@@ -2933,6 +3204,18 @@ class Request implements \IteratorAggregate, RequestInterface
         }
 
         return $this->_withNamedCurlOption('CURLOPT_NOPROXY', (string) $hosts);
+    }
+
+    /**
+     * @param string[]|string $hosts
+     *
+     * @return static
+     *
+     * @see Request::withNoProxy()
+     */
+    public function noProxy($hosts): self
+    {
+        return $this->withNoProxy($hosts);
     }
 
     /**
@@ -2952,6 +3235,18 @@ class Request implements \IteratorAggregate, RequestInterface
      * @param string[]|string $entries
      *
      * @return static
+     *
+     * @see Request::withResolve()
+     */
+    public function resolve($entries): self
+    {
+        return $this->withResolve($entries);
+    }
+
+    /**
+     * @param string[]|string $entries
+     *
+     * @return static
      */
     public function withConnectTo($entries): self
     {
@@ -2959,6 +3254,18 @@ class Request implements \IteratorAggregate, RequestInterface
             'CURLOPT_CONNECT_TO',
             $this->_normalizeCurlStringList($entries, 'connect-to entries')
         );
+    }
+
+    /**
+     * @param string[]|string $entries
+     *
+     * @return static
+     *
+     * @see Request::withConnectTo()
+     */
+    public function connectTo($entries): self
+    {
+        return $this->withConnectTo($entries);
     }
 
     /**
@@ -3035,6 +3342,39 @@ class Request implements \IteratorAggregate, RequestInterface
         $new->file_path_for_download = $file_path;
 
         return $new;
+    }
+
+    /**
+     * @param string $file_path
+     *
+     * @return static
+     *
+     * @see Request::withDownload()
+     */
+    public function downloadTo($file_path): self
+    {
+        /** @var static $request */
+        $request = $this->withDownload($file_path);
+
+        return $request;
+    }
+
+    /**
+     * @return \Http\Promise\Promise
+     */
+    public function sendAsync()
+    {
+        return (new ClientPromise())->sendAsyncRequest($this);
+    }
+
+    /**
+     * @param Request $template
+     *
+     * @return static
+     */
+    public static function fromTemplate(self $template): self
+    {
+        return new static(null, null, $template);
     }
 
     /**

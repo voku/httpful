@@ -74,4 +74,22 @@ final class ClientPromiseTest extends TestCase
             static::assertContains('"foo": "bar"', $bodies[0] . $bodies[1]);
         }
     }
+
+    public function testRequestSendAsyncHelper()
+    {
+        $request = Request::get(self::localFixtureUrl('foo.txt'));
+
+        $promise = $request->sendAsync();
+
+        /** @var Response $result */
+        $result = null;
+        $promise->then(static function (Response $response, Request $request) use (&$result) {
+            $result = $response;
+        });
+
+        $promise->wait();
+
+        static::assertInstanceOf(Response::class, $result);
+        static::assertStringContainsString('Foobar', (string) $result);
+    }
 }
