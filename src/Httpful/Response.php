@@ -967,13 +967,12 @@ class Response implements ResponseInterface
         }
 
         $this->content_type = $content_type_parts[0] ?? '';
-        if (
-            \count($content_type_parts) === 2
-            &&
-            \strpos($content_type_parts[1], '=') !== false
-        ) {
-            /** @noinspection PhpUnusedLocalVariableInspection */
-            list($nill, $this->charset) = \explode('=', $content_type_parts[1]);
+        foreach (\array_slice($content_type_parts, 1) as $part) {
+            $part = \trim($part);
+            if (\stripos($part, 'charset=') === 0) {
+                $this->charset = \substr($part, 8);
+                break;
+            }
         }
 
         // fallback

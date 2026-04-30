@@ -288,7 +288,7 @@ class Request implements \IteratorAggregate, RequestInterface
 
         // fallback
         if (!isset($this->template)) {
-            $this->template = new self(Http::GET, null, $this);
+            $this->template = new static(Http::GET, null, $this);
             $this->template = $this->template->disableStrictSSL();
         }
 
@@ -1216,7 +1216,7 @@ class Request implements \IteratorAggregate, RequestInterface
      */
     public function withAddedHeader($name, $value): MessageInterface
     {
-        if ($name === '') {
+        if (!\is_string($name) || $name === '') {
             throw new \InvalidArgumentException('Header name must be an RFC 7230 compatible string.');
         }
 
@@ -1655,7 +1655,7 @@ class Request implements \IteratorAggregate, RequestInterface
      */
     public function hasParseCallback(): bool
     {
-        return $this->parse_callback !== null;
+        return $this->parse_callback !== null && \is_callable($this->parse_callback);
     }
 
     /**

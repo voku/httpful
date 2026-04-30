@@ -19,21 +19,21 @@ Features
  - Automatic Payload Serialization
  - Basic Auth
  - Bearer Token Auth
-  - Client Side Certificate Auth (SSL)
+ - Client Side Certificate Auth (SSL)
  - Retry Configuration (count, delay, max time, all-errors, connection-refused)
  - Advanced TLS Configuration (CA bundle / path, pinned public key, TLS version)
  - Cookie Persistence (cookie file / cookie jar)
  - Modern HTTP Version Helpers (HTTP/2 prior knowledge, HTTP/3, HTTP/3 only)
  - Alt-Svc / HSTS Cache Helpers
  - Proxy / Routing Helpers (no-proxy, proxy tunnel, resolve, connect-to)
-  - Request "Download"
-  - Request "Templates"
-  - Parallel Request (via curl_multi)
+ - Request "Download"
+ - Request "Templates"
+ - Parallel Request (via curl_multi)
  - Transfer Metadata Helpers
-  - PSR-3: Logger Interface
-  - PSR-7: HTTP Message Interface
-  - PSR-17: HTTP Factory Interface
-  - PSR-18: HTTP Client Interface
+ - PSR-3: Logger Interface
+ - PSR-7: HTTP Message Interface
+ - PSR-17: HTTP Factory Interface
+ - PSR-18: HTTP Client Interface
 
 # Examples
 
