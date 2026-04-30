@@ -22,7 +22,7 @@ class XmlMimeHandler extends DefaultMimeHandler
     private $libxml_opts;
 
     /**
-     * @param array $conf sets configuration options
+     * @param array<string, mixed> $conf sets configuration options
      */
     public function __construct(array $conf = [])
     {
@@ -108,7 +108,7 @@ class XmlMimeHandler extends DefaultMimeHandler
      * @param \DOMElement  $parent
      * @param \DOMDocument $dom
      *
-     * @return array
+     * @return array{0:\DOMElement,1:\DOMDocument}
      */
     private function _future_serializeArrayAsXml(&$value, \DOMElement $parent, \DOMDocument $dom): array
     {
@@ -118,7 +118,7 @@ class XmlMimeHandler extends DefaultMimeHandler
                 $n = "child-{$n}";
             }
 
-            $el = $dom->createElement($n);
+            $el = $this->_future_createElement($dom, (string) $n);
             $parent->appendChild($el);
             $this->_future_serializeAsXml($v, $el, $dom);
         }
@@ -128,20 +128,23 @@ class XmlMimeHandler extends DefaultMimeHandler
 
     /**
      * @param mixed             $value
-     * @param \DOMElement|null  $node
+     * @param \DOMNode|null     $node
      * @param \DOMDocument|null $dom
      *
-     * @return array
+     * @return array{0:\DOMNode,1:\DOMDocument}
      */
-    private function _future_serializeAsXml(&$value, \DOMElement $node = null, \DOMDocument $dom = null): array
-    {
+    private function _future_serializeAsXml(
+        &$value,
+        ?\DOMNode $node = null,
+        \DOMDocument $dom = null
+    ): array {
         if (!$dom) {
             $dom = new \DOMDocument();
         }
 
         if (!$node) {
             if (!\is_object($value)) {
-                $node = $dom->createElement('response');
+                $node = $this->_future_createElement($dom, 'response');
                 $dom->appendChild($node);
             } else {
                 $node = $dom; // is it correct, that we use the "dom" as "node"?
@@ -149,11 +152,11 @@ class XmlMimeHandler extends DefaultMimeHandler
         }
 
         if (\is_object($value)) {
-            $objNode = $dom->createElement(\get_class($value));
+            $objNode = $this->_future_createElement($dom, \get_class($value));
             $node->appendChild($objNode);
             $this->_future_serializeObjectAsXml($value, $objNode, $dom);
         } elseif (\is_array($value)) {
-            $arrNode = $dom->createElement('array');
+            $arrNode = $this->_future_createElement($dom, 'array');
             $node->appendChild($arrNode);
             $this->_future_serializeArrayAsXml($value, $arrNode, $dom);
         } elseif ((bool) $value === $value) {
@@ -166,18 +169,32 @@ class XmlMimeHandler extends DefaultMimeHandler
     }
 
     /**
+     * @throws \RuntimeException
+     */
+    private function _future_createElement(\DOMDocument $dom, string $name): \DOMElement
+    {
+        $node = $dom->createElement($name);
+
+        if ($node === false) {
+            throw new \RuntimeException('Unable to create DOM element: ' . $name);
+        }
+
+        return $node;
+    }
+
+    /**
      * @param mixed        $value
      * @param \DOMElement  $parent
      * @param \DOMDocument $dom
      *
-     * @return array
+     * @return array{0:\DOMElement,1:\DOMDocument}
      */
     private function _future_serializeObjectAsXml(&$value, \DOMElement $parent, \DOMDocument $dom): array
     {
         $refl = new \ReflectionObject($value);
         foreach ($refl->getProperties() as $pr) {
             if (!$pr->isPrivate()) {
-                $el = $dom->createElement($pr->getName());
+                $el = $this->_future_createElement($dom, $pr->getName());
                 $parent->appendChild($el);
                 $value = $pr->getValue($value);
                 $this->_future_serializeAsXml($value, $el, $dom);

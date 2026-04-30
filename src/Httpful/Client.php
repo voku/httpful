@@ -11,9 +11,9 @@ use Psr\Http\Message\ResponseInterface;
 class Client implements ClientInterface
 {
     /**
-     * @param string     $uri
-     * @param array|null $params
-     * @param string     $mime
+     * @param string                       $uri
+     * @param array<string|int, mixed>|null $params
+     * @param string                       $mime
      *
      * @return Response
      */
@@ -23,9 +23,9 @@ class Client implements ClientInterface
     }
 
     /**
-     * @param string     $uri
-     * @param array|null $params
-     * @param string     $mime
+     * @param string                       $uri
+     * @param array<string|int, mixed>|null $params
+     * @param string                       $mime
      *
      * @return Request
      */
@@ -54,9 +54,9 @@ class Client implements ClientInterface
     }
 
     /**
-     * @param string      $uri
-     * @param array|null  $params
-     * @param string|null $mime
+     * @param string                       $uri
+     * @param array<string|int, mixed>|null $params
+     * @param string|null                  $mime
      *
      * @return Response
      */
@@ -66,8 +66,8 @@ class Client implements ClientInterface
     }
 
     /**
-     * @param string     $uri
-     * @param array|null $param
+     * @param string                       $uri
+     * @param array<string|int, mixed>|null $param
      *
      * @return \voku\helper\HtmlDomParser|null
      */
@@ -77,10 +77,10 @@ class Client implements ClientInterface
     }
 
     /**
-     * @param string     $uri
-     * @param array|null $param
+     * @param string                       $uri
+     * @param array<string|int, mixed>|null $param
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public static function get_form(string $uri, array $param = null): array
     {
@@ -88,8 +88,8 @@ class Client implements ClientInterface
     }
 
     /**
-     * @param string     $uri
-     * @param array|null $param
+     * @param string                       $uri
+     * @param array<string|int, mixed>|null $param
      *
      * @return mixed
      */
@@ -99,9 +99,9 @@ class Client implements ClientInterface
     }
 
     /**
-     * @param string      $uri
-     * @param array|null  $param
-     * @param string|null $mime
+     * @param string                       $uri
+     * @param array<string|int, mixed>|null $param
+     * @param string|null                  $mime
      *
      * @return Request
      */
@@ -111,8 +111,8 @@ class Client implements ClientInterface
     }
 
     /**
-     * @param string     $uri
-     * @param array|null $param
+     * @param string                       $uri
+     * @param array<string|int, mixed>|null $param
      *
      * @return \SimpleXMLElement|null
      */
@@ -212,7 +212,7 @@ class Client implements ClientInterface
      * @param string     $uri
      * @param mixed|null $payload
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public static function post_form(string $uri, $payload = null): array
     {

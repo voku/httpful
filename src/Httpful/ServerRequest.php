@@ -10,27 +10,27 @@ use Psr\Http\Message\UploadedFileInterface;
 class ServerRequest extends Request implements ServerRequestInterface
 {
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     private $attributes = [];
 
     /**
-     * @var array
+     * @var array<string, string>
      */
     private $cookieParams = [];
 
     /**
-     * @var array|object|null
+     * @var array<string, mixed>|object|null
      */
     private $parsedBody;
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     private $queryParams = [];
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     private $serverParams;
 
@@ -40,15 +40,15 @@ class ServerRequest extends Request implements ServerRequestInterface
     private $uploadedFiles = [];
 
     /**
-     * @param string|null $method       Http Method
-     * @param string|null $mime         Mime Type to Use
-     * @param static|null $template     "Request"-template object
-     * @param array       $serverParams Typically the $_SERVER (superglobal)
+     * @param string|null         $method       Http Method
+     * @param string|null         $mime         Mime Type to Use
+     * @param Request|null        $template     "Request"-template object
+     * @param array<string,mixed> $serverParams Typically the $_SERVER (superglobal)
      */
     public function __construct(
         string $method = null,
         string $mime = null,
-        self $template = null,
+        Request $template = null,
         array $serverParams = []
     ) {
         $this->serverParams = $serverParams;
@@ -72,7 +72,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function getAttributes(): array
     {
@@ -80,7 +80,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     }
 
     /**
-     * @return array
+     * @return array<string, string>
      */
     public function getCookieParams(): array
     {
@@ -88,7 +88,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     }
 
     /**
-     * @return array|object|null
+     * @return array<string, mixed>|object|null
      */
     public function getParsedBody()
     {
@@ -96,7 +96,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function getQueryParams(): array
     {
@@ -104,7 +104,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function getServerParams(): array
     {
@@ -112,7 +112,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     }
 
     /**
-     * @return array
+     * @return array<string, UploadedFileInterface>
      */
     public function getUploadedFiles(): array
     {
@@ -134,7 +134,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     }
 
     /**
-     * @param array $cookies
+     * @param array<string, string> $cookies
      *
      * @return ServerRequest|ServerRequestInterface
      */
@@ -147,7 +147,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     }
 
     /**
-     * @param array|object|null $data
+     * @param mixed $data
      *
      * @return ServerRequest|ServerRequestInterface
      */
@@ -170,7 +170,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     }
 
     /**
-     * @param array $query
+     * @param array<string, mixed> $query
      *
      * @return ServerRequestInterface|static
      */
@@ -183,7 +183,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     }
 
     /**
-     * @param array $uploadedFiles
+     * @param array<string, UploadedFileInterface> $uploadedFiles
      *
      * @return ServerRequestInterface|static
      */

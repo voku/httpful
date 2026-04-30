@@ -56,11 +56,11 @@ class Factory implements RequestFactoryInterface, ServerRequestFactoryInterface,
     }
 
     /**
-     * @param string      $method
-     * @param string      $uri
-     * @param array       $serverParams
-     * @param string|null $mime
-     * @param string      $body
+     * @param string               $method
+     * @param string               $uri
+     * @param array<string, mixed> $serverParams
+     * @param string|null          $mime
+     * @param string               $body
      *
      * @return ServerRequest
      */

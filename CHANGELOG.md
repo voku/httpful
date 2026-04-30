@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+- drop support for PHP versions below 8.0
+- upgrade phpstan to the current 2.x line and clean up PHP 8-only typing/fallbacks
+- add curl-inspired request helpers for bearer auth, retries/backoff, TLS trust controls, cookie persistence, Alt-Svc/HSTS caches, proxy routing, and HTTP/2 + HTTP/3 selection
+- add response transfer-info helpers for effective URL, IPs, timings, redirect count, and negotiated HTTP version
+- fix `withNtlmAuth()` so the curl auth option is preserved correctly
+- fix `retry_max_time` so the retry budget starts with the first retry decision instead of request preparation
+- add tests and phpstan-safe handle/type narrowing so the local CI pipeline is green again
+
 ## 3.1.0 (2026-04-24)
 
 - test with PHP 8.3 + 8.4 + 8.5
@@ -307,4 +315,3 @@ breaking change:
  - Created AbstractMimeHandler type that all Mime Handlers must extend
  - Pulled out the parsing/serializing logic from the Request/Response classes into their own MimeHandler classes
  - Added ability to register new mime handlers for mime types
-

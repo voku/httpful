@@ -33,9 +33,9 @@ class ClientMulti
     }
 
     /**
-     * @param string     $uri
-     * @param array|null $params
-     * @param string     $mime
+     * @param string                       $uri
+     * @param array<string|int, mixed>|null $params
+     * @param string                       $mime
      *
      * @return $this
      */
@@ -72,9 +72,9 @@ class ClientMulti
     }
 
     /**
-     * @param string      $uri
-     * @param array|null  $params
-     * @param string|null $mime
+     * @param string                       $uri
+     * @param array<string|int, mixed>|null $params
+     * @param string|null                  $mime
      *
      * @return $this
      */
@@ -92,9 +92,9 @@ class ClientMulti
     }
 
     /**
-     * @param string      $uri
-     * @param array|null  $params
-     * @param string|null $mime
+     * @param string                       $uri
+     * @param array<string|int, mixed>|null $params
+     * @param string|null                  $mime
      *
      * @return $this
      */
@@ -112,8 +112,8 @@ class ClientMulti
     }
 
     /**
-     * @param string     $uri
-     * @param array|null $params
+     * @param string                       $uri
+     * @param array<string|int, mixed>|null $params
      *
      * @return $this
      */
@@ -131,8 +131,8 @@ class ClientMulti
     }
 
     /**
-     * @param string     $uri
-     * @param array|null $params
+     * @param string                       $uri
+     * @param array<string|int, mixed>|null $params
      *
      * @return $this
      */
@@ -150,8 +150,8 @@ class ClientMulti
     }
 
     /**
-     * @param string     $uri
-     * @param array|null $params
+     * @param string                       $uri
+     * @param array<string|int, mixed>|null $params
      *
      * @return $this
      */
@@ -169,8 +169,8 @@ class ClientMulti
     }
 
     /**
-     * @param string     $uri
-     * @param array|null $params
+     * @param string                       $uri
+     * @param array<string|int, mixed>|null $params
      *
      * @return $this
      */

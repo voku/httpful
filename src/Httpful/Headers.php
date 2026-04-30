@@ -9,6 +9,10 @@ namespace Httpful;
 
 use Httpful\Exception\ResponseHeaderException;
 
+/**
+ * @implements \ArrayAccess<string, array<int, string>>
+ * @implements \Iterator<string, array<int, string>>
+ */
 class Headers implements \ArrayAccess, \Countable, \Iterator
 {
     /**
@@ -217,8 +221,8 @@ class Headers implements \ArrayAccess, \Countable, \Iterator
     }
 
     /**
-     * @param string $offset
-     * @param string $value
+     * @param string             $offset
+     * @param array<int, string> $value
      *
      * @throws ResponseHeaderException
      *
@@ -244,7 +248,7 @@ class Headers implements \ArrayAccess, \Countable, \Iterator
     }
 
     /**
-     * @return array
+     * @return array<string, array<int, string>>
      */
     public function toArray(): array
     {
@@ -254,10 +258,8 @@ class Headers implements \ArrayAccess, \Countable, \Iterator
         $that = clone $this;
 
         foreach ($that as $key => $value) {
-            if (\is_array($value)) {
-                foreach ($value as $keyInner => $valueInner) {
-                    $value[$keyInner] = \trim($valueInner, " \t");
-                }
+            foreach ($value as $keyInner => $valueInner) {
+                $value[$keyInner] = \trim($valueInner, " \t");
             }
 
             $return[$key] = $value;

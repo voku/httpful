@@ -65,7 +65,7 @@ class Response implements ResponseInterface
     private $charset = '';
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     private $meta_data;
 
@@ -80,10 +80,10 @@ class Response implements ResponseInterface
     private $is_mime_personal = false;
 
     /**
-     * @param StreamInterface|string|null $body
-     * @param array|string|null           $headers
-     * @param RequestInterface|null       $request
-     * @param array                       $meta_data
+     * @param StreamInterface|string|null                 $body
+     * @param array<string, string|string[]>|string|null $headers
+     * @param RequestInterface|null                       $request
+     * @param array<string, mixed>                       $meta_data
      *                                               <p>e.g. [protocol_version] = '1.1'</p>
      */
     public function __construct(
@@ -281,7 +281,7 @@ class Response implements ResponseInterface
     }
 
     /**
-     * @return array
+     * @return array<string, string[]>
      */
     public function getHeaders(): array
     {
@@ -527,6 +527,81 @@ class Response implements ResponseInterface
     }
 
     /**
+     * @return float
+     */
+    private function _getTransferFloat(string $key): float
+    {
+        $value = $this->getTransferInfoValue($key);
+
+        return \is_numeric($value) ? (float) $value : 0.0;
+    }
+
+    /**
+     * @return int
+     */
+    private function _getTransferInt(string $key): int
+    {
+        $value = $this->getTransferInfoValue($key);
+
+        return \is_numeric($value) ? (int) $value : 0;
+    }
+
+    /**
+     * @return string|null
+     */
+    private function _getTransferString(string $key): ?string
+    {
+        $value = $this->getTransferInfoValue($key);
+        if (!\is_string($value) || $value === '') {
+            return null;
+        }
+
+        return $value;
+    }
+
+    /**
+     * @param mixed  $http_version
+     * @param string $fallback
+     *
+     * @return string
+     */
+    private static function _normalizeTransferHttpVersion($http_version, string $fallback): string
+    {
+        if (!\is_int($http_version)) {
+            if (\is_string($http_version) && $http_version !== '') {
+                return $http_version;
+            }
+
+            return $fallback;
+        }
+
+        $map = [
+            \CURL_HTTP_VERSION_NONE => $fallback,
+            \CURL_HTTP_VERSION_1_0  => Http::HTTP_1_0,
+            \CURL_HTTP_VERSION_1_1  => Http::HTTP_1_1,
+            \CURL_HTTP_VERSION_2_0  => Http::HTTP_2_0,
+        ];
+
+        if (\defined('CURL_HTTP_VERSION_2TLS')) {
+            $map[(int) \constant('CURL_HTTP_VERSION_2TLS')] = Http::HTTP_2_0;
+        }
+
+        if (\defined('CURL_HTTP_VERSION_2_PRIOR_KNOWLEDGE')) {
+            $map[(int) \constant('CURL_HTTP_VERSION_2_PRIOR_KNOWLEDGE')] = Http::HTTP_2_0;
+        }
+
+        if (\defined('CURL_HTTP_VERSION_3')) {
+            $map[(int) \constant('CURL_HTTP_VERSION_3')] = Http::HTTP_3;
+        }
+
+        if (\defined('CURL_HTTP_VERSION_3ONLY')) {
+            $map[(int) \constant('CURL_HTTP_VERSION_3ONLY')] = Http::HTTP_3;
+        }
+
+        return $map[$http_version] ?? $fallback;
+    }
+
+    /**
      * @return string
      */
     public function getCharset(): string
@@ -551,11 +626,95 @@ class Response implements ResponseInterface
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function getMetaData(): array
     {
         return $this->meta_data;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getTransferInfo(): array
+    {
+        return $this->getMetaData();
+    }
+
+    /**
+     * @param mixed|null $fallback
+     *
+     * @return mixed|null
+     */
+    public function getTransferInfoValue(string $key, $fallback = null)
+    {
+        return $this->meta_data[$key] ?? $fallback;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getEffectiveUrl(): ?string
+    {
+        return $this->_getTransferString('url');
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPrimaryIp(): ?string
+    {
+        return $this->_getTransferString('primary_ip');
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getLocalIp(): ?string
+    {
+        return $this->_getTransferString('local_ip');
+    }
+
+    /**
+     * @return int
+     */
+    public function getRedirectCount(): int
+    {
+        return $this->_getTransferInt('redirect_count');
+    }
+
+    /**
+     * @return float
+     */
+    public function getTotalTime(): float
+    {
+        return $this->_getTransferFloat('total_time');
+    }
+
+    /**
+     * @return float
+     */
+    public function getConnectTime(): float
+    {
+        return $this->_getTransferFloat('connect_time');
+    }
+
+    /**
+     * @return float
+     */
+    public function getTlsHandshakeTime(): float
+    {
+        return $this->_getTransferFloat('appconnect_time');
+    }
+
+    /**
+     * @return string
+     */
+    public function getTransferHttpVersion(): string
+    {
+        $http_version = $this->getTransferInfoValue('http_version');
+
+        return self::_normalizeTransferHttpVersion($http_version, $this->getProtocolVersion());
     }
 
     /**
@@ -794,18 +953,27 @@ class Response implements ResponseInterface
     {
         // Parse the Content-Type and charset
         $content_type = $this->headers['Content-Type'] ?? [];
-        foreach ($content_type as $content_type_inner) {
-            $content_type = \array_merge(\explode(';', $content_type_inner));
+        if (!\is_array($content_type)) {
+            $content_type = [$content_type];
         }
 
-        $this->content_type = $content_type[0] ?? '';
+        $content_type_parts = [];
+        foreach ($content_type as $content_type_inner) {
+            if (!\is_string($content_type_inner)) {
+                continue;
+            }
+
+            $content_type_parts = \array_merge($content_type_parts, \explode(';', $content_type_inner));
+        }
+
+        $this->content_type = $content_type_parts[0] ?? '';
         if (
-            \count($content_type) === 2
+            \count($content_type_parts) === 2
             &&
-            \strpos($content_type[1], '=') !== false
+            \strpos($content_type_parts[1], '=') !== false
         ) {
             /** @noinspection PhpUnusedLocalVariableInspection */
-            list($nill, $this->charset) = \explode('=', $content_type[1]);
+            list($nill, $this->charset) = \explode('=', $content_type_parts[1]);
         }
 
         // fallback
@@ -855,7 +1023,10 @@ class Response implements ResponseInterface
             &&
             $this->request->hasParseCallback()
         ) {
-            return \call_user_func($this->request->getParseCallback(), $body);
+            $parseCallback = $this->request->getParseCallback();
+            if ($parseCallback !== null) {
+                return $parseCallback($body);
+            }
         }
 
         // Decide how to parse the body of the response in the following order:

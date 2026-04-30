@@ -24,7 +24,7 @@
     }
   ],
   "require": {
-    "php": ">=7.4",
+    "php": "^8.0",
     "ext-curl": "*",
     "ext-dom": "*",
     "ext-fileinfo": "*",
@@ -41,8 +41,8 @@
     "voku/simple_html_dom": "~4.8 || ~5.0"
   },
   "require-dev": {
-    "phpstan/phpstan": "^1.12",
-    "phpunit/phpunit": "~6.0 || ~7.0 || ~9.0"
+    "phpstan/phpstan": "^2.1",
+    "phpunit/phpunit": "^9.6"
   },
   "provide": {
     "php-http/async-client-implementation": "1.0",

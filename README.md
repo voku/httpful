@@ -18,14 +18,22 @@ Features
  - Automatic "Smart" Parsing
  - Automatic Payload Serialization
  - Basic Auth
- - Client Side Certificate Auth (SSL)
- - Request "Download"
- - Request "Templates"
- - Parallel Request (via curl_multi)
- - PSR-3: Logger Interface
- - PSR-7: HTTP Message Interface
- - PSR-17: HTTP Factory Interface
- - PSR-18: HTTP Client Interface
+ - Bearer Token Auth
+  - Client Side Certificate Auth (SSL)
+ - Retry Configuration (count, delay, max time, all-errors, connection-refused)
+ - Advanced TLS Configuration (CA bundle / path, pinned public key, TLS version)
+ - Cookie Persistence (cookie file / cookie jar)
+ - Modern HTTP Version Helpers (HTTP/2 prior knowledge, HTTP/3, HTTP/3 only)
+ - Alt-Svc / HSTS Cache Helpers
+ - Proxy / Routing Helpers (no-proxy, proxy tunnel, resolve, connect-to)
+  - Request "Download"
+  - Request "Templates"
+  - Parallel Request (via curl_multi)
+ - Transfer Metadata Helpers
+  - PSR-3: Logger Interface
+  - PSR-7: HTTP Message Interface
+  - PSR-17: HTTP Factory Interface
+  - PSR-18: HTTP Client Interface
 
 # Examples
 
@@ -82,11 +90,31 @@ $multi->start();
 //print_r($results);
 ```
 
+```php
+<?php
+
+$response = \Httpful\Request::get('https://api.example.com/items')
+    ->withBearerToken('secret-token')
+    ->withRetry(3)
+    ->withRetryDelay(1)
+    ->withRetryMaxTime(10)
+    ->withCookieJar('/tmp/httpful.cookies')
+    ->withCaBundle('/etc/ssl/certs/ca-bundle.crt')
+    ->withHttp2PriorKnowledge()
+    ->send();
+
+echo $response->getEffectiveUrl() . "\n";
+echo $response->getTransferHttpVersion() . "\n";
+echo $response->getTotalTime() . "\n";
+```
+
 # Installation
 
 ```shell
 composer require voku/httpful
 ```
+
+Requires PHP 8.0+.
 
 ## Handlers
 
@@ -154,4 +182,3 @@ Finally, you must register this handler for a particular mime type.
 ```
 
 After this registering the handler in your source code, by default, any responses with a mime type of text/csv should be parsed by this handler.
-
