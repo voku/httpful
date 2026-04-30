@@ -27,9 +27,11 @@ Features
  - Alt-Svc / HSTS Cache Helpers
  - Proxy / Routing Helpers (no-proxy, proxy tunnel, resolve, connect-to)
  - Request "Download"
+ - Async Request Helper (`Request::sendAsync()`)
  - Request "Templates"
  - Parallel Request (via curl_multi)
  - Transfer Metadata Helpers
+ - Curl-Style Alias Helpers (`downloadTo()`, `authenticateWith*()`, `useHttp*()`, ...)
  - PSR-3: Logger Interface
  - PSR-7: HTTP Message Interface
  - PSR-17: HTTP Factory Interface
@@ -93,6 +95,18 @@ $multi->start();
 ```php
 <?php
 
+$promise = \Httpful\Request::get('https://api.example.com/items')
+    ->authenticateWithBearerToken('secret-token')
+    ->sendAsync();
+
+$response = $promise->wait();
+
+echo $response->getCode() . "\n";
+```
+
+```php
+<?php
+
 $response = \Httpful\Request::get('https://api.example.com/items')
     ->withBearerToken('secret-token')
     ->withRetry(3)
@@ -115,6 +129,7 @@ composer require voku/httpful
 ```
 
 Requires PHP 8.0+.
+Compared with 3.1.0, the only intended breaking change is the PHP 8.0 minimum; the new request and response helpers are additive.
 
 ## Handlers
 
