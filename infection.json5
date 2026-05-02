@@ -7,6 +7,8 @@
     },
     "threads": "max",
     "timeout": 30,
+    "minMsi": 95,
+    "minCoveredMsi": 95,
     "testFramework": "phpunit",
     "phpUnit": {
         "configDir": "."
