@@ -523,6 +523,17 @@ final class CoverageTopUpTest extends TestCase
         static::assertSame('WILDCARD', $iter['serialized_payload']);
     }
 
+    public function testNeverSerializePayloadPreservesArrayPayload(): void
+    {
+        $payload = ['data' => 1];
+        $req = Request::post('http://example.com/', $payload, Mime::JSON)
+            ->neverSerializePayload();
+
+        $req->_curlPrep();
+
+        static::assertSame($payload, $req->getSerializedPayload());
+    }
+
     // =========================================================================
     // Request – _withContentType / _withExpectedType empty+empty short-circuit
     // =========================================================================

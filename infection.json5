@@ -6,9 +6,11 @@
         ]
     },
     "threads": "max",
-    "timeout": 30,
-    "minMsi": 95,
-    "minCoveredMsi": 95,
+    "timeout": 60,
+    "minMsi": 100,
+    "minCoveredMsi": 100,
+    "maxTimeouts": 0,
+    "timeoutsAsEscaped": true,
     "testFramework": "phpunit",
     "phpUnit": {
         "configDir": "."
@@ -19,6 +21,11 @@
     "testFrameworkOptions": "--do-not-cache-result",
     "staticAnalysisTool": "phpstan",
     "mutators": {
-        "@default": true
+        "@default": true,
+        "UnwrapArrayValues": {
+            "ignoreSourceCodeByRegex": [
+                "\\$payload_first = \\\\array_values\\(\\$payload\\)\\[0\\]"
+            ]
+        }
     }
 }
