@@ -1,0 +1,22 @@
+{
+    "$schema": "./vendor/infection/infection/resources/schema.json",
+    "source": {
+        "directories": [
+            "src"
+        ]
+    },
+    "threads": "max",
+    "timeout": 30,
+    "testFramework": "phpunit",
+    "phpUnit": {
+        "configDir": "."
+    },
+    "phpStan": {
+        "configDir": "."
+    },
+    "testFrameworkOptions": "--do-not-cache-result",
+    "staticAnalysisTool": "phpstan",
+    "mutators": {
+        "@default": true
+    }
+}

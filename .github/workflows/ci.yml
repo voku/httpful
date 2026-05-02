@@ -31,7 +31,7 @@ jobs:
           - '8.3'
           - '8.4'
           - '8.5'
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -71,12 +71,21 @@ jobs:
           XDEBUG_MODE: coverage
         run: |
           mkdir -p build/logs
-          php vendor/bin/phpunit -c phpunit.xml.dist --coverage-clover=build/logs/clover.xml
+          if [[ "${{ matrix.php }}" == '8.5' ]]; then
+            php vendor/bin/phpunit -c phpunit.xml.dist --coverage-clover=build/logs/clover.xml --coverage-xml=build/coverage-xml --log-junit=build/coverage-xml/junit.xml
+          else
+            php vendor/bin/phpunit -c phpunit.xml.dist --coverage-clover=build/logs/clover.xml
+          fi
 
       - name: Run phpstan
         if: ${{ matrix.php == '8.5' }}
         run: |
           php vendor/bin/phpstan analyse
+
+      - name: Run Infection
+        if: ${{ matrix.php == '8.5' }}
+        run: |
+          php vendor/bin/infection --configuration=infection.json5 --coverage=build/coverage-xml --skip-initial-tests --only-covering-test-cases --show-mutations=0 --min-msi=0 --min-covered-msi=0 --no-progress
 
       - name: Upload coverage results to Coveralls
         if: ${{ matrix.php == '8.5' }}
