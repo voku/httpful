@@ -690,7 +690,7 @@ final class ExtraCoverageTest extends TestCase
     public function testGetPayloadAndGetSerializedPayload(): void
     {
         $req = Request::post('http://example.com/', 'body');
-        static::assertIsArray($req->getPayload());
+        static::assertSame(['body'], $req->getPayload());
         // Before sending, serialized_payload is null
         static::assertNull($req->getSerializedPayload());
     }

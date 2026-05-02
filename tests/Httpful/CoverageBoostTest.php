@@ -103,6 +103,7 @@ final class CoverageBoostTest extends TestCase
         $base = new Uri('http://example.com/a/b/c');
         $rel  = new Uri('');
         $result = UriResolver::resolve($base, $rel);
+        static::assertSame($base, $result);
         static::assertSame('http://example.com/a/b/c', (string) $result);
     }
 

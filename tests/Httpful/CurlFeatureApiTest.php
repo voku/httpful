@@ -15,6 +15,11 @@ use PHPUnit\Framework\TestCase;
  */
 final class CurlFeatureApiTest extends TestCase
 {
+    private static function localFixtureUrl(string $path): string
+    {
+        return 'http://' . \TEST_SERVER . '/' . ltrim($path, '/');
+    }
+
     private function setPrivateProperty(object $object, string $property, $value): void
     {
         $reflection = new \ReflectionProperty($object, $property);
@@ -412,6 +417,13 @@ final class CurlFeatureApiTest extends TestCase
         );
     }
 
+    public function testWithTlsVersionRejectsTls1WithDefaultMaximum(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        Request::get('http://example.com/')->withTlsVersion('1', 'default');
+    }
+
     public function testWithTlsVersionRejectsInvalidVersion(): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -584,6 +596,33 @@ final class CurlFeatureApiTest extends TestCase
         $curl->reset();
 
         static::assertNotFalse($curl->getCurl());
+        $curl->close();
+    }
+
+    public function testCurlExecResetsNobodyAfterHeadRequest(): void
+    {
+        $curl = new Curl(self::localFixtureUrl('foo.txt'));
+        $curl->setOpt(\CURLOPT_NOBODY, true);
+
+        $curl->exec();
+        $body = $curl->exec();
+
+        static::assertSame("Foobar\n", $body);
+        $curl->close();
+    }
+
+    public function testCurlBuildCookiesUsesCookieNames(): void
+    {
+        $curl = new Curl(self::localFixtureUrl('foo.txt'));
+        $curl->setCookies([
+            'session' => 'abc123',
+            'mode' => 'test',
+        ]);
+
+        $curl->exec();
+
+        $requestHeaders = (string) $curl->getInfo(\CURLINFO_HEADER_OUT);
+        static::assertStringContainsString('Cookie: session=abc123; mode=test', $requestHeaders);
         $curl->close();
     }
 

@@ -386,6 +386,14 @@ Transfer-Encoding: chunked\r\n";
         $req = (new Request())->withContentType(Mime::UPLOAD);
 
         static::assertTrue($req->isUpload());
+        static::assertSame(Request::SERIALIZE_PAYLOAD_NEVER, $req->getSerializePayloadMethod());
+    }
+
+    public function testUploadMimeTypeDisablesPayloadSerialization()
+    {
+        $req = (new Request())->withMimeType(Mime::UPLOAD);
+
+        static::assertSame(Request::SERIALIZE_PAYLOAD_NEVER, $req->getSerializePayloadMethod());
     }
 
     public function testJsonResponseParse()

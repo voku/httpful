@@ -540,7 +540,7 @@ class Request implements \IteratorAggregate, RequestInterface
             $curl->download($this->file_path_for_download);
             $curl->setOpt(\CURLOPT_CUSTOMREQUEST, 'GET');
             $curl->setOpt(\CURLOPT_HTTPGET, true);
-            $this->disableAutoParsing();
+            $this->auto_parse = false;
         }
 
         return $this;
@@ -4082,7 +4082,7 @@ class Request implements \IteratorAggregate, RequestInterface
         $this->content_type = Mime::getFullMime($mime);
 
         if ($this->isUpload()) {
-            $this->neverSerializePayload();
+            $this->serialize_payload_method = static::SERIALIZE_PAYLOAD_NEVER;
         }
 
         return $this;
@@ -4126,7 +4126,7 @@ class Request implements \IteratorAggregate, RequestInterface
         $this->content_type = $this->expected_type;
 
         if ($this->isUpload()) {
-            $this->neverSerializePayload();
+            $this->serialize_payload_method = static::SERIALIZE_PAYLOAD_NEVER;
         }
 
         return $this;
