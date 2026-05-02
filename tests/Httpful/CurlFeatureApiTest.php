@@ -331,6 +331,48 @@ final class CurlFeatureApiTest extends TestCase
         $req->close();
     }
 
+    public function testRetryDeciderDoesNotRetryConnectionRefusedWithoutMatchingMessage(): void
+    {
+        $req = Request::get('http://example.com/')
+            ->withRetry(1)
+            ->withRetryDelay(0)
+            ->withRetryConnectionRefused()
+            ->_curlPrep();
+
+        $decider = $req->_curl()->getRetryDecider();
+        $curl = new Curl();
+        $curl->error = true;
+        $curl->curlError = true;
+        $curl->curlErrorCode = \CURLE_COULDNT_CONNECT;
+        $curl->curlErrorMessage = 'No route to host';
+
+        static::assertFalse($decider($curl));
+
+        $curl->close();
+        $req->close();
+    }
+
+    public function testRetryDeciderWaitsForPositiveRetryDelay(): void
+    {
+        $req = Request::get('http://example.com/')
+            ->withRetry(1)
+            ->withRetryDelay(0.02)
+            ->_curlPrep();
+
+        $decider = $req->_curl()->getRetryDecider();
+        $curl = new Curl();
+        $curl->error = true;
+        $curl->httpError = true;
+        $curl->httpStatusCode = 503;
+
+        $startedAt = \microtime(true);
+        static::assertTrue($decider($curl));
+        static::assertGreaterThanOrEqual(0.015, \microtime(true) - $startedAt);
+
+        $curl->close();
+        $req->close();
+    }
+
     public function testRetryMaxTimeStartsAtFirstRetryDecision(): void
     {
         $req = Request::get('http://example.com/')
@@ -486,6 +528,21 @@ final class CurlFeatureApiTest extends TestCase
         static::assertSame($altSvcControl, $opts[\CURLOPT_ALTSVC_CTRL]);
         static::assertSame('/tmp/hsts.cache', $opts[\CURLOPT_HSTS]);
         static::assertSame($hstsControl, $opts[\CURLOPT_HSTS_CTRL]);
+    }
+
+    public function testUseAltSvcCacheDefaultsToWritableMode(): void
+    {
+        if (!\defined('CURLOPT_ALTSVC') || !\defined('CURLOPT_ALTSVC_CTRL')) {
+            static::markTestSkipped('Alt-Svc curl options are not supported by this cURL build.');
+        }
+
+        $viaAlias = Request::get('http://example.com/')->useAltSvcCache('/tmp/altsvc.cache');
+        $direct = Request::get('http://example.com/')->withAltSvcCache('/tmp/altsvc.cache', false);
+
+        static::assertSame(
+            $direct->getIterator()['additional_curl_opts'][\CURLOPT_ALTSVC_CTRL],
+            $viaAlias->getIterator()['additional_curl_opts'][\CURLOPT_ALTSVC_CTRL]
+        );
     }
 
     public function testHttpVersionHelpersUpdateRequestState(): void
@@ -680,5 +737,16 @@ final class CurlFeatureApiTest extends TestCase
         );
 
         static::assertSame(Http::HTTP_1_1, $fallbackResponse->getTransferHttpVersion());
+    }
+
+    public function testResponseWithHeaderArrayDefaultsTo200(): void
+    {
+        $response = new Response(
+            '',
+            ['Content-Type' => ['text/plain']]
+        );
+
+        static::assertSame(200, $response->getStatusCode());
+        static::assertSame('OK', $response->getReasonPhrase());
     }
 }

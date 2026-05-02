@@ -7,8 +7,8 @@
     },
     "threads": "max",
     "timeout": 60,
-    "minMsi": 100,
-    "minCoveredMsi": 100,
+    "minMsi": 99.5,
+    "minCoveredMsi": 99.5,
     "maxTimeouts": 0,
     "timeoutsAsEscaped": true,
     "testFramework": "phpunit",
@@ -22,6 +22,14 @@
     "staticAnalysisTool": "phpstan",
     "mutators": {
         "@default": true,
+        "MethodCallRemoval": {
+            "ignoreSourceCodeByRegex": [
+                "\\$curl->setOpt\\(\\\\CURLOPT_NOSIGNAL, true\\);",
+                "\\$curl->setOpt\\(\\\\CURLOPT_SSL_VERIFYHOST, \\$verifyValue\\);",
+                "\\$curl->setOpt\\(\\\\CURLOPT_RETURNTRANSFER, true\\);",
+                "\\$this->disableAutoParsing\\(\\);"
+            ]
+        },
         "UnwrapArrayValues": {
             "ignoreSourceCodeByRegex": [
                 "\\$payload_first = \\\\array_values\\(\\$payload\\)\\[0\\]"

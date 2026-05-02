@@ -631,7 +631,9 @@ final class ExtraCoverageTest extends TestCase
 
     public function testWithMimeType(): void
     {
-        $req = Request::get('http://example.com/')->withMimeType(Mime::JSON);
+        $original = Request::get('http://example.com/');
+        $req = $original->withMimeType(Mime::JSON);
+        static::assertNotSame($original, $req);
         static::assertSame(Mime::getFullMime(Mime::JSON), $req->getContentType());
         static::assertSame(Mime::getFullMime(Mime::JSON), $req->getExpectedType());
     }

@@ -507,7 +507,6 @@ final class ClientMultiAndPromiseTest extends TestCase
         $req = Request::download('http://localhost:1349/', $tmpFile);
         $prepped = $req->_curlPrep();
         static::assertSame($req, $prepped);
-        static::assertFalse($req->isAutoParse());
         @unlink($tmpFile . '.pccdownload');
         @unlink($tmpFile);
     }

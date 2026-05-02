@@ -809,10 +809,10 @@ final class ExtraCoverageExtendedTest extends TestCase
         static::assertInstanceOf(Request::class, $req);
     }
 
-    public function testRequestHasBeenInitializedFalse(): void
+    public function testRequestHasBeenInitializedByDefault(): void
     {
         $req = Request::get('http://example.com/');
-        static::assertFalse($req->hasBeenInitialized());
+        static::assertTrue($req->hasBeenInitialized());
     }
 
     public function testRequestHasBeenInitializedMultiFalse(): void
@@ -890,7 +890,9 @@ final class ExtraCoverageExtendedTest extends TestCase
 
     public function testRequestWithContentTypeWithFallback(): void
     {
-        $req = Request::get('http://example.com/')->withContentType(null, Mime::JSON);
+        $original = Request::get('http://example.com/');
+        $req = $original->withContentType(null, Mime::JSON);
+        static::assertNotSame($original, $req);
         static::assertSame(Mime::getFullMime(Mime::JSON), $req->getContentType());
     }
 

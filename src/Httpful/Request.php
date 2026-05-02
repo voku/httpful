@@ -540,7 +540,7 @@ class Request implements \IteratorAggregate, RequestInterface
             $curl->download($this->file_path_for_download);
             $curl->setOpt(\CURLOPT_CUSTOMREQUEST, 'GET');
             $curl->setOpt(\CURLOPT_HTTPGET, true);
-            $this->auto_parse = false;
+            $this->disableAutoParsing();
         }
 
         return $this;
