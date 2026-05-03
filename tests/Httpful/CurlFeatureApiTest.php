@@ -445,6 +445,13 @@ final class CurlFeatureApiTest extends TestCase
         static::assertSame(\CURL_SSLVERSION_TLSv1_2, $reqInteger->getIterator()['additional_curl_opts'][\CURLOPT_SSLVERSION]);
     }
 
+    public function testWithTlsVersionAcceptsNormalizedMixedCaseString(): void
+    {
+        $req = Request::get('http://example.com/')->withTlsVersion('TLSv1.2');
+
+        static::assertSame(\CURL_SSLVERSION_TLSv1_2, $req->getIterator()['additional_curl_opts'][\CURLOPT_SSLVERSION]);
+    }
+
     public function testWithTlsVersionAllowsTls1ToTls10Bounds(): void
     {
         if (!\defined('CURL_SSLVERSION_MAX_TLSv1_0')) {
@@ -457,6 +464,13 @@ final class CurlFeatureApiTest extends TestCase
             \CURL_SSLVERSION_TLSv1 | \CURL_SSLVERSION_MAX_TLSv1_0,
             $req->getIterator()['additional_curl_opts'][\CURLOPT_SSLVERSION]
         );
+    }
+
+    public function testWithTlsVersionAcceptsIntegerMaximumWithoutRangeValidation(): void
+    {
+        $req = Request::get('http://example.com/')->withTlsVersion('1.2', \CURL_SSLVERSION_TLSv1_2);
+
+        static::assertSame(\CURL_SSLVERSION_TLSv1_2, $req->getIterator()['additional_curl_opts'][\CURLOPT_SSLVERSION]);
     }
 
     public function testWithTlsVersionRejectsTls1WithDefaultMaximum(): void
@@ -488,6 +502,14 @@ final class CurlFeatureApiTest extends TestCase
     public function testResolveRejectsInvalidEntries(): void
     {
         $this->expectException(\InvalidArgumentException::class);
+
+        Request::get('http://example.com/')->withResolve([123]);
+    }
+
+    public function testResolveRejectsInvalidEntriesWithPreciseMessage(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid resolve entries provided: 123');
 
         Request::get('http://example.com/')->withResolve([123]);
     }

@@ -3715,7 +3715,7 @@ class Request implements \IteratorAggregate, RequestInterface
             return [$version, null];
         }
 
-        $normalized_version = \strtolower(\str_replace(['tls', 'v'], '', \trim((string) $version)));
+        $normalized_version = \str_replace(['tls', 'v'], '', \strtolower(\trim((string) $version)));
 
         if ($normalized_version === 'default') {
             return [self::_requireCurlConstant('CURL_SSLVERSION_DEFAULT'), 0];
