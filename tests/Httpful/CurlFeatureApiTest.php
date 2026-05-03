@@ -499,13 +499,6 @@ final class CurlFeatureApiTest extends TestCase
         static::assertSame(['example.com:443:backend.internal:8443'], $opts[\CURLOPT_CONNECT_TO]);
     }
 
-    public function testResolveRejectsInvalidEntries(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-
-        Request::get('http://example.com/')->withResolve([123]);
-    }
-
     public function testResolveRejectsInvalidEntriesWithPreciseMessage(): void
     {
         $this->expectException(\InvalidArgumentException::class);

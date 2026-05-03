@@ -429,28 +429,14 @@ final class ClientTest extends TestCase
             $client->sendRequest($request);
             static::fail('Expected a network exception.');
         } catch (NetworkExceptionInterface $e) {
-            static::assertStringContainsString(
-                \curl_strerror(\CURLE_COULDNT_RESOLVE_HOST) . ': Could not resolve host: www.does.not.exists',
-                $e->getMessage()
-            );
-        }
-    }
+            $expectedCurlMessage = \curl_strerror(\CURLE_COULDNT_RESOLVE_HOST) . ': Could not resolve host: www.does.not.exists';
 
-    public function testHostNotFoundUsesExactNetworkErrorMessage()
-    {
-        $client = new Client();
-        $request = (new Request('GET'))->withUriFromString('http://www.does.not.exists');
-
-        try {
-            $client->sendRequest($request);
-            static::fail('Expected a network exception.');
-        } catch (NetworkExceptionInterface $e) {
+            static::assertStringContainsString($expectedCurlMessage, $e->getMessage());
             static::assertSame(
                 'Unable to connect to "http://www.does.not.exists": '
                 . \CURLE_COULDNT_RESOLVE_HOST
                 . ' '
-                . \curl_strerror(\CURLE_COULDNT_RESOLVE_HOST)
-                . ': Could not resolve host: www.does.not.exists',
+                . $expectedCurlMessage,
                 $e->getMessage()
             );
         }
