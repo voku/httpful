@@ -14,3 +14,5 @@ server.log
 # Composer
 vendor
 composer.lock
+node_modules
+dist

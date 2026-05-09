@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Httpful favicon</title>
+  <desc id="desc">Stylized horn icon on a blue gradient background.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+  <path d="M34 79c16-2 30-12 42-29l11-16c3-5 8-8 14-8h7v54h-7c-6 0-11-3-14-8L76 56c-11 15-25 24-42 27v-4Z" fill="#eff6ff"/>
+  <path d="M35 82h14c2 0 4 2 4 4v8c0 4-3 7-7 7h-4c-4 0-7-3-7-7V82Z" fill="#bfdbfe"/>
+</svg>

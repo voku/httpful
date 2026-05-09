@@ -1,96 +1,140 @@
-[![Build Status](https://github.com/voku/httpful/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/voku/httpful/actions)
+[![Build Status](https://github.com/voku/httpful/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/voku/httpful/actions/workflows/ci.yml)
 [![codecov.io](https://codecov.io/github/voku/httpful/coverage.svg?branch=master)](https://codecov.io/github/voku/httpful?branch=master)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/5882e37a6cd24f6c9d1cf70a08064146)](https://www.codacy.com/app/voku/httpful)
-[![Latest Stable Version](https://poser.pugx.org/voku/httpful/v/stable)](https://packagist.org/packages/voku/httpful) 
+[![Latest Stable Version](https://poser.pugx.org/voku/httpful/v/stable)](https://packagist.org/packages/voku/httpful)
 [![Total Downloads](https://poser.pugx.org/voku/httpful/downloads)](https://packagist.org/packages/voku/httpful)
 [![License](https://poser.pugx.org/voku/httpful/license)](https://packagist.org/packages/voku/httpful)
-[![Donate to this project using Paypal](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.me/moelleken)
-[![Donate to this project using Patreon](https://img.shields.io/badge/patreon-donate-yellow.svg)](https://www.patreon.com/voku)
 
-# 📯 Httpful
+# Httpful
 
-Forked some years ago from [nategood/httpful](https://github.com/nategood/httpful) + added support for parallel request and implemented many PSR Interfaces: A Chainable, REST Friendly Wrapper for cURL with many "PSR-HTTP" implemented interfaces. 
+Httpful is a fluent PHP HTTP client built on top of cURL. This fork keeps the original chainable API while adding modern PSR interfaces, better transport controls, async helpers, and curl-multi support for high-volume workloads.
 
-Features
+## Why Httpful
 
- - Readable HTTP Method Support (GET, PUT, POST, DELETE, HEAD, PATCH and OPTIONS)
- - Custom Headers
- - Automatic "Smart" Parsing
- - Automatic Payload Serialization
- - Basic Auth
- - Bearer Token Auth
- - Client Side Certificate Auth (SSL)
- - Retry Configuration (count, delay, max time, all-errors, connection-refused)
- - Advanced TLS Configuration (CA bundle / path, pinned public key, TLS version)
- - Cookie Persistence (cookie file / cookie jar)
- - Modern HTTP Version Helpers (HTTP/2 prior knowledge, HTTP/3, HTTP/3 only)
- - Alt-Svc / HSTS Cache Helpers
- - Proxy / Routing Helpers (no-proxy, proxy tunnel, resolve, connect-to)
- - Request "Download"
- - Async Request Helper (`Request::sendAsync()`)
- - Request "Templates"
- - Parallel Request (via curl_multi)
- - Transfer Metadata Helpers
- - Curl-Style Alias Helpers (`downloadTo()`, `authenticateWith*()`, `useHttp*()`, ...)
- - PSR-3: Logger Interface
- - PSR-7: HTTP Message Interface
- - PSR-17: HTTP Factory Interface
- - PSR-18: HTTP Client Interface
+- Clear request builders for `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `HEAD`, and `OPTIONS`
+- Automatic payload serialization and response parsing for JSON, XML, HTML, forms, CSV, and plain text
+- PSR-3, PSR-7, PSR-17, and PSR-18 support
+- Retry, timeout, TLS, proxy, cookie jar, redirect, and download helpers
+- Async request promises and parallel execution with curl-multi
+- Extensible mime handler registration for custom content types
 
-# Examples
+## Installation
 
-```php
-<?php
-
-// Make a request to the GitHub API.
-
-$uri = 'https://api.github.com/users/voku';
-$response = \Httpful\Client::get($uri, null, \Httpful\Mime::JSON);
-
-echo $response->getBody()->name . ' joined GitHub on ' . date('M jS Y', strtotime($response->getBody()->created_at)) . "\n";
+```bash
+composer require voku/httpful
 ```
 
+Requirements:
+
+- PHP 8.0+
+- `ext-curl`
+- `ext-dom`
+- `ext-fileinfo`
+- `ext-json`
+- `ext-simplexml`
+- `ext-xmlwriter`
+
+## Quick start
+
+### Simple JSON request
+
 ```php
 <?php
 
-// Make a request to the GitHub API with a custom
-// header of "X-Foo-Header: Just as a demo".
+declare(strict_types=1);
 
-$uri = 'https://api.github.com/users/voku';
-$response = \Httpful\Client::get_request($uri)->withAddedHeader('X-Foo-Header', 'Just as a demo')
-                                              ->expectsJson()
-                                              ->send();
+use Httpful\Client;
 
-$result = $response->getRawBody();
+$response = Client::get('https://api.github.com/users/voku', null, \Httpful\Mime::JSON);
 
-echo $result['name'] . ' joined GitHub on ' . \date('M jS Y', \strtotime($result['created_at'])) . "\n";
+$data = $response->getRawBody();
+
+echo $data['login'] . PHP_EOL;
+echo $response->getCode() . PHP_EOL;
 ```
 
+### Fluent request builder
+
 ```php
 <?php
 
-// BasicAuth example with MultiCurl for async requests.
+declare(strict_types=1);
 
-/** @var \Httpful\Response[] $results */
-$results = [];
-$multi = new \Httpful\ClientMulti(
-    static function (\Httpful\Response $response, \Httpful\Request $request) use (&$results) {
-        $results[] = $response;
-    }
+use Httpful\Request;
+
+$response = Request::get('https://api.github.com/repos/voku/httpful')
+    ->expectsJson()
+    ->withAddedHeader('Accept', 'application/vnd.github+json')
+    ->withAddedHeader('User-Agent', 'httpful-docs-example')
+    ->followRedirects()
+    ->send();
+
+$repository = $response->getRawBody();
+
+echo $repository['full_name'] . PHP_EOL;
+```
+
+## Common workflows
+
+### Send JSON payloads
+
+```php
+<?php
+
+$response = \Httpful\Request::post('https://api.example.com/items')
+    ->sendsJson()
+    ->expectsJson()
+    ->body(['name' => 'demo', 'status' => 'active'])
+    ->send();
+```
+
+### Authentication
+
+```php
+<?php
+
+$response = \Httpful\Request::get('https://api.example.com/private')
+    ->withBasicAuth('username', 'password')
+    ->send();
+
+$bearerResponse = \Httpful\Request::get('https://api.example.com/private')
+    ->withBearerToken('secret-token')
+    ->send();
+```
+
+### Transport controls
+
+```php
+<?php
+
+$response = \Httpful\Request::get('https://api.example.com/items')
+    ->expectsJson()
+    ->withRetry(3)
+    ->withRetryDelay(1)
+    ->withRetryMaxTime(10)
+    ->withCookieJar('/tmp/httpful.cookies')
+    ->withCaBundle('/etc/ssl/certs/ca-bundle.crt')
+    ->withHttp2PriorKnowledge()
+    ->withTimeout(15)
+    ->send();
+```
+
+### File downloads
+
+```php
+<?php
+
+$response = \Httpful\Client::download(
+    'https://example.com/archive.zip',
+    '/tmp/archive.zip',
+    30
 );
 
-$request = (new \Httpful\Request(\Httpful\Http::GET))
-    ->withUriFromString('https://postman-echo.com/basic-auth')
-    ->withBasicAuth('postman', 'password');
-
-$multi->add_request($request);
-// $multi->add_request(...); // add more calls here
-
-$multi->start();
-
-// DEBUG
-//print_r($results);
+echo $response->getCode() . PHP_EOL;
 ```
+
+## Async and parallel requests
+
+### Promise-based async request
 
 ```php
 <?php
@@ -101,99 +145,141 @@ $promise = \Httpful\Request::get('https://api.example.com/items')
 
 $response = $promise->wait();
 
-echo $response->getCode() . "\n";
+echo $response->getCode() . PHP_EOL;
 ```
+
+### Parallel requests with `ClientMulti`
 
 ```php
 <?php
 
-$response = \Httpful\Request::get('https://api.example.com/items')
-    ->withBearerToken('secret-token')
-    ->withRetry(3)
-    ->withRetryDelay(1)
-    ->withRetryMaxTime(10)
-    ->withCookieJar('/tmp/httpful.cookies')
-    ->withCaBundle('/etc/ssl/certs/ca-bundle.crt')
-    ->withHttp2PriorKnowledge()
-    ->send();
+$results = [];
+$multi = new \Httpful\ClientMulti(
+    static function (\Httpful\Response $response, \Httpful\Request $request) use (&$results): void {
+        $results[] = [
+            'uri' => (string) $request->getUri(),
+            'status' => $response->getCode(),
+        ];
+    }
+);
 
-echo $response->getEffectiveUrl() . "\n";
-echo $response->getTransferHttpVersion() . "\n";
-echo $response->getTotalTime() . "\n";
+$multi
+    ->add_get('https://postman-echo.com/get?name=httpful')
+    ->add_get('https://postman-echo.com/get?name=parallel');
+
+$multi->start();
+
+var_dump($results);
 ```
 
-# Installation
+## Response handling
 
-```shell
-composer require voku/httpful
-```
+`Httpful\Response` implements `Psr\Http\Message\ResponseInterface` and keeps parsed and raw accessors available:
 
-Requires PHP 8.0+.
-Compared with 3.1.0, the only intended breaking change is the PHP 8.0 minimum; the new request and response helpers are additive.
+- `getCode()` for the HTTP status code
+- `getBody()` for the PSR-7 stream
+- `getRawBody()` for the parsed body value
+- `getHeaders()` and `hasHeader()` for response metadata
+- `getMetaData()` for curl transfer details such as protocol version and timing data
 
-## Handlers
+## PSR support
 
-We can override the default parser configuration options be registering
-a parser with different configuration options for a particular mime type
+Httpful ships with interfaces and helpers that make it usable in PSR-based applications:
 
-Example: setting a namespace for the XMLHandler parser
-```php
-$conf = ['namespace' => 'http://example.com'];
-\Httpful\Setup::registerMimeHandler(\Httpful\Mime::XML, new \Httpful\Handlers\XmlMimeHandler($conf));
-```
+- `Httpful\Client` implements `Psr\Http\Client\ClientInterface`
+- `Httpful\ClientPromise` implements `Http\Client\HttpAsyncClient`
+- `Httpful\Request` implements `Psr\Http\Message\RequestInterface`
+- `Httpful\Response` implements `Psr\Http\Message\ResponseInterface`
+- Request and response factories are available for PSR-17 style integrations
 
----
+## Custom mime handlers
 
-Handlers are simple classes that are used to parse response bodies and serialize request payloads.  All Handlers must implement the `MimeHandlerInterface` interface and implement two methods: `serialize($payload)` and `parse($response)`.  Let's build a very basic Handler to register for the `text/csv` mime type.
+Register a custom parser or serializer when you need special handling for a content type.
 
 ```php
 <?php
 
-class SimpleCsvMimeHandler extends \Httpful\Handlers\DefaultMimeHandler
+use Httpful\Handlers\DefaultMimeHandler;
+use Httpful\Mime;
+use Httpful\Setup;
+
+final class SimpleCsvMimeHandler extends DefaultMimeHandler
 {
-    /**
-     * Takes a response body, and turns it into
-     * a two dimensional array.
-     *
-     * @param string $body
-     *
-     * @return array
-     */
     public function parse($body)
     {
-        return \str_getcsv($body);
+        return str_getcsv($body);
     }
 
-    /**
-     * Takes a two dimensional array and turns it
-     * into a serialized string to include as the
-     * body of a request
-     *
-     * @param mixed $payload
-     *
-     * @return string
-     */
     public function serialize($payload)
     {
-        // init
         $serialized = '';
 
         foreach ($payload as $line) {
-            $serialized .= '"' . \implode('","', $line) . '"' . "\n";
+            $serialized .= '"' . implode('","', $line) . '"' . "\n";
         }
 
         return $serialized;
     }
 }
 
-\Httpful\Setup::registerMimeHandler(\Httpful\Mime::CSV, new SimpleCsvMimeHandler());
-
+Setup::registerMimeHandler(Mime::CSV, new SimpleCsvMimeHandler());
 ```
 
-Finally, you must register this handler for a particular mime type.
+Use `Setup::registerGlobalMimeHandler()` to override the default handler and `Setup::registerGlobalErrorHandler()` to install a callable or PSR-3 logger for transport failures.
 
-```
-\Httpful\Setup::register(Mime::CSV, new SimpleCsvHandler());
+## Key Files Detector helper prompt
+
+Use this prompt when you want an assistant to find the most relevant implementation files quickly:
+
+```text
+You are reviewing the voku/httpful repository.
+
+Start with these key files and explain why each one matters before exploring anything else:
+- README.md
+- composer.json
+- .github/workflows/ci.yml
+- src/Httpful/Client.php
+- src/Httpful/Request.php
+- src/Httpful/Response.php
+- src/Httpful/Factory.php
+- src/Httpful/ClientMulti.php
+- src/Httpful/Setup.php
+- src/Httpful/Mime.php
+- tests/Httpful/
+- examples/
+
+Then identify any additional files that are critical for the task at hand, grouped by API surface, transport internals, test coverage, and release automation.
+Return the result as a prioritized checklist with short explanations.
 ```
 
-After this registering the handler in your source code, by default, any responses with a mime type of text/csv should be parsed by this handler.
+## Repository layout
+
+- `/src/Httpful` — library source code
+- `/tests/Httpful` — PHPUnit coverage for the public API and curl integrations
+- `/examples` — runnable usage samples
+- `/.github/workflows/ci.yml` — continuous integration workflow
+- `/README.md` — primary user-facing documentation
+
+## Development
+
+Install dependencies and run the same baseline checks used during development:
+
+```bash
+composer validate --strict
+composer dump-autoload -o
+composer audit
+php vendor/bin/phpunit -c phpunit.xml.dist
+php vendor/bin/phpstan analyse
+```
+
+When working on the documentation site locally:
+
+```bash
+npm install
+npm run dev
+npm run build
+```
+
+## License
+
+MIT. See [`LICENSE.txt`](LICENSE.txt).
