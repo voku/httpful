@@ -1,0 +1,29 @@
+{
+  "id": "finding.2026-08-16.242f29",
+  "task_id": "HTTPFUL-1",
+  "session": "httpful-34-dogfood",
+  "created_at": "2026-08-16T01:32:00+02:00",
+  "created_by": "dogfood-replay",
+  "scope": [
+    ".agent-loop/todo",
+    "voku/agent-kanban CLI"
+  ],
+  "observation": "The delegated board CLI exposed two internally inconsistent creation contracts: its option parser required --name=value syntax while sibling agent-loop namespaces accepted --name value, and card create could not set taskBrief even though board verify immediately requires taskBrief for a READY card.",
+  "evidence": [
+    {
+      "type": "runtime_observation",
+      "summary": "agent-loop board card claim HTTPFUL-1 --by \"Claude\" --move-to-doing reached agent-kanban and rejected the space-separated --by value form as a validation error."
+    },
+    {
+      "type": "runtime_observation",
+      "summary": "board card create produced a READY card, then board verify rejected that card for missing required taskBrief; --brief existed on card update but not card create."
+    }
+  ],
+  "hypothesis": "agent-kanban's CLI grammar and card-creation surface are not closed under the invariants its own verifier enforces.",
+  "validated_conclusion": "The consumer run demonstrated that a newly created board card can be invalid by construction and that delegated option syntax differs from the umbrella CLI's normal form; both are package-level CLI contract gaps.",
+  "confidence": "high",
+  "validation_status": "validated",
+  "status": "validated",
+  "sensitivity": "public",
+  "target_package": "voku/agent-kanban"
+}

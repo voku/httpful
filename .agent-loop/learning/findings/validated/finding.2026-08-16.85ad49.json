@@ -1,0 +1,29 @@
+{
+  "id": "finding.2026-08-16.85ad49",
+  "task_id": "HTTPFUL-1",
+  "session": "httpful-34-dogfood",
+  "created_at": "2026-08-16T01:36:00+02:00",
+  "created_by": "dogfood-replay",
+  "scope": [
+    "src/Httpful/Http.php",
+    ".agent-loop/map"
+  ],
+  "observation": "For the HTTP QUERY-method task, every ranked navigation lead pointed at URI query-string code rather than Http.php where the implementation belonged, because both lexical and semantic ranking collapsed 'QUERY method' into 'query string'. The briefing nevertheless labelled the leads INFERRED and explicitly required opening source before treating rank as evidence.",
+  "evidence": [
+    {
+      "type": "runtime_observation",
+      "summary": "Ranked leads included Uri::withQuery, Uri::composeComponents and Factory::createRequest while the decisive method classification change belonged in Http.php."
+    },
+    {
+      "type": "manual_verification",
+      "summary": "The generated briefing explicitly marked the ranking as inferred and warned not to cite rank as evidence, so the wrong ranking did not cause a wrong edit."
+    }
+  ],
+  "hypothesis": "The ranking signal cannot reliably distinguish an HTTP method named QUERY from URI query-string concepts when the task language shares the same token.",
+  "validated_conclusion": "The ranking was wrong for this real task but safely bounded by the existing evidence guidance; preserve this ambiguity as a regression case rather than widening search/context just to make one rank look better.",
+  "confidence": "medium",
+  "validation_status": "validated",
+  "status": "validated",
+  "sensitivity": "public",
+  "target_package": "voku/agent-map"
+}

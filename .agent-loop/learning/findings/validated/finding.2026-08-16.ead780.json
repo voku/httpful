@@ -1,0 +1,28 @@
+{
+  "id": "finding.2026-08-16.ead780",
+  "task_id": "HTTPFUL-1",
+  "session": "httpful-34-dogfood",
+  "created_at": "2026-08-16T01:35:00+02:00",
+  "created_by": "dogfood-replay",
+  "scope": [
+    ".agent-loop/recall/HTTPFUL-1"
+  ],
+  "observation": "The compiled Recall/review output spent context on duplicate navigation evidence and produced a persistent security warning from a substring match: system.md repeated the same php-symbols.json navigation fact four times, while blindspots matched 'auth' inside Request::hasBasicAuth even though the task did not touch credential handling and offered no acknowledgement path.",
+  "evidence": [
+    {
+      "type": "runtime_observation",
+      "summary": "HTTPFUL-1 system.md listed the same .agent-loop/map/php-symbols.json navigation fact four times."
+    },
+    {
+      "type": "runtime_observation",
+      "summary": "review blindspots emitted security_sensitive_context with marker auth because the map evidence contained Request::hasBasicAuth; the QUERY task did not modify authentication and the warning could not be cleared."
+    }
+  ],
+  "hypothesis": "Recall rendering lacks final deduplication for repeated navigation facts and security marker detection uses substring presence rather than a bounded symbol/term match with review acknowledgement semantics.",
+  "validated_conclusion": "The real consumer briefing contained deterministic avoidable context duplication and a reproducible false-positive review warning, reducing signal quality without adding task evidence.",
+  "confidence": "high",
+  "validation_status": "validated",
+  "status": "validated",
+  "sensitivity": "public",
+  "target_package": "voku/agent-recall-compiler"
+}

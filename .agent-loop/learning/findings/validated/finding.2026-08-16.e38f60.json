@@ -1,0 +1,35 @@
+{
+  "id": "finding.2026-08-16.e38f60",
+  "task_id": "HTTPFUL-1",
+  "session": "httpful-34-dogfood",
+  "created_at": "2026-08-16T01:30:00+02:00",
+  "created_by": "dogfood-replay",
+  "scope": [
+    "tools/agent-loop",
+    ".claude",
+    "docs/agents/claude-hooks"
+  ],
+  "observation": "The documented isolated tool-project layout exposed three coupled projection failures in agent-loop 0.16.3: projected Claude hooks loaded the host root autoloader instead of the isolated tool runtime, projected skills hardcoded vendor/bin/agent-loop, and sync-hooks omitted helper files that hook entrypoints required.",
+  "evidence": [
+    {
+      "type": "runtime_observation",
+      "summary": "Running the projected Claude SessionStart hook loaded the host vendor/autoload.php and failed because voku\\AgentLoop\\AgentGuidance\\AgentDisciplineHook was unavailable there; the tool runtime lived under tools/agent-loop/vendor/."
+    },
+    {
+      "type": "runtime_observation",
+      "summary": "The projected skill/subagent assets contained 144 vendor/bin/agent-loop command references although this repository's installed binary is tools/agent-loop/vendor/bin/agent-loop."
+    },
+    {
+      "type": "runtime_observation",
+      "summary": "A hook bundle whose entrypoints required hooks/runtime.php passed init validate and sync, but sync copied only the registered entrypoints; execution then failed because runtime.php was missing."
+    }
+  ],
+  "hypothesis": "Agent asset projection assumes the default root Composer layout instead of projecting the resolved CLI/runtime location and the complete executable hook bundle.",
+  "validated_conclusion": "agent-loop 0.16.3 was not portable to its documented isolated tool-project layout without host-owned workarounds: runtime/CLI locations and hook dependencies need to be projected from the actual install rather than assumed.",
+  "confidence": "high",
+  "validation_status": "validated",
+  "status": "validated",
+  "sensitivity": "public",
+  "target_package": "voku/agent-loop",
+  "tested_ref": "0.16.3"
+}

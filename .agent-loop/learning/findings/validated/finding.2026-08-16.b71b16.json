@@ -1,0 +1,35 @@
+{
+  "id": "finding.2026-08-16.b71b16",
+  "task_id": "HTTPFUL-1",
+  "session": "httpful-34-dogfood",
+  "created_at": "2026-08-16T01:34:00+02:00",
+  "created_by": "dogfood-replay",
+  "scope": [
+    "AGENTS.md",
+    "src/Init",
+    "src/Workflow"
+  ],
+  "observation": "The released agent-loop 0.16.3 router/status surface contradicted the executable release in three places: the router expected Activation/Next status sections that were absent, it documented sync-instructions although that command/asset was not shipped, and workflow status reported ready_to_close even with failed validation evidence that workflow close correctly refused.",
+  "evidence": [
+    {
+      "type": "runtime_observation",
+      "summary": "agent-loop 0.16.3 init status printed source paths, aliases, manifests and stale entries but not the Activation/Next sections its router told agents to consume."
+    },
+    {
+      "type": "runtime_observation",
+      "summary": "The 0.16.3 router described init sync-instructions and a package-managed instruction block, but the released command and source asset were absent."
+    },
+    {
+      "type": "runtime_observation",
+      "summary": "workflow status reported Overall: ready_to_close and suggested workflow close while a failed observation for the declared phpunit validation command was recorded; workflow close then refused on that same evidence."
+    }
+  ],
+  "hypothesis": "Release-facing instructions and the status projection were not derived from the same executable command/gate authorities used by the installed release and workflow close.",
+  "validated_conclusion": "The consumer run demonstrated release/status drift in agent-loop 0.16.3: an agent following published/router output could be directed toward nonexistent commands or a close operation that the authoritative gate would reject.",
+  "confidence": "high",
+  "validation_status": "validated",
+  "status": "validated",
+  "sensitivity": "public",
+  "target_package": "voku/agent-loop",
+  "tested_ref": "0.16.3"
+}

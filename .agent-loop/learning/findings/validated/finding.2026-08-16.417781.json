@@ -1,0 +1,30 @@
+{
+  "id": "finding.2026-08-16.417781",
+  "task_id": "HTTPFUL-1",
+  "session": "httpful-34-dogfood",
+  "created_at": "2026-08-16T01:37:00+02:00",
+  "created_by": "dogfood-replay",
+  "scope": [
+    ".agent-loop/learning/findings/validated",
+    "docs/agents/agent-loop-findings.md"
+  ],
+  "observation": "The HTTPFUL-1 dogfood run produced reproducible evidence about agent-loop/agent-* tooling, but agent-loop 0.16.3 had no governed way to mark an ordinary Finding as being about an external package and hand those records upstream, so the evidence was stored in a parallel Markdown document.",
+  "evidence": [
+    {
+      "type": "issue_reference",
+      "issue": "voku/agent-loop#144"
+    },
+    {
+      "type": "runtime_observation",
+      "summary": "Thirteen tooling observations were written to docs/agents/agent-loop-findings.md because the host Learning root had no target-aware export path."
+    }
+  ],
+  "hypothesis": "Dogfood feedback does not need a new ToolingFinding lifecycle; ordinary Findings need an optional external subject plus read-only owner-side export, with Run provenance reused from existing learning decisions.",
+  "validated_conclusion": "The 0.16.3 consumer workflow lacked a governed upstream handoff for tooling findings; the demonstrated gap is external target identity/export on the existing Finding lifecycle, not a second feedback store or promotion pipeline.",
+  "confidence": "high",
+  "validation_status": "validated",
+  "status": "validated",
+  "sensitivity": "public",
+  "target_package": "voku/agent-loop",
+  "tested_ref": "0.16.3"
+}
