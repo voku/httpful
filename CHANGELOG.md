@@ -1,5 +1,9 @@
 # Changelog
 
+## unreleased
+
+- add the `QUERY` HTTP method ([RFC 10008](https://www.rfc-editor.org/rfc/rfc10008.html)): `Http::QUERY`, `Request::query()`, `Client::query()` / `Client::query_request()` and `ClientMulti::add_query()`. `QUERY` carries the query in the request body like `POST`, but is classified as safe and idempotent, so it is reported by `Http::safeMethods()` and `Http::idempotentMethods()`.
+
 ## 3.2.0 (2026-05-05)
 
 - breaking change: require PHP 8.0+

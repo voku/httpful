@@ -14,3 +14,9 @@
 /phpcs.php_cs export-ignore
 /phpstan.neon export-ignore
 /phpunit.xml.dist export-ignore
+/.agent-loop export-ignore
+/tools export-ignore
+/docs export-ignore
+/AGENTS.md export-ignore
+/CLAUDE.md export-ignore
+/.claude export-ignore

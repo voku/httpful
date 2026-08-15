@@ -13,7 +13,7 @@ Forked some years ago from [nategood/httpful](https://github.com/nategood/httpfu
 
 Features
 
- - Readable HTTP Method Support (GET, PUT, POST, DELETE, HEAD, PATCH and OPTIONS)
+ - Readable HTTP Method Support (GET, PUT, POST, DELETE, HEAD, PATCH, OPTIONS and QUERY)
  - Custom Headers
  - Automatic "Smart" Parsing
  - Automatic Payload Serialization

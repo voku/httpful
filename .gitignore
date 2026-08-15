@@ -14,3 +14,24 @@ server.log
 # Composer
 vendor
 composer.lock
+# Agent tooling (isolated tool project, PHP >= 8.3)
+/tools/agent-loop/vendor
+/tools/agent-loop/composer.lock
+
+# agent-map / phpstan scratch cache
+/.agent-map
+
+# agent-loop workflow state.
+# Tracked: the Kanban board, the task briefs, the config and durable validated findings.
+# Ignored: everything run-local or derived (map index, compiled recall, run manifests,
+# working sessions, contracts, accepted risks). A checkout without them still passes
+# `agent-loop verify`; rebuild the map with `map build` + `map search-index build`.
+/.agent-loop/*
+!/.agent-loop/init.json
+!/.agent-loop/todo/
+!/.agent-loop/tasks/
+!/.agent-loop/learning/
+/.agent-loop/learning/*
+!/.agent-loop/learning/findings/
+/.agent-loop/learning/findings/*
+!/.agent-loop/learning/findings/validated/

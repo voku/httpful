@@ -1,0 +1,10 @@
+{
+    "version": 1,
+    "kind": "hooks",
+    "agent": "claude",
+    "entries": [
+        "hooks/context.php",
+        "hooks/pre_tool_use_policy.php",
+        "settings.json#hooks"
+    ]
+}

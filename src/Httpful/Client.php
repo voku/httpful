@@ -186,6 +186,33 @@ class Client implements ClientInterface
     }
 
     /**
+     * Send a QUERY request (RFC 10008): a safe, idempotent query carried in the
+     * request body.
+     *
+     * @param string     $uri
+     * @param mixed|null $payload
+     * @param string     $mime
+     *
+     * @return Response
+     */
+    public static function query(string $uri, $payload = null, string $mime = Mime::PLAIN): Response
+    {
+        return self::query_request($uri, $payload, $mime)->send();
+    }
+
+    /**
+     * @param string     $uri
+     * @param mixed|null $payload
+     * @param string     $mime
+     *
+     * @return Request
+     */
+    public static function query_request(string $uri, $payload = null, string $mime = Mime::PLAIN): Request
+    {
+        return Request::query($uri, $payload, $mime);
+    }
+
+    /**
      * @param string     $uri
      * @param mixed|null $payload
      * @param string     $mime

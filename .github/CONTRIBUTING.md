@@ -20,3 +20,20 @@ All pull requests must be accompanied by passing PHPUnit unit tests and
 complete code coverage.
 
 [Learn about PHPUnit](https://github.com/sebastianbergmann/phpunit/)
+
+## Agent tooling (optional)
+
+Coding agents working in this repository use
+[`voku/agent-loop`](https://github.com/voku/agent-loop) for a governed change workflow. It is
+**not** a root dependency: httpful supports PHP `^8.0` while agent-loop requires `^8.3`, so it
+lives in an isolated tool project and never affects `composer install` for contributors or CI.
+
+```bash
+composer install --working-dir=tools/agent-loop   # needs PHP >= 8.3
+composer agent-loop -- board summary
+```
+
+Workflow state lives under `.agent-loop/` (task board, contracts, sessions, learning). See
+[`AGENTS.md`](../AGENTS.md) for the router and
+[`docs/agents/agent-loop-findings.md`](../docs/agents/agent-loop-findings.md) for known
+friction with the tooling itself.

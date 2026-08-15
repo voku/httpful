@@ -1873,6 +1873,33 @@ class Request implements \IteratorAggregate, RequestInterface
     }
 
     /**
+     * HTTP Method Query (RFC 10008)
+     *
+     * QUERY carries the query itself in the request body, but is safe and
+     * idempotent. RFC 10008 requires the server to reject the request when the
+     * Content-Type is missing or inconsistent with the content, so callers
+     * should pass the MIME type that describes $payload.
+     *
+     * @param string|UriInterface $uri
+     * @param mixed               $payload data to send in body of request
+     * @param string              $mime    MIME to use for Content-Type
+     *
+     * @return static
+     */
+    public static function query($uri, $payload = null, ?string $mime = null): self
+    {
+        if ($uri instanceof UriInterface) {
+            $uri = (string) $uri;
+        }
+
+        /** @var static $request */
+        $request = new static(Http::QUERY);
+        $request = $request->withUriFromString($uri);
+
+        return $request->_setBody($payload, null, $mime);
+    }
+
+    /**
      * HTTP Method Post
      *
      * @param string|UriInterface $uri

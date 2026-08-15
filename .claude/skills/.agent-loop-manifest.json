@@ -1,0 +1,24 @@
+{
+    "version": 1,
+    "kind": "skills",
+    "agent": "claude",
+    "entries": [
+        "agent-guidance-maintenance",
+        "agent-learning",
+        "agent-loop-code-review",
+        "agent-loop-discipline",
+        "agent-loop-dogfood",
+        "agent-loop-investigate",
+        "agent-loop-l2-context",
+        "agent-loop-learning-boundary",
+        "agent-loop-review-close",
+        "agent-loop-simplify-audit",
+        "agent-loop-simplify-review",
+        "agent-loop-surgical-edit",
+        "agent-loop-task-progress",
+        "agent-loop-task-start",
+        "agent-loop-workflow",
+        "agent-recall-compiler-maintainer",
+        "agent-recall-consumer"
+    ]
+}

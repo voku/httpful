@@ -1,0 +1,10 @@
+{
+    "version": 1,
+    "kind": "subagents",
+    "agent": "claude",
+    "entries": [
+        "agent-loop-code-reviewer.md",
+        "agent-loop-investigator.md",
+        "agent-loop-surgical-builder.md"
+    ]
+}

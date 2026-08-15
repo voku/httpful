@@ -23,6 +23,13 @@ class Http
 
     const PUT = 'PUT';
 
+    /**
+     * The QUERY method (RFC 10008) asks a resource to perform a query described
+     * by the request content. Unlike POST it is safe and idempotent, and unlike
+     * GET it carries a request body.
+     */
+    const QUERY = 'QUERY';
+
     const TRACE = 'TRACE';
 
     const HTTP_1_0 = '1.0';
@@ -47,6 +54,7 @@ class Http
             self::OPTIONS,
             self::TRACE,
             self::PATCH,
+            self::QUERY,
         ];
     }
 
@@ -63,6 +71,7 @@ class Http
             self::OPTIONS,
             self::TRACE,
             self::PATCH,
+            self::QUERY,
         ];
     }
 
@@ -144,6 +153,7 @@ class Http
             self::GET,
             self::OPTIONS,
             self::TRACE,
+            self::QUERY,
         ];
     }
 

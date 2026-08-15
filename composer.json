@@ -65,5 +65,8 @@
     "allow-plugins": {
       "infection/extension-installer": false
     }
+  },
+  "scripts": {
+    "agent-loop": "tools/agent-loop/vendor/bin/agent-loop"
   }
 }

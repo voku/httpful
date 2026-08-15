@@ -244,6 +244,28 @@ class ClientMulti
     }
 
     /**
+     * Queue a QUERY request (RFC 10008).
+     *
+     * @param string     $uri
+     * @param mixed|null $payload
+     * @param string     $mime
+     *
+     * @return $this
+     */
+    public function add_query(string $uri, $payload = null, string $mime = Mime::PLAIN)
+    {
+        $request = Request::query($uri, $payload, $mime);
+        $curl = $request->_curlPrep()->_curl();
+
+        if ($curl) {
+            $curl->request = $request;
+            $this->curlMulti->addCurl($curl);
+        }
+
+        return $this;
+    }
+
+    /**
      * @param string     $uri
      * @param mixed|null $payload
      * @param string     $mime
