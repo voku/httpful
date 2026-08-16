@@ -12,7 +12,10 @@ sealed input before editing code.
 
 ## Fast Path
 
-Prefer the governed Contract path:
+Prefer the governed Contract path. If the task id already exists or may have
+durable state, inspect `workflow status <task-id> --format=json` before PLAN and
+continue or re-plan from that persisted state. Skip that preflight only for a
+genuinely new task id; do not hide an unexpected status failure with a fallback.
 
 ```bash
 tools/agent-loop/vendor/bin/agent-loop workflow plan <task-id> \
@@ -22,6 +25,7 @@ tools/agent-loop/vendor/bin/agent-loop workflow plan <task-id> \
   --goal "Implement the approved task." \
   --non-goal "Do not widen the task without a revised brief." \
   --acceptance "The required user-visible outcome remains present." \
+  --behavior-anchor "<runtime/request/consumer seam>" \
   --validation "vendor/bin/phpunit tests/FocusedTest.php"
 ```
 

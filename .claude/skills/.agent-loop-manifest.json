@@ -11,8 +11,8 @@
             "source_id": "voku/agent-loop:skill:agent-guidance-maintenance",
             "semantic_owner": "voku/agent-loop",
             "source_path": "/home/runner/work/httpful/httpful/tools/agent-loop/vendor/voku/agent-loop/docs/agents/skills/agent-guidance-maintenance",
-            "source_sha256": "sha256:5c24d2226a7af17159b722bff172e734efd014c573c06daff5cbf473c1bb10cc",
-            "representation_sha256": "sha256:dae69493368ce70b3117f2d55f199e70fd7feef8ea648f6174162f05aceec7df",
+            "source_sha256": "sha256:e5f27f872cc831a4bc2fce480a7f94c86521758efe301e33610c4eaf4e67a7fb",
+            "representation_sha256": "sha256:8dddeacb0299e3c22063905418262844b8318ea195b689d26638fb3a7f0836f6",
             "adopted": false
         },
         {
@@ -137,8 +137,8 @@
             "source_id": "voku/agent-loop:skill:agent-loop-task-start",
             "semantic_owner": "voku/agent-loop",
             "source_path": "/home/runner/work/httpful/httpful/tools/agent-loop/vendor/voku/agent-loop/docs/agents/skills/agent-loop-task-start",
-            "source_sha256": "sha256:7eba87fcd600cece3e5bb03a569951bb59b970e11869e0845e0a0ddc375670c5",
-            "representation_sha256": "sha256:1afa77ebc1df3a020358b366757120a62296c9f73c5f39b046c40279ab236b15",
+            "source_sha256": "sha256:a32eaf1702d9e1c989ea157c7c4ac71863ae6ffe2d1859062af6c9eb7a0727fa",
+            "representation_sha256": "sha256:e90f367f4aad335e1187413283f713004cdcd2d853614943d3e8e9c833c0c7e3",
             "adopted": false
         },
         {
