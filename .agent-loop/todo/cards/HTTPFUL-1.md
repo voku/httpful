@@ -7,7 +7,7 @@
 - **Created:** 2026-08-15T16:50:32+00:00
 - **Updated:** 2026-08-15T17:01:24+00:00
 - **Summary:** Add the safe, idempotent, body-carrying QUERY method to Httpful\Http, Request and Client.
-- **Next:** Run the governed plan/approve cycle, then implement in src/Httpful/Http.php, Request.php and Client.php with tests.
+- **Next:** Resolve the remaining PR review findings, rerun the current validation, and merge only after the current head is review-clean.
 - **Validation:** vendor/bin/phpunit && vendor/bin/phpstan analyse
 - **Priority:** 1
 - **Claim:** Claude (agent-loop dogfood)|claimed=2026-08-15T16:52:40+00:00|expires=-|rev=2363ff56927bdcf3a9648d9fa4ffeeae30c4f815e618effa32fa0cfa8530b3c2
