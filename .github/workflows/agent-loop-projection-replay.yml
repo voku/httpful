@@ -1,0 +1,84 @@
+name: Agent-loop projection replay
+
+on:
+  push:
+    branches: [claude/agent-loop-query-workflow-bhqeaw]
+    paths:
+      - '.github/workflows/agent-loop-projection-replay.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+          tools: composer:v2
+
+      - name: Install exact merged agent-loop candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          php <<'PHP'
+          <?php
+          $path = 'tools/agent-loop/composer.json';
+          $data = json_decode((string) file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);
+          $data['repositories'] = [[
+              'type' => 'vcs',
+              'url' => 'https://github.com/voku/agent-loop',
+          ]];
+          $data['require']['voku/agent-loop'] = 'dev-main#443f6e0f8ce618b6093de7311be61bf57931d4d5';
+          file_put_contents($path, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . "\n");
+          PHP
+          composer install --working-dir=tools/agent-loop --no-interaction --prefer-dist
+
+          cat > tools/agent-loop/composer.json <<'JSON'
+          {
+              "//": "Isolated tool project. agent-loop requires PHP ^8.3, while httpful itself still supports PHP ^8.0, so it must not become a root require-dev dependency. Exact dev pin is temporary dogfood evidence for the merged current projection candidate; return to ^0.16 after its release tag exists.",
+              "require": {
+                  "voku/agent-loop": "dev-main#443f6e0f8ce618b6093de7311be61bf57931d4d5"
+              },
+              "config": {
+                  "allow-plugins": false,
+                  "sort-packages": true
+              }
+          }
+          JSON
+
+      - name: Regenerate package-owned Claude assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          composer agent-loop -- init install-assets --agent=claude --force --skip-git-config | tee /tmp/agent-loop-install-assets.log
+          composer agent-loop -- init validate --kind=all --agent=claude | tee /tmp/agent-loop-validate.log
+          composer agent-loop -- init status | tee /tmp/agent-loop-status.log
+
+      - name: Capture exact generated patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check
+          mkdir -p build/agent-loop-projection
+          git status --short > build/agent-loop-projection/status.txt
+          git diff --stat > build/agent-loop-projection/stat.txt
+          git diff --binary > build/agent-loop-projection/projection.patch
+          cp /tmp/agent-loop-install-assets.log build/agent-loop-projection/install-assets.log
+          cp /tmp/agent-loop-validate.log build/agent-loop-projection/validate.log
+          cp /tmp/agent-loop-status.log build/agent-loop-projection/status-command.log
+          test -s build/agent-loop-projection/projection.patch
+
+      - name: Upload projection evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-loop-projection-443f6e0
+          path: build/agent-loop-projection
+          if-no-files-found: error
