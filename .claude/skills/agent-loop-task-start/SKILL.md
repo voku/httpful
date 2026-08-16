@@ -15,7 +15,7 @@ sealed input before editing code.
 Prefer the governed Contract path:
 
 ```bash
-vendor/bin/agent-loop workflow plan <task-id> \
+tools/agent-loop/vendor/bin/agent-loop workflow plan <task-id> \
   --by <actor> \
   --file <path-to-file-1> \
   --file <path-to-file-2> \
@@ -26,15 +26,46 @@ vendor/bin/agent-loop workflow plan <task-id> \
 ```
 
 `workflow plan` creates or revises a candidate Contract. It deliberately creates
-neither a Session nor a Run and does **not** compile Recall yet. A named human
-must approve the exact revision before implementation; approval prepares the
-governed Run/Session and compiles Recall from that sealed Contract. Inspect the
-result immediately:
+neither a Session nor a Run and does **not** compile Recall yet.
+
+### Re-planning an active governed Run
+
+`PLAN` re-entry is a supersession handoff, not an in-place mutation of the
+current Run. If scope or task policy changes while a governed Session is active:
+
+1. stop using the old Contract as implementation authority;
+2. close that Session with `session close <session-id> --status dropped`;
+3. rerun `workflow plan <task-id> ...` with the corrected durable intent;
+4. obtain named human approval for the new Contract revision;
+5. let `workflow approve` create the replacement Session/Run and archive the
+   superseded Run evidence.
+
+If durable intent did **not** change, continue the existing Run instead. Never
+close a Session merely to bypass a gate, and never reuse one Session across two
+Contract revisions.
+
+When ranked map evidence is expected, establish both the semantic map and its
+separate Search index **before approval**:
 
 ```bash
-vendor/bin/agent-loop workflow approve <task-id> --by <human-actor>
-vendor/bin/agent-loop workflow context <task-id> --max-lines 120 --max-bytes 12000
-vendor/bin/agent-loop workflow status <task-id>
+tools/agent-loop/vendor/bin/agent-loop map build --paths=src,tests
+tools/agent-loop/vendor/bin/agent-loop map search-index build
+tools/agent-loop/vendor/bin/agent-loop map summary
+```
+
+`map build` does not create `<map-root>/search.sqlite`. `workflow approve`
+compiles governed Recall immediately, so an index built afterwards cannot
+contribute ranked map evidence to that first briefing. Resolve `map_root` with
+`tools/agent-loop/vendor/bin/agent-loop init paths --format=json` instead of assuming its location.
+
+A named human must approve the exact revision before implementation; approval
+prepares the governed Run/Session and compiles Recall from that sealed Contract.
+Inspect the result immediately:
+
+```bash
+tools/agent-loop/vendor/bin/agent-loop workflow approve <task-id> --by <human-actor>
+tools/agent-loop/vendor/bin/agent-loop workflow context <task-id> --max-lines 120 --max-bytes 12000
+tools/agent-loop/vendor/bin/agent-loop workflow status <task-id>
 ```
 
 ## Preserve Acceptance Intent
@@ -131,32 +162,38 @@ The initial `--file` values become the approved scope unless explicit
 a new approval before working outside the current scope or changing required
 acceptance intent.
 
-## Optional Map Preflight
+## Map Maintenance After Start
 
-When source navigation would otherwise require broad reads, build the compact
-map before rendering workflow context:
+The initial map/Search preflight belongs before approval, as shown in the fast
+path above. After a branch switch or source change, keep the semantic map current
+without paying for a full rebuild:
 
 ```bash
-vendor/bin/agent-loop map build --paths=src,tests
-vendor/bin/agent-loop map refresh
-vendor/bin/agent-loop map stale
+tools/agent-loop/vendor/bin/agent-loop map refresh
+tools/agent-loop/vendor/bin/agent-loop map stale
 ```
 
-Build the whole scope once and keep it current with `map refresh`, which
-re-analyses only changed or new files: a full rebuild of a large repository
-costs minutes, a refresh after a normal branch switch costs seconds. Keep
-`--paths` on directories. PHPStan disables its result cache when it is handed
+`map refresh` re-analyses only changed or new files. Keep `--paths` on
+directories for full builds. PHPStan disables its result cache when it is handed
 individual files, so a file-list scope pays the full cost every single time.
+
+If a refreshed map must feed a later approval or Recall recompile, rebuild the
+Search index first:
+
+```bash
+tools/agent-loop/vendor/bin/agent-loop map search-index build
+```
 
 The map output (`agent-loop init paths` reports `map_root`) is generated
 navigation state. Confirm it is ignored; never force-add the index. `workflow
-context` reads an existing index but never builds one itself.
+context` reads existing generated evidence but never builds a map or Search
+index itself.
 
 ## Validation After Start
 
 ```bash
-vendor/bin/agent-loop workflow status <task-id>
-vendor/bin/agent-loop verify
+tools/agent-loop/vendor/bin/agent-loop workflow status <task-id>
+tools/agent-loop/vendor/bin/agent-loop verify
 ```
 
 `workflow status` confirms the Session, Run, Recall, Contract, and approval state.
@@ -168,8 +205,8 @@ Use this only when you intentionally need direct control over Session and Recall
 outside the governed PLAN/APPROVE path:
 
 ```bash
-vendor/bin/agent-loop session start --task <task-id> --by <actor> --base-commit "$(git rev-parse HEAD)"
-vendor/bin/agent-loop recall compile \
+tools/agent-loop/vendor/bin/agent-loop session start --task <task-id> --by <actor> --base-commit "$(git rev-parse HEAD)"
+tools/agent-loop/vendor/bin/agent-loop recall compile \
   --task <task-id> \
   --file <path-to-file-1> \
   --file <path-to-file-2>
@@ -180,7 +217,7 @@ vendor/bin/agent-loop recall compile \
 not hardcode them. Inspect the project layout when you need the physical paths:
 
 ```bash
-vendor/bin/agent-loop init paths --format=json
+tools/agent-loop/vendor/bin/agent-loop init paths --format=json
 ```
 
 Without an explicit output override, Recall artifacts live below the configured
@@ -201,6 +238,7 @@ This skill owns:
 - the opening step of a governed agent-loop task in a consuming repository
 - choosing a task id, actor, file scope, non-goals, explicit acceptance criteria, behavior anchors, and validation commands
 - checking bounded prior/parallel work when the host exposes relevant history, and falsifying the strongest existing candidate before creating a competing implementation
+- establishing map and Search readiness before approval when ranked map evidence is expected
 - understanding that `workflow plan` creates/revises a candidate Contract and `workflow approve` creates the governed working state and compiles Recall from its approved revision
 - obtaining human approval before implementation and inspecting the bounded context
 - inspecting initial state with `workflow status` and `verify`

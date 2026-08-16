@@ -8,15 +8,32 @@ description: Evaluate agent guidance against real agent-* tasks with clean, comp
 Use this skill when changing agent guidance, hooks, recall, edit orchestration, or
 `agent-map` navigation behavior.
 
+## Dogfood Modes
+
+Do not call three different experiments the same thing:
+
+1. **Installer dogfood** proves package-owned skills, subagents, and hooks can be projected into a supported host. Presence is the result; it does not prove a running agent consumed them.
+2. **Deterministic lifecycle dogfood** proves Loop/Recall/Session/Learning mechanics and generated artifacts. A harness that never reads `system.md` cannot claim selected Recall guidance or an L2 prompt affected behavior.
+3. **Agent-host dogfood** is required for behavioral claims about skills, model guidance, or L2 meta-prompts. Install/project the assets before a clean host session starts, then record which generated briefing the agent actually received.
+
+Host boundaries remain real. A GitHub API/connector write does not execute a local
+`pre-commit` or `commit-msg` hook, and repository-local Codex/Claude skills do not
+magically become instructions for a different host. Record that capability as
+`not_exercised` rather than treating an absent mechanism as a passing experiment.
+
 ## Method
 
 1. Choose a real bounded task from `agent-loop`, `agent-map`, or a release-set fixture.
-2. Record baseline task, revision, model, tools, and validation.
-3. Run baseline and candidate guidance in separate clean sessions when the host supports it.
-4. Keep task wording, repository state, model, and validation identical.
-5. Compare observable artifacts, never hidden reasoning.
-6. If clean model A/B execution is unavailable, use an already-observed baseline from the same task or review and label that limitation explicitly.
-7. Change one guidance/runtime mechanism after each failure and rerun the affected case.
+2. Classify the run as installer, deterministic lifecycle, or agent-host dogfood before interpreting its result.
+3. Record baseline task, revision, model, host, tools, and validation.
+4. For agent-host dogfood, project the intended skills/hooks before starting a clean session. Do not install them mid-session and then claim they influenced earlier work.
+5. When map-backed context is under test, build the map and search index **before** `workflow approve`; approval compiles Recall and can only consume evidence that already exists.
+6. When an L2 operating prompt is under test, select it in the approved Contract and prove the agent consumed the generated `system.md`/validation briefing. Compilation plus a hand-written L1 proves wiring, not model use.
+7. Run baseline and candidate guidance in separate clean sessions when the host supports it.
+8. Keep task wording, repository state, model, and validation identical.
+9. Compare observable artifacts, never hidden reasoning.
+10. If clean model A/B execution is unavailable, use an already-observed baseline from the same task or review and label that limitation explicitly.
+11. Change one guidance/runtime mechanism after each failure and rerun the affected case.
 
 ## Real Issues
 
@@ -45,7 +62,10 @@ Record only observable values:
 - validation commands actually run;
 - response words and repeated explanations;
 - full diff/evidence inspected: yes/no;
-- review findings and regressions.
+- review findings and regressions;
+- projected skills/hooks: yes/no;
+- generated Recall briefing consumed by the acting agent: yes/no/not-observable;
+- local Git hooks eligible to execute in the host used: yes/no.
 
 Do not claim saved reasoning tokens without provider telemetry. Do not invent a
 counterfactual diff that was never produced.
@@ -68,7 +88,8 @@ Keep the candidate only when all are true:
 4. trivial tasks do not gain mandatory ceremony;
 5. observed failures are reflected in the guidance or runtime, not merely explained away;
 6. the report states, per external tool used, whether it materially helped, abstained, missed
-   required context, or produced noise.
+   required context, or produced noise;
+7. the report does not upgrade installer or deterministic-harness evidence into an unobserved agent-behavior claim.
 
 Installing and invoking a tool is not evidence that it improved the run.
 Presence is not usefulness.

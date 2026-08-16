@@ -20,7 +20,7 @@ skills/agent-recall-consumer/operating-prompts.json
 From an installed Composer dependency:
 
 ```text
-vendor/voku/agent-recall-compiler/skills/agent-recall-consumer/operating-prompts.json
+tools/agent-loop/vendor/voku/agent-recall-compiler/skills/agent-recall-consumer/operating-prompts.json
 ```
 
 Callers still select every recipe and provide every required argument explicitly. Bundling the catalog does not create hidden defaults.
@@ -39,8 +39,8 @@ Do not copy historical project-specific roots or ad-hoc output directories into 
 When `agent-loop` is installed, prefer its wrapper for project-owned path resolution:
 
 ```bash
-vendor/bin/agent-loop init paths --format=json
-vendor/bin/agent-loop recall compile --task PROJECT-123 --description "Implement region-aware navigation" --file src/Navigation/Menu.php
+tools/agent-loop/vendor/bin/agent-loop init paths --format=json
+tools/agent-loop/vendor/bin/agent-loop recall compile --task PROJECT-123 --description "Implement region-aware navigation" --file src/Navigation/Menu.php
 ```
 
 `agent-loop recall compile` resolves the configured Learning and Recall roots through the project layout. The standalone compiler uses the defaults above.
@@ -50,7 +50,7 @@ vendor/bin/agent-loop recall compile --task PROJECT-123 --description "Implement
 Minimal standalone compile:
 
 ```bash
-vendor/bin/agent-recall-compiler compile \
+tools/agent-loop/vendor/bin/agent-recall-compiler compile \
   --task PROJECT-123 \
   --description "Implement region-aware navigation" \
   --file src/Navigation/Menu.php
@@ -61,11 +61,11 @@ For behavioral work, provide concrete files and behavior anchors through the sup
 Use a bundled L2 recipe without copying its semantics elsewhere:
 
 ```bash
-vendor/bin/agent-recall-compiler compile \
+tools/agent-loop/vendor/bin/agent-recall-compiler compile \
   --task PROJECT-123 \
   --description "Review the current implementation as a first draft" \
   --file src/Navigation/Menu.php \
-  --operating-prompt-manifest vendor/voku/agent-recall-compiler/skills/agent-recall-consumer/operating-prompts.json \
+  --operating-prompt-manifest tools/agent-loop/vendor/voku/agent-recall-compiler/skills/agent-recall-consumer/operating-prompts.json \
   --operating-prompt '{"id":"adversarial-review","arguments":{"minimum_failure_modes":3}}'
 ```
 
@@ -76,7 +76,7 @@ Recipe selection and arguments are task policy. A selected recipe may be L1 or L
 For an immediate context-light falsification lens:
 
 ```bash
-vendor/bin/agent-recall-compiler review first-draft
+tools/agent-loop/vendor/bin/agent-recall-compiler review first-draft
 ```
 
 For project/task-backed review use the current `review` subcommands exposed by `agent-recall-compiler review --help` or the owning `agent-loop review` wrapper when Loop is installed. Review output is evidence for a decision, not approval by itself.
@@ -88,8 +88,8 @@ The bundled `adversarial-review` recipe requires actual falsification attempts. 
 Context-light reflection is a separate prompt surface:
 
 ```bash
-vendor/bin/agent-recall-compiler prompt future-work --scope project
-vendor/bin/agent-recall-compiler prompt future-work --scope task
+tools/agent-loop/vendor/bin/agent-recall-compiler prompt future-work --scope project
+tools/agent-loop/vendor/bin/agent-recall-compiler prompt future-work --scope task
 ```
 
 It does not mutate workflow state or imply that follow-up work must be created.
@@ -99,7 +99,7 @@ It does not mutate workflow state or imply that follow-up work must be created.
 To expose where an implementation had to guess because a usable source of truth was absent, run the opt-in L2 helper explicitly:
 
 ```bash
-vendor/bin/agent-recall-compiler prompt guidance-gaps
+tools/agent-loop/vendor/bin/agent-recall-compiler prompt guidance-gaps
 ```
 
 Give the returned L2 prompt to an agent that already has the current task/spec and repository context. It asks that agent to create a project-specific implementation prompt that maintains `implementation-notes.html` while work proceeds. The journal separates normal design decisions, deviations, tradeoffs, open questions, and actual guidance gaps. Treat the journal as task-local working evidence and do not commit it unless the approved task or harness explicitly requires that artifact.
@@ -113,7 +113,7 @@ This technique is intentionally not a default workflow stage. Do not automatical
 After actual implementation and validation, complete the generated `recall-log.draft.json` honestly, then append it to learning history:
 
 ```bash
-vendor/bin/agent-recall-compiler log-outcome \
+tools/agent-loop/vendor/bin/agent-recall-compiler log-outcome \
   --draft .agent-loop/recall/PROJECT-123/recall-log.draft.json \
   --by agent \
   --commit working-tree
@@ -122,7 +122,7 @@ vendor/bin/agent-recall-compiler log-outcome \
 When the project overrides the compact layout, pass the real `--root` and draft path rather than assuming defaults. With `agent-loop`, prefer the wrapper because it resolves the configured Learning root:
 
 ```bash
-vendor/bin/agent-loop recall log-outcome \
+tools/agent-loop/vendor/bin/agent-loop recall log-outcome \
   --draft <recall-root>/PROJECT-123/recall-log.draft.json \
   --by <actor> \
   --commit <sha>

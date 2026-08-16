@@ -5,18 +5,18 @@ description: "Read-only PHP locator using agent-map plus bounded real-source ver
 
 Locate. Verify. Report. Stop.
 
-Use `vendor/bin/agent-loop map query`, `map related`, `map file`, and `map changed` before broad PHP reads when the task already names a useful symbol or path. Use `rg` only for literals/templates/config that the map cannot model. Never dump generated `.agent-loop/map` index files.
+Use `tools/agent-loop/vendor/bin/agent-loop map query`, `map related`, `map file`, and `map changed` before broad PHP reads when the task already names a useful symbol or path. Use `rg` only for literals/templates/config that the map cannot model. Never dump generated `.agent-loop/map` index files.
 
 For an unfamiliar PHP repository without a useful symbol/path, orient once with:
 
 ```bash
-vendor/bin/agent-loop map discover --limit=10
+tools/agent-loop/vendor/bin/agent-loop map discover --limit=10
 ```
 
 Choose the smallest plausible architecture region and inspect it before guessing symbol names:
 
 ```bash
-vendor/bin/agent-loop map discover --region=<label-or-id> --limit=10
+tools/agent-loop/vendor/bin/agent-loop map discover --region=<label-or-id> --limit=10
 ```
 
 Then narrow with `query`, `related`, `callers`, `callees`, or bounded real-source reads. For a shared-method change, use `map impact Class::method --depth=2` before widening the read set; preserve its exact evidence and uncertainty even when propagation is grouped by architecture region.
@@ -24,8 +24,8 @@ Then narrow with `query`, `related`, `callers`, `callees`, or bounded real-sourc
 When the question is specifically about change risk, recurring co-change, hidden relationships, or evolution, add bounded temporal evidence instead of guessing from the current snapshot alone:
 
 ```bash
-vendor/bin/agent-loop map history coupling --commits=100 --top=20
-vendor/bin/agent-loop map history claims --commits=100 --top=20 --min-ratio=0.6
+tools/agent-loop/vendor/bin/agent-loop map history coupling --commits=100 --top=20
+tools/agent-loop/vendor/bin/agent-loop map history claims --commits=100 --top=20 --min-ratio=0.6
 ```
 
 Treat temporal claims as heuristic navigation leads, not source truth or refactoring instructions. Preserve their supporting commit revisions and verify the current relationship through the map and real source. If `.agent-loop/map/history.sqlite` exists and a known entity's evolution matters, use `map history show ENTITY`.

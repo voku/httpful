@@ -1,10 +1,48 @@
 {
-    "version": 1,
+    "version": 2,
     "kind": "hooks",
     "agent": "claude",
+    "required_capabilities": [
+        "pre-tool-guardrail",
+        "session-bootstrap",
+        "subagent-bootstrap"
+    ],
     "entries": [
-        "hooks/context.php",
-        "hooks/pre_tool_use_policy.php",
-        "settings.json#hooks"
+        {
+            "target": "hooks/context.php",
+            "source_id": "voku/agent-loop:hooks:claude:hooks/context.php",
+            "semantic_owner": "voku/agent-loop",
+            "source_path": "/home/runner/work/httpful/httpful/tools/agent-loop/vendor/voku/agent-loop/docs/agents/claude-hooks/hooks/context.php",
+            "source_sha256": "sha256:181248063bb656bfc3ba38b9e13e42719da6cf95dcf5ae3ec37b472a6ab04cd8",
+            "representation_sha256": "sha256:181248063bb656bfc3ba38b9e13e42719da6cf95dcf5ae3ec37b472a6ab04cd8",
+            "adopted": false
+        },
+        {
+            "target": "hooks/pre_tool_use_policy.php",
+            "source_id": "voku/agent-loop:hooks:claude:hooks/pre_tool_use_policy.php",
+            "semantic_owner": "voku/agent-loop",
+            "source_path": "/home/runner/work/httpful/httpful/tools/agent-loop/vendor/voku/agent-loop/docs/agents/claude-hooks/hooks/pre_tool_use_policy.php",
+            "source_sha256": "sha256:ae68104515f2ada4a970d81d1fdfa891ec6e87968d89b0fc36a4ea0bf457f168",
+            "representation_sha256": "sha256:ae68104515f2ada4a970d81d1fdfa891ec6e87968d89b0fc36a4ea0bf457f168",
+            "adopted": false
+        },
+        {
+            "target": "hooks/runtime.php",
+            "source_id": "voku/agent-loop:hooks:claude:hooks/runtime.php",
+            "semantic_owner": "voku/agent-loop",
+            "source_path": "/home/runner/work/httpful/httpful/tools/agent-loop/vendor/voku/agent-loop/docs/agents/claude-hooks/hooks/runtime.php",
+            "source_sha256": "sha256:d60a01035d86bf1c68c9da53a388e5afaaefce83b9551e3c1b3bfdb682c54c29",
+            "representation_sha256": "sha256:d60a01035d86bf1c68c9da53a388e5afaaefce83b9551e3c1b3bfdb682c54c29",
+            "adopted": false
+        },
+        {
+            "target": "settings.json#hooks",
+            "source_id": "voku/agent-loop:hooks:claude:settings-hooks",
+            "semantic_owner": "voku/agent-loop",
+            "source_path": "/home/runner/work/httpful/httpful/tools/agent-loop/vendor/voku/agent-loop/docs/agents/claude-hooks/hooks.json",
+            "source_sha256": "sha256:654bea7f0c1f8761c5154af92dadc00a59c4d5ad497c79cf3f078e76810d7942",
+            "representation_sha256": "sha256:b65a0b993f6b35d43b1de787e50450415893579e205fb94ea2e6b91d4a886090",
+            "adopted": false
+        }
     ]
 }

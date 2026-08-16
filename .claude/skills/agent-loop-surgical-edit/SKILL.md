@@ -16,7 +16,7 @@ Use only when the target and required behavior are already understood and the ex
 5. Prefer deterministic execution for exact replacements:
 
 ```bash
-vendor/bin/agent-loop edit '<Class>::<method>' \
+tools/agent-loop/vendor/bin/agent-loop edit '<Class>::<method>' \
   --runner=auto \
   --replace-old='<old>' \
   --replace-new='<new>' -- \

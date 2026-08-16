@@ -49,7 +49,7 @@
     {
       "id": "regression-hunt",
       "level": 2,
-      "template": "Create a project-specific regression-hunting prompt that strengthens tests until they expose at least {{minimum_findings}} real regression, broken assumption, missing edge case, weak assertion, behavior drift, or equivalent concrete defect. Use the actual changed production files, existing tests, public contracts, call sites, and high-risk branches from recall context as search anchors. Coverage growth alone must not satisfy Done When. The generated prompt must instruct the agent to fix production code when a new test exposes a defect unless repository evidence proves the requirement changed."
+      "template": "Create a project-specific regression-hunting prompt that investigates at least {{minimum_findings}} concrete high-risk regression hypotheses or search targets using the actual changed production files, existing tests, public contracts, call sites, and high-risk branches from recall context. Require an exact trigger scenario plus confirming or disproving evidence for every probe. When a probe exposes a real regression, broken assumption, missing edge case, weak assertion, behavior drift, or equivalent concrete defect, require the smallest regression test and fix production code unless repository evidence proves the requirement changed. If the bounded probes complete without an evidence-backed defect, Done When must permit an explicit CLEAN result. If material evidence required for the probes is unavailable, permit BLOCKED with the exact gap. Do not manufacture defects to satisfy {{minimum_findings}}; coverage growth alone is not a finding."
     },
     {
       "id": "reproduce-before-fix",

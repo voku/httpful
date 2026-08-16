@@ -1,7 +1,7 @@
 {
-    "//": "Isolated tool project. agent-loop requires PHP ^8.3, while httpful itself still supports PHP ^8.0, so it must not become a root require-dev dependency. Exact dev pin is temporary dogfood evidence for the merged finding-export candidate; return to ^0.16 after its release tag exists.",
+    "//": "Isolated tool project. agent-loop requires PHP ^8.3, while httpful itself still supports PHP ^8.0, so it must not become a root require-dev dependency. Exact dev pin is temporary dogfood evidence for the merged current projection candidate; return to a stable ^0.16 release once it contains this candidate.",
     "require": {
-        "voku/agent-loop": "dev-main#0dd42ae068d639f7efd274df2caef1a49d95cd7a"
+        "voku/agent-loop": "dev-main#7e31c2f0326ede2d8b9ebe486b4861d749814920"
     },
     "config": {
         "allow-plugins": false,

@@ -5,30 +5,10 @@ declare(strict_types=1);
 use voku\AgentLoop\AgentGuidance\AgentDisciplineHook;
 
 $repositoryRoot = dirname(__DIR__, 2);
-
-// See context.php for why the runtime is probed instead of required from a
-// fixed path, and why this block is duplicated rather than shared.
-$runtimeReady = false;
-$autoloadCandidates = [$repositoryRoot . '/vendor/autoload.php'];
-foreach ((array) glob($repositoryRoot . '/tools/*/vendor/autoload.php') as $toolAutoload) {
-    $autoloadCandidates[] = $toolAutoload;
-}
-foreach ($autoloadCandidates as $autoload) {
-    if (!is_file($autoload)) {
-        continue;
-    }
-
-    require_once $autoload;
-
-    if (class_exists(AgentDisciplineHook::class)) {
-        $runtimeReady = true;
-        break;
-    }
-}
-
-if (!$runtimeReady) {
-    // The tool project is not installed yet. The hook carries no security
-    // boundary, so an unavailable runtime must not block ordinary tool use.
+$runtimeReady = require __DIR__ . '/runtime.php';
+if ($runtimeReady !== true) {
+    // This hook is a workflow guardrail, not a security boundary. Optional
+    // tooling being unavailable must not block ordinary host tool use.
     exit(0);
 }
 

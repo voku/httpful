@@ -12,17 +12,17 @@ agent or human would otherwise have to rediscover.
 ## Fast Path
 
 ```bash
-vendor/bin/agent-loop session record <task-id> \
+tools/agent-loop/vendor/bin/agent-loop session record <task-id> \
   --kind decision \
   --title "Keep change scoped" \
   --body "Only update dispatcher routing; recall compiler behavior is unchanged."
 
-vendor/bin/agent-loop session checkpoint <task-id> \
+tools/agent-loop/vendor/bin/agent-loop session checkpoint <task-id> \
   --title "Validation" \
   --body "vendor/bin/phpunit --filter Init passed with exit code 0."
 
-vendor/bin/agent-loop session show <task-id>
-vendor/bin/agent-loop workflow status <task-id>
+tools/agent-loop/vendor/bin/agent-loop session show <task-id>
+tools/agent-loop/vendor/bin/agent-loop workflow status <task-id>
 ```
 
 ## Record
@@ -54,7 +54,7 @@ Checkpoint after:
 ## Scope Changes
 
 ```bash
-vendor/bin/agent-loop session checkpoint <task-id> \
+tools/agent-loop/vendor/bin/agent-loop session checkpoint <task-id> \
   --title "Scope change" \
   --body "Task expanded from docs-only to docs plus init help because the executable contract was stale."
 ```
@@ -70,7 +70,7 @@ in session working memory with the ceiling and the condition that would justify
 more machinery:
 
 ```bash
-vendor/bin/agent-loop session record <task-id> \
+tools/agent-loop/vendor/bin/agent-loop session record <task-id> \
   --kind decision \
   --title "Simplification ceiling: global lock" \
   --body "Current choice: one global lock. Ceiling: serializes independent accounts. Revisit when: measured lock contention materially affects request latency."
@@ -86,7 +86,7 @@ permanent code comment by accident.
 A prose checkpoint explains progress but does not satisfy a governed close:
 
 ```bash
-vendor/bin/agent-loop session validation record <task-id> \
+tools/agent-loop/vendor/bin/agent-loop session validation record <task-id> \
   --contract-revision <current-revision> \
   --command "vendor/bin/phpunit tests/FocusedTest.php" \
   --status passed \
@@ -113,22 +113,18 @@ A summary supports navigation. It is not code review or diagnostic evidence.
 
 ## Before Review And Close
 
+Record the review-ready checkpoint here, then hand the task to the installed
+`agent-loop-review-close` skill. That skill owns the primary code review,
+blind-spot review, Recall outcomes, Learning-root validation, Run learning
+decision, verification, reporting, accepted-risk boundary, and final close.
+Do not duplicate that sequence here; it previously drifted into skipping the
+primary review and hard-coding `no_durable_learning`.
+
 ```bash
-vendor/bin/agent-loop session checkpoint <task-id> \
+tools/agent-loop/vendor/bin/agent-loop session checkpoint <task-id> \
   --title "Ready for review" \
-  --body "Implementation complete; full diff reviewed; required validation passed."
-
-vendor/bin/agent-loop review blindspots <task-id>
-vendor/bin/agent-loop verify --task-id=<task-id>
-vendor/bin/agent-loop workflow status <task-id>
-
-vendor/bin/agent-loop workflow learn <task-id> \
-  --status no_durable_learning \
-  --by <actor> \
-  --reason "No reusable finding from this bounded task."
+  --body "Implementation complete; full diff inspected; required validation evidence recorded."
 ```
-
-The learning decision records an outcome; it does not approve guidance.
 
 ## Completion Check
 

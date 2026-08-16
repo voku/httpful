@@ -5,35 +5,11 @@ declare(strict_types=1);
 use voku\AgentLoop\AgentGuidance\AgentDisciplineHook;
 
 $repositoryRoot = dirname(__DIR__, 2);
-
-// httpful still supports PHP ^8.0 while voku/agent-loop requires ^8.3, so
-// agent-loop is installed as the isolated tool project below tools/agent-loop/
-// instead of as a root require-dev dependency. The repository's own
-// vendor/autoload.php exists but knows nothing about voku\AgentLoop\*, so probe
-// every candidate autoloader and confirm the class really resolved. This is
-// duplicated in pre_tool_use_policy.php because `init sync-hooks` only copies
-// the files named as commands in hooks.json, not a shared helper next to them.
-$runtimeReady = false;
-$autoloadCandidates = [$repositoryRoot . '/vendor/autoload.php'];
-foreach ((array) glob($repositoryRoot . '/tools/*/vendor/autoload.php') as $toolAutoload) {
-    $autoloadCandidates[] = $toolAutoload;
-}
-foreach ($autoloadCandidates as $autoload) {
-    if (!is_file($autoload)) {
-        continue;
-    }
-
-    require_once $autoload;
-
-    if (class_exists(AgentDisciplineHook::class)) {
-        $runtimeReady = true;
-        break;
-    }
-}
-
-if (!$runtimeReady) {
-    // The tool project is not installed yet. Injecting no context is correct
-    // here; failing the hook would break every session over optional tooling.
+$runtimeReady = require __DIR__ . '/runtime.php';
+if ($runtimeReady !== true) {
+    // Projected hooks are optional tooling. A clean checkout may run them before
+    // Composer installed the tool project, and the host PHP may be below the
+    // agent-loop runtime floor. Neither condition should break the host session.
     exit(0);
 }
 

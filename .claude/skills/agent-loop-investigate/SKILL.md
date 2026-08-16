@@ -18,22 +18,22 @@ Do not edit code and do not turn a locator task into architecture advice.
 When the task names a concrete symbol or path, start with the smallest relevant map operation:
 
 ```bash
-vendor/bin/agent-loop map query <symbol>
-vendor/bin/agent-loop map related <symbol>
-vendor/bin/agent-loop map file <path>
-vendor/bin/agent-loop map changed --base=<ref>
+tools/agent-loop/vendor/bin/agent-loop map query <symbol>
+tools/agent-loop/vendor/bin/agent-loop map related <symbol>
+tools/agent-loop/vendor/bin/agent-loop map file <path>
+tools/agent-loop/vendor/bin/agent-loop map changed --base=<ref>
 ```
 
 When the PHP repository is unfamiliar and the task does **not** identify a useful symbol/path yet, orient once before guessing search terms:
 
 ```bash
-vendor/bin/agent-loop map discover --limit=10
+tools/agent-loop/vendor/bin/agent-loop map discover --limit=10
 ```
 
 Treat the inferred architecture as a navigation coordinate, not a subsystem oracle. Choose the smallest plausible region from the reported hierarchy and inspect it before switching to symbol queries:
 
 ```bash
-vendor/bin/agent-loop map discover --region=<label-or-id> --limit=10
+tools/agent-loop/vendor/bin/agent-loop map discover --region=<label-or-id> --limit=10
 ```
 
 The region drill-down is the bridge between repository-level orientation and concrete source navigation. It exposes the selected root-to-region path, bounded files, interface files, and boundary evidence. Namespace-less PHP remains first-class because directory and file structure are independent architecture signals.
@@ -43,7 +43,7 @@ After the region is narrowed, use `query`, `related`, `callers`, `callees`, or b
 For a proposed shared-method change, use architecture-aware impact before widening the read set:
 
 ```bash
-vendor/bin/agent-loop map impact 'App\\Service\\Thing::run' --depth=2
+tools/agent-loop/vendor/bin/agent-loop map impact 'App\\Service\\Thing::run' --depth=2
 ```
 
 Impact keeps exact node evidence and uncertainty while grouping propagation by inferred architecture region. Dynamic or multiple-target paths remain uncertain.
@@ -55,8 +55,8 @@ Use temporal evidence only when the question is about change risk, recurring co-
 Start with bounded Git co-change and explicit heuristic claims:
 
 ```bash
-vendor/bin/agent-loop map history coupling --commits=100 --top=20
-vendor/bin/agent-loop map history claims --commits=100 --top=20 --min-ratio=0.6
+tools/agent-loop/vendor/bin/agent-loop map history coupling --commits=100 --top=20
+tools/agent-loop/vendor/bin/agent-loop map history claims --commits=100 --top=20 --min-ratio=0.6
 ```
 
 `history coupling` is evidence. `history claims` is a heuristic navigation lead, never source truth or a refactoring instruction. Keep its supporting commit revisions and verify the current relationship through the map and real source before reporting a conclusion.
@@ -64,7 +64,7 @@ vendor/bin/agent-loop map history claims --commits=100 --top=20 --min-ratio=0.6
 When the configured map history database exists and the evolution of a known entity matters, inspect it through the wrapper rather than opening the database directly:
 
 ```bash
-vendor/bin/agent-loop map history show 'method:App\\Service\\Thing::run'
+tools/agent-loop/vendor/bin/agent-loop map history show 'method:App\\Service\\Thing::run'
 ```
 
 If explicit before/after map snapshots already exist, `map history diff --before=... --after=...` can expose structural lifecycle facts without guessing from Git text diffs.
@@ -74,7 +74,7 @@ Do not run `history observe` during investigation or while tracked files are dir
 When a physical map path is needed, ask the project layout:
 
 ```bash
-vendor/bin/agent-loop init paths --format=json
+tools/agent-loop/vendor/bin/agent-loop init paths --format=json
 ```
 
 Never dump the generated symbol index, search database, or history database. Map and temporal output are navigation/evidence, not a substitute for source verification. Read only the selected real source ranges before reporting a hit.

@@ -1,24 +1,172 @@
 {
-    "version": 1,
+    "version": 2,
     "kind": "skills",
     "agent": "claude",
+    "required_capabilities": [
+        "skill-projection"
+    ],
     "entries": [
-        "agent-guidance-maintenance",
-        "agent-learning",
-        "agent-loop-code-review",
-        "agent-loop-discipline",
-        "agent-loop-dogfood",
-        "agent-loop-investigate",
-        "agent-loop-l2-context",
-        "agent-loop-learning-boundary",
-        "agent-loop-review-close",
-        "agent-loop-simplify-audit",
-        "agent-loop-simplify-review",
-        "agent-loop-surgical-edit",
-        "agent-loop-task-progress",
-        "agent-loop-task-start",
-        "agent-loop-workflow",
-        "agent-recall-compiler-maintainer",
-        "agent-recall-consumer"
+        {
+            "target": "agent-guidance-maintenance",
+            "source_id": "voku/agent-loop:skill:agent-guidance-maintenance",
+            "semantic_owner": "voku/agent-loop",
+            "source_path": "/home/runner/work/httpful/httpful/tools/agent-loop/vendor/voku/agent-loop/docs/agents/skills/agent-guidance-maintenance",
+            "source_sha256": "sha256:5c24d2226a7af17159b722bff172e734efd014c573c06daff5cbf473c1bb10cc",
+            "representation_sha256": "sha256:dae69493368ce70b3117f2d55f199e70fd7feef8ea648f6174162f05aceec7df",
+            "adopted": false
+        },
+        {
+            "target": "agent-learning",
+            "source_id": "voku/agent-loop:skill:agent-learning",
+            "semantic_owner": "voku/agent-loop",
+            "source_path": "/home/runner/work/httpful/httpful/tools/agent-loop/vendor/voku/agent-loop/docs/agents/skills/agent-learning",
+            "source_sha256": "sha256:ca58664a9f4e8e396d3ce09848572c593e432dbb11b1b15a021fa17bccde0192",
+            "representation_sha256": "sha256:a104584c77250b5facf7ec63803987623bcb6be904067cdba5f2bc3490047fb2",
+            "adopted": false
+        },
+        {
+            "target": "agent-loop-code-review",
+            "source_id": "voku/agent-loop:skill:agent-loop-code-review",
+            "semantic_owner": "voku/agent-loop",
+            "source_path": "/home/runner/work/httpful/httpful/tools/agent-loop/vendor/voku/agent-loop/docs/agents/skills/agent-loop-code-review",
+            "source_sha256": "sha256:d4ce76eacd3d9a78181ef0e84fbb3057aa470e05e5ee38d1a35fa753795a9e95",
+            "representation_sha256": "sha256:d4ce76eacd3d9a78181ef0e84fbb3057aa470e05e5ee38d1a35fa753795a9e95",
+            "adopted": false
+        },
+        {
+            "target": "agent-loop-discipline",
+            "source_id": "voku/agent-loop:skill:agent-loop-discipline",
+            "semantic_owner": "voku/agent-loop",
+            "source_path": "/home/runner/work/httpful/httpful/tools/agent-loop/vendor/voku/agent-loop/docs/agents/skills/agent-loop-discipline",
+            "source_sha256": "sha256:6efc85aed34db0cc1604503e8e179f8d61e88de36e36ae575fa540d81edab4ac",
+            "representation_sha256": "sha256:2aec238f10da76b287decf2af585e3c6835870f912ce2e016637416c636d8963",
+            "adopted": false
+        },
+        {
+            "target": "agent-loop-dogfood",
+            "source_id": "voku/agent-loop:skill:agent-loop-dogfood",
+            "semantic_owner": "voku/agent-loop",
+            "source_path": "/home/runner/work/httpful/httpful/tools/agent-loop/vendor/voku/agent-loop/docs/agents/skills/agent-loop-dogfood",
+            "source_sha256": "sha256:8e7e4949a7cca959d63fad055d1890d79f187afda2c827082257cc745c1d090d",
+            "representation_sha256": "sha256:8e7e4949a7cca959d63fad055d1890d79f187afda2c827082257cc745c1d090d",
+            "adopted": false
+        },
+        {
+            "target": "agent-loop-investigate",
+            "source_id": "voku/agent-loop:skill:agent-loop-investigate",
+            "semantic_owner": "voku/agent-loop",
+            "source_path": "/home/runner/work/httpful/httpful/tools/agent-loop/vendor/voku/agent-loop/docs/agents/skills/agent-loop-investigate",
+            "source_sha256": "sha256:bf411378497cbc3b3b4f435c49fa821bef96e1744fa19ab5a51b056de0b02e6c",
+            "representation_sha256": "sha256:b93ed4408db56c48cd7c9fde8719d09956d871063616d38853fd7d1e12435771",
+            "adopted": false
+        },
+        {
+            "target": "agent-loop-l2-context",
+            "source_id": "voku/agent-loop:skill:agent-loop-l2-context",
+            "semantic_owner": "voku/agent-loop",
+            "source_path": "/home/runner/work/httpful/httpful/tools/agent-loop/vendor/voku/agent-loop/docs/agents/skills/agent-loop-l2-context",
+            "source_sha256": "sha256:0414adb1f089a440f8fe802083adcc8bc8dfb88684d07c8de5474bfafcf89eaa",
+            "representation_sha256": "sha256:41ce39b0b3fb4ba19ad764e5a90e5d659371ed0456b333774215b34e824a904e",
+            "adopted": false
+        },
+        {
+            "target": "agent-loop-learning-boundary",
+            "source_id": "voku/agent-loop:skill:agent-loop-learning-boundary",
+            "semantic_owner": "voku/agent-loop",
+            "source_path": "/home/runner/work/httpful/httpful/tools/agent-loop/vendor/voku/agent-loop/docs/agents/skills/agent-loop-learning-boundary",
+            "source_sha256": "sha256:bec23c54f1ec9f3395e8a062a48dd66f80388ccc12da90a4c59855eb6fb4f7d1",
+            "representation_sha256": "sha256:c4c99de0a9b222460497d1f530eb8d095e05179187d9712faa89d1e95c182a66",
+            "adopted": false
+        },
+        {
+            "target": "agent-loop-review-close",
+            "source_id": "voku/agent-loop:skill:agent-loop-review-close",
+            "semantic_owner": "voku/agent-loop",
+            "source_path": "/home/runner/work/httpful/httpful/tools/agent-loop/vendor/voku/agent-loop/docs/agents/skills/agent-loop-review-close",
+            "source_sha256": "sha256:5662c4265c7c11b6c1f6fdf6baac5c9ba132644e7bb504683c2ae3ae9aa2f70e",
+            "representation_sha256": "sha256:0dea71ba4b5f96f73bdc7d2ba1fb9636d320c7da1b26a469d2639d5798fae4a7",
+            "adopted": false
+        },
+        {
+            "target": "agent-loop-shipping-evidence",
+            "source_id": "voku/agent-loop:skill:agent-loop-shipping-evidence",
+            "semantic_owner": "voku/agent-loop",
+            "source_path": "/home/runner/work/httpful/httpful/tools/agent-loop/vendor/voku/agent-loop/docs/agents/skills/agent-loop-shipping-evidence",
+            "source_sha256": "sha256:0b3362120f58182cff379a30b577d9937b03e027e8a857d31aaee8983b16256a",
+            "representation_sha256": "sha256:45ddf28c9b7af2ef92edd58067233638461ba038b02e2a8fafa464672df25594",
+            "adopted": false
+        },
+        {
+            "target": "agent-loop-simplify-audit",
+            "source_id": "voku/agent-loop:skill:agent-loop-simplify-audit",
+            "semantic_owner": "voku/agent-loop",
+            "source_path": "/home/runner/work/httpful/httpful/tools/agent-loop/vendor/voku/agent-loop/docs/agents/skills/agent-loop-simplify-audit",
+            "source_sha256": "sha256:122cb4a91f13758dd3049b2a1f3b19050849909ac868abd9c82e45a14c6ed938",
+            "representation_sha256": "sha256:4bb014c0f54eeed7526a7905109dbadf1b2a8650fcf7e022a7476652bdcbe483",
+            "adopted": false
+        },
+        {
+            "target": "agent-loop-simplify-review",
+            "source_id": "voku/agent-loop:skill:agent-loop-simplify-review",
+            "semantic_owner": "voku/agent-loop",
+            "source_path": "/home/runner/work/httpful/httpful/tools/agent-loop/vendor/voku/agent-loop/docs/agents/skills/agent-loop-simplify-review",
+            "source_sha256": "sha256:7a2e42d66ba4d7ab2f75396c7c393ca8bded099c7892325071eade4f0dc1e688",
+            "representation_sha256": "sha256:7a2e42d66ba4d7ab2f75396c7c393ca8bded099c7892325071eade4f0dc1e688",
+            "adopted": false
+        },
+        {
+            "target": "agent-loop-surgical-edit",
+            "source_id": "voku/agent-loop:skill:agent-loop-surgical-edit",
+            "semantic_owner": "voku/agent-loop",
+            "source_path": "/home/runner/work/httpful/httpful/tools/agent-loop/vendor/voku/agent-loop/docs/agents/skills/agent-loop-surgical-edit",
+            "source_sha256": "sha256:cc4f83aeb35b4038c7dcd1147c2baa619d6aec88718293bc156ea08605c4e63e",
+            "representation_sha256": "sha256:5544b1aec9ebb6172acd13842f2320e276b08b66b716db3d70c3fd874469f004",
+            "adopted": false
+        },
+        {
+            "target": "agent-loop-task-progress",
+            "source_id": "voku/agent-loop:skill:agent-loop-task-progress",
+            "semantic_owner": "voku/agent-loop",
+            "source_path": "/home/runner/work/httpful/httpful/tools/agent-loop/vendor/voku/agent-loop/docs/agents/skills/agent-loop-task-progress",
+            "source_sha256": "sha256:ee22f8936ac604b114726c02fb128a325831f4396eabbb391c47118b7dd6b0bb",
+            "representation_sha256": "sha256:87e552967b5f9f5dc7758b69f605f9ff467f6f710e3db367fc806d8d4a2862d7",
+            "adopted": false
+        },
+        {
+            "target": "agent-loop-task-start",
+            "source_id": "voku/agent-loop:skill:agent-loop-task-start",
+            "semantic_owner": "voku/agent-loop",
+            "source_path": "/home/runner/work/httpful/httpful/tools/agent-loop/vendor/voku/agent-loop/docs/agents/skills/agent-loop-task-start",
+            "source_sha256": "sha256:7eba87fcd600cece3e5bb03a569951bb59b970e11869e0845e0a0ddc375670c5",
+            "representation_sha256": "sha256:1afa77ebc1df3a020358b366757120a62296c9f73c5f39b046c40279ab236b15",
+            "adopted": false
+        },
+        {
+            "target": "agent-loop-workflow",
+            "source_id": "voku/agent-loop:skill:agent-loop-workflow",
+            "semantic_owner": "voku/agent-loop",
+            "source_path": "/home/runner/work/httpful/httpful/tools/agent-loop/vendor/voku/agent-loop/docs/agents/skills/agent-loop-workflow",
+            "source_sha256": "sha256:334595996a79937570e504d6539739337ae8860bd8f91588d7a06d53cd4628df",
+            "representation_sha256": "sha256:416e2cf11f8c7a14d7f1059400e41ffd86a8523f6c3930a32e036d20b6992ff6",
+            "adopted": false
+        },
+        {
+            "target": "agent-recall-compiler-maintainer",
+            "source_id": "voku/agent-recall-compiler:skill:agent-recall-compiler-maintainer",
+            "semantic_owner": "voku/agent-recall-compiler",
+            "source_path": "/home/runner/work/httpful/httpful/tools/agent-loop/vendor/voku/agent-recall-compiler/skills/agent-recall-compiler-maintainer",
+            "source_sha256": "sha256:22f1766ba3def78d3463e070b3785fd1e8ccc7b31c85a0af0d39df64dfa6b199",
+            "representation_sha256": "sha256:22f1766ba3def78d3463e070b3785fd1e8ccc7b31c85a0af0d39df64dfa6b199",
+            "adopted": false
+        },
+        {
+            "target": "agent-recall-consumer",
+            "source_id": "voku/agent-recall-compiler:skill:agent-recall-consumer",
+            "semantic_owner": "voku/agent-recall-compiler",
+            "source_path": "/home/runner/work/httpful/httpful/tools/agent-loop/vendor/voku/agent-recall-compiler/skills/agent-recall-consumer",
+            "source_sha256": "sha256:ea5d50fc444ad45b3125360301d95f1a1c1fd41a7299485d4f03822e3b5ce224",
+            "representation_sha256": "sha256:46b4f71d2085b401b682cc62c602f5a412b3cf5938944f05bb4d12c56e717366",
+            "adopted": false
+        }
     ]
 }

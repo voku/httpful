@@ -21,7 +21,7 @@ checked against current repository evidence.
 First resolve repository-owned paths instead of guessing them:
 
 ```bash
-vendor/bin/agent-loop init paths --format=json
+tools/agent-loop/vendor/bin/agent-loop init paths --format=json
 ```
 
 After actual implementation and validation, complete the Recall outcome draft and
@@ -29,7 +29,7 @@ append it through the Loop wrapper. The wrapper resolves the configured Learning
 root automatically:
 
 ```bash
-vendor/bin/agent-loop recall log-outcome \
+tools/agent-loop/vendor/bin/agent-loop recall log-outcome \
   --draft <recall-root>/<task-id>/recall-log.draft.json \
   --by <actor> \
   --commit <sha>
@@ -38,7 +38,7 @@ vendor/bin/agent-loop recall log-outcome \
 Then record the governed **Run learning decision**:
 
 ```bash
-vendor/bin/agent-loop workflow learn <task-id> \
+tools/agent-loop/vendor/bin/agent-loop workflow learn <task-id> \
   --status findings_recorded|no_durable_learning|follow_up_required \
   --by <actor> \
   --reason "<bounded reason>"
@@ -52,7 +52,7 @@ compiled for the task.
 Validate the configured learning root:
 
 ```bash
-vendor/bin/agent-loop learn validate
+tools/agent-loop/vendor/bin/agent-loop learn validate
 ```
 
 Neither `recall log-outcome` nor `workflow learn` approves durable guidance.
@@ -84,14 +84,14 @@ outcome truthful, validate the Learning root, and reference the resulting findin
 IDs in the Run decision:
 
 ```bash
-vendor/bin/agent-loop recall log-outcome \
+tools/agent-loop/vendor/bin/agent-loop recall log-outcome \
   --draft <recall-root>/<task-id>/recall-log.draft.json \
   --by <actor> \
   --commit <sha>
 
-vendor/bin/agent-loop learn validate
+tools/agent-loop/vendor/bin/agent-loop learn validate
 
-vendor/bin/agent-loop workflow learn <task-id> \
+tools/agent-loop/vendor/bin/agent-loop workflow learn <task-id> \
   --status findings_recorded \
   --finding <finding-id> \
   --by <actor> \
@@ -102,7 +102,7 @@ If the host repository uses the proposal pipeline, validate the candidate with
 the owning `learn` CLI rather than editing approval state by hand:
 
 ```bash
-vendor/bin/agent-loop learn proposal-validate \
+tools/agent-loop/vendor/bin/agent-loop learn proposal-validate \
   --proposal <learning-root>/proposals/candidate/proposal.001.json
 ```
 
@@ -116,7 +116,7 @@ A local fix that teaches nothing reusable does **not** justify a manufactured
 finding. It still requires an explicit Run learning decision:
 
 ```bash
-vendor/bin/agent-loop workflow learn <task-id> \
+tools/agent-loop/vendor/bin/agent-loop workflow learn <task-id> \
   --status no_durable_learning \
   --by <actor> \
   --reason "The evidence was task-local and adds no reusable guidance."
@@ -139,7 +139,7 @@ completed inside the current Contract, record the real reference rather than
 silently widening scope:
 
 ```bash
-vendor/bin/agent-loop workflow learn <task-id> \
+tools/agent-loop/vendor/bin/agent-loop workflow learn <task-id> \
   --status follow_up_required \
   --follow-up <issue-or-task-ref> \
   --by <actor> \
@@ -159,7 +159,7 @@ secret-shaped strings into findings.
 When existing learning guidance may have drifted, evaluate it read-only:
 
 ```bash
-vendor/bin/agent-loop learn guidance-evaluate
+tools/agent-loop/vendor/bin/agent-loop learn guidance-evaluate
 ```
 
 This does not create findings, modify proposals, or approve durable guidance.
@@ -169,7 +169,7 @@ This does not create findings, modify proposals, or approve durable guidance.
 If the repository maintains a `MEMORY.md` promotion queue:
 
 ```bash
-vendor/bin/agent-loop memory review --file=MEMORY.md
+tools/agent-loop/vendor/bin/agent-loop memory review --file=MEMORY.md
 ```
 
 This reports promotion candidates. It does not edit `MEMORY.md` or approve them.
@@ -207,7 +207,7 @@ This skill does not own:
 Before close:
 
 - the Recall outcome reflects actual application/use rather than default optimism;
-- `vendor/bin/agent-loop learn validate` exits successfully;
+- `tools/agent-loop/vendor/bin/agent-loop learn validate` exits successfully;
 - exactly one truthful Run learning decision exists for the current close-out state;
 - no proposal or durable memory entry was self-approved merely to satisfy the workflow.
 

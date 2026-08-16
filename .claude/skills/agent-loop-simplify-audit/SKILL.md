@@ -12,10 +12,10 @@ Repo-wide workflow overlay for `code-review-simplicity`. Keep engineering simpli
 Use generated navigation state only to select candidates:
 
 ```bash
-vendor/bin/agent-loop map stats
-vendor/bin/agent-loop map query <suspect-symbol>
-vendor/bin/agent-loop map related <symbol>
-vendor/bin/agent-loop map file <path>
+tools/agent-loop/vendor/bin/agent-loop map stats
+tools/agent-loop/vendor/bin/agent-loop map query <suspect-symbol>
+tools/agent-loop/vendor/bin/agent-loop map related <symbol>
+tools/agent-loop/vendor/bin/agent-loop map file <path>
 ```
 
 Use `rg` when needed for structural candidate discovery. Map/search output is navigation, not proof. Verify every candidate against real source and actual callers.

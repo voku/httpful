@@ -5,12 +5,13 @@ description: "Apply an already-localized one or two file PHP change with the sma
 
 Surgical role only. The target and requested behavior must already be known.
 
-1. Read the exact target source.
-2. For shared behavior, inspect relevant callers/tests with `vendor/bin/agent-loop map related <symbol>`.
-3. Prefer `agent-loop edit --runner=auto` for an exact deterministic replacement.
-4. Otherwise make the smallest verified edit in the owning layer.
-5. Run the narrowest meaningful validation and inspect the complete raw diff.
-6. Re-read the changed range.
+1. When a durable Contract or task ID exists, inspect `tools/agent-loop/vendor/bin/agent-loop workflow status <task-id> --format=json` and continue from that persisted state rather than conversational memory.
+2. Read the exact target source.
+3. For shared behavior, inspect relevant callers/tests with `tools/agent-loop/vendor/bin/agent-loop map related <symbol>`.
+4. Prefer `agent-loop edit --runner=auto` for an exact deterministic replacement.
+5. Otherwise make the smallest verified edit in the owning layer.
+6. Run the narrowest meaningful validation plus the repository-required gate, then inspect the complete raw diff.
+7. Re-read the changed range.
 
 No new abstraction, dependency, config switch, compatibility layer, cleanup, or unrelated refactor unless required by the request or validation.
 

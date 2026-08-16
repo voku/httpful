@@ -29,8 +29,8 @@ Do not duplicate those contracts here. In an installed project, the canonical
 Recall skill and first-party recipe catalog are shipped with the tool at:
 
 ```text
-vendor/voku/agent-recall-compiler/skills/agent-recall-consumer/SKILL.md
-vendor/voku/agent-recall-compiler/skills/agent-recall-consumer/operating-prompts.json
+tools/agent-loop/vendor/voku/agent-recall-compiler/skills/agent-recall-consumer/SKILL.md
+tools/agent-loop/vendor/voku/agent-recall-compiler/skills/agent-recall-consumer/operating-prompts.json
 ```
 
 When Recall changes, update its owned skill with the code. This Loop skill should
@@ -41,15 +41,15 @@ only change when Loop's orchestration of that tool changes.
 For an existing governed task, inspect the bounded view and current state:
 
 ```bash
-vendor/bin/agent-loop workflow context <task-id> --max-lines 120 --max-bytes 12000
-vendor/bin/agent-loop workflow status <task-id>
+tools/agent-loop/vendor/bin/agent-loop workflow context <task-id> --max-lines 120 --max-bytes 12000
+tools/agent-loop/vendor/bin/agent-loop workflow status <task-id>
 ```
 
 For standalone exploration, compile task-scoped Recall through Loop and let the
 wrapper resolve the configured Learning and Recall roots:
 
 ```bash
-vendor/bin/agent-loop recall compile \
+tools/agent-loop/vendor/bin/agent-loop recall compile \
   --task <task-id> \
   --file <path-to-file-1> \
   --file <path-to-file-2>
@@ -68,13 +68,13 @@ global context.
 Use Recall's installed first-party catalog instead of a copied recipe file:
 
 ```bash
-vendor/bin/agent-loop workflow plan <task-id> \
+tools/agent-loop/vendor/bin/agent-loop workflow plan <task-id> \
   --by <actor> \
   --file src/Parser.php \
   --file tests/ParserTest.php \
   --goal 'Harden the parser tests.' \
   --validation 'composer ci' \
-  --operating-prompt-manifest vendor/voku/agent-recall-compiler/skills/agent-recall-consumer/operating-prompts.json \
+  --operating-prompt-manifest tools/agent-loop/vendor/voku/agent-recall-compiler/skills/agent-recall-consumer/operating-prompts.json \
   --operating-prompt '{"id":"coverage-mutation","arguments":{"minimum_percentage_points":10,"mutation_command":"vendor/bin/infection --threads=max"}}'
 ```
 
@@ -84,8 +84,8 @@ catalog with Recall does not make Loop select recipes automatically.
 After approval:
 
 ```bash
-vendor/bin/agent-loop workflow approve <task-id> --by <human-actor>
-vendor/bin/agent-loop workflow context <task-id> --max-lines 120 --max-bytes 12000
+tools/agent-loop/vendor/bin/agent-loop workflow approve <task-id> --by <human-actor>
+tools/agent-loop/vendor/bin/agent-loop workflow context <task-id> --max-lines 120 --max-bytes 12000
 ```
 
 If the compiled Recall artifacts require an L2 construction pass, follow the
@@ -94,7 +94,7 @@ restated schema in this file. Persist the constructed execution contract through
 Loop before mutation:
 
 ```bash
-vendor/bin/agent-loop workflow contract <task-id> \
+tools/agent-loop/vendor/bin/agent-loop workflow contract <task-id> \
   --status ready \
   --from <project-specific-l1.md> \
   --by <actor>
@@ -117,8 +117,8 @@ agent and their presence does not prove an L1 prompt was constructed or executed
 Use the project layout instead of assuming a hard-coded Recall path:
 
 ```bash
-vendor/bin/agent-loop init paths --format=json
-vendor/bin/agent-loop workflow status <task-id>
+tools/agent-loop/vendor/bin/agent-loop init paths --format=json
+tools/agent-loop/vendor/bin/agent-loop workflow status <task-id>
 ```
 
 Recompile only through the owning workflow when the approved Contract or relevant
@@ -131,11 +131,11 @@ precise definitions, callers, or related symbols across more than one or two
 files:
 
 ```bash
-vendor/bin/agent-loop init tools
-vendor/bin/agent-loop map build --paths=src,tests   # once; then prefer refresh
-vendor/bin/agent-loop map query SomeClass
-vendor/bin/agent-loop map related SomeClass
-vendor/bin/agent-loop map stale
+tools/agent-loop/vendor/bin/agent-loop init tools
+tools/agent-loop/vendor/bin/agent-loop map build --paths=src,tests   # once; then prefer refresh
+tools/agent-loop/vendor/bin/agent-loop map query SomeClass
+tools/agent-loop/vendor/bin/agent-loop map related SomeClass
+tools/agent-loop/vendor/bin/agent-loop map stale
 ```
 
 Query the generated map, then inspect the selected real source. Do not dump map
@@ -166,7 +166,7 @@ For a one-for-one literal replacement inside one exact PHP method, prefer Loop's
 token-safe `auto` route:
 
 ```bash
-vendor/bin/agent-loop edit 'App\Service\UserService::save' \
+tools/agent-loop/vendor/bin/agent-loop edit 'App\Service\UserService::save' \
   --runner=auto \
   --replace-old='$legacyUser->regionId' \
   --replace-new='$legacyUser->getCurrentRegionId()' -- \
@@ -184,15 +184,15 @@ After implementation, use Loop's review routing rather than interpreting Recall
 artifacts as approval:
 
 ```bash
-vendor/bin/agent-loop review blindspots <task-id>
-vendor/bin/agent-loop review code <task-id>
+tools/agent-loop/vendor/bin/agent-loop review blindspots <task-id>
+tools/agent-loop/vendor/bin/agent-loop review code <task-id>
 ```
 
 Record Recall outcomes only after actual work and validation happened. The Loop
 wrapper resolves the configured Learning root:
 
 ```bash
-vendor/bin/agent-loop recall log-outcome \
+tools/agent-loop/vendor/bin/agent-loop recall log-outcome \
   --draft <recall-root>/<task-id>/recall-log.draft.json \
   --by <actor> \
   --commit <sha>
@@ -210,7 +210,7 @@ Before claiming context work is complete:
 - when L2 policy applies, confirm the current Loop execution-contract gate is
   `ready` before mutation;
 - run the task's approved validation commands and record their observed result;
-- run `vendor/bin/agent-loop verify --task-id=<task-id>` before close.
+- run `tools/agent-loop/vendor/bin/agent-loop verify --task-id=<task-id>` before close.
 
 ## Skill Boundary
 

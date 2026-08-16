@@ -113,9 +113,9 @@ boundary, and verification. Generic slogans are decoration.
 ## Validation
 
 ```bash
-vendor/bin/agent-loop init doctor
-vendor/bin/agent-loop init validate --kind=all
-vendor/bin/agent-loop init install-assets --agent=codex --dry-run
+tools/agent-loop/vendor/bin/agent-loop init doctor
+tools/agent-loop/vendor/bin/agent-loop init validate --kind=all
+tools/agent-loop/vendor/bin/agent-loop init install-assets --agent=codex --dry-run
 composer dogfood:discipline
 vendor/bin/phpunit --filter 'AgentDisciplineHook|InitInstallAssets|Init|DispatcherTest'
 vendor/bin/phpstan analyse --configuration=phpstan.neon.dist --memory-limit=512M

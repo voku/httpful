@@ -15,7 +15,8 @@ Use this skill when changing the `voku/agent-recall-compiler` package itself. Ke
 4. Treat compile blockers as intentional safety behavior. Add tests before relaxing any blocker.
 5. Add focused regression tests for manifest loading, config path resolution, scope selection, prompt output, validation-plan output, or outcome logging when those change.
 6. For guidance event changes, verify compile output includes `compilation_id`, `evaluated_guidance`, and per-guidance `guidance_outcomes`, and verify `log-outcome` appends both JSONL event types transactionally.
-7. Validate from the package repo.
+7. Prefer PHP for project-local automation, validation, and dogfood runners. Keep shell only for thin operating-system glue when PHP would make the task less direct.
+8. Validate from the package repo.
 
 ## Validation
 
