@@ -1,0 +1,85 @@
+name: Apply final agent-loop projection
+
+on:
+  push:
+    branches: [claude/agent-loop-query-workflow-bhqeaw]
+    paths:
+      - '.github/workflows/agent-loop-final-projection.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: claude/agent-loop-query-workflow-bhqeaw
+          fetch-depth: 0
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+          tools: composer:v2
+
+      - name: Install exact merged agent-loop candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          php <<'PHP'
+          <?php
+          $path = 'tools/agent-loop/composer.json';
+          $data = json_decode((string) file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);
+          $data['repositories'] = [[
+              'type' => 'vcs',
+              'url' => 'https://github.com/voku/agent-loop',
+          ]];
+          $data['require']['voku/agent-loop'] = 'dev-main#e046c2030c242daa22bff7469c8dc5089eb23aab';
+          file_put_contents($path, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . "\n");
+          PHP
+          composer install --working-dir=tools/agent-loop --no-interaction --prefer-dist
+
+          cat > tools/agent-loop/composer.json <<'JSON'
+          {
+              "//": "Isolated tool project. agent-loop requires PHP ^8.3, while httpful itself still supports PHP ^8.0, so it must not become a root require-dev dependency. Exact dev pin is final dogfood evidence for the merged 0.16.x candidate; replace it with the stable release that targets this commit.",
+              "require": {
+                  "voku/agent-loop": "dev-main#e046c2030c242daa22bff7469c8dc5089eb23aab"
+              },
+              "config": {
+                  "allow-plugins": false,
+                  "sort-packages": true
+              }
+          }
+          JSON
+
+      - name: Regenerate and verify package-owned Claude assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          composer agent-loop -- init install-assets --agent=claude --force --skip-git-config
+          composer agent-loop -- init validate --kind=all --agent=claude
+          composer agent-loop -- init status | tee /tmp/agent-loop-status.log
+
+          ! grep -Fq '[WARN] claude skills: stale managed entries:' /tmp/agent-loop-status.log
+          ! grep -Fq '[WARN] claude subagents: stale managed entries:' /tmp/agent-loop-status.log
+          ! grep -Fq '[WARN] claude hooks: stale managed entries:' /tmp/agent-loop-status.log
+          grep -Fq '[OK] claude skills: current:' /tmp/agent-loop-status.log
+          grep -Fq '[OK] claude subagents: current:' /tmp/agent-loop-status.log
+          grep -Fq '[OK] claude hooks: current:' /tmp/agent-loop-status.log
+
+      - name: Commit exact generated projection
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm .github/workflows/agent-loop-final-projection.yml
+          git diff --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git diff --cached --check
+          git status --short
+          git commit -m 'chore: regenerate final agent-loop projection'
+          git push origin HEAD:claude/agent-loop-query-workflow-bhqeaw
