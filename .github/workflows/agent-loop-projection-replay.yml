@@ -36,16 +36,16 @@ jobs:
               'type' => 'vcs',
               'url' => 'https://github.com/voku/agent-loop',
           ]];
-          $data['require']['voku/agent-loop'] = 'dev-main#443f6e0f8ce618b6093de7311be61bf57931d4d5';
+          $data['require']['voku/agent-loop'] = 'dev-main#7e31c2f0326ede2d8b9ebe486b4861d749814920';
           file_put_contents($path, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . "\n");
           PHP
           composer install --working-dir=tools/agent-loop --no-interaction --prefer-dist
 
           cat > tools/agent-loop/composer.json <<'JSON'
           {
-              "//": "Isolated tool project. agent-loop requires PHP ^8.3, while httpful itself still supports PHP ^8.0, so it must not become a root require-dev dependency. Exact dev pin is temporary dogfood evidence for the merged current projection candidate; return to ^0.16 after its release tag exists.",
+              "//": "Isolated tool project. agent-loop requires PHP ^8.3, while httpful itself still supports PHP ^8.0, so it must not become a root require-dev dependency. Exact dev pin is temporary dogfood evidence for the merged current projection candidate; return to a stable ^0.16 release once it contains this candidate.",
               "require": {
-                  "voku/agent-loop": "dev-main#443f6e0f8ce618b6093de7311be61bf57931d4d5"
+                  "voku/agent-loop": "dev-main#7e31c2f0326ede2d8b9ebe486b4861d749814920"
               },
               "config": {
                   "allow-plugins": false,
@@ -61,6 +61,13 @@ jobs:
           composer agent-loop -- init install-assets --agent=claude --force --skip-git-config | tee /tmp/agent-loop-install-assets.log
           composer agent-loop -- init validate --kind=all --agent=claude | tee /tmp/agent-loop-validate.log
           composer agent-loop -- init status | tee /tmp/agent-loop-status.log
+
+          ! grep -Fq '[WARN] claude skills: stale managed entries:' /tmp/agent-loop-status.log
+          ! grep -Fq '[WARN] claude subagents: stale managed entries:' /tmp/agent-loop-status.log
+          ! grep -Fq '[WARN] claude hooks: stale managed entries:' /tmp/agent-loop-status.log
+          grep -Fq '[OK] claude skills: current:' /tmp/agent-loop-status.log
+          grep -Fq '[OK] claude subagents: current:' /tmp/agent-loop-status.log
+          grep -Fq '[OK] claude hooks: current:' /tmp/agent-loop-status.log
 
       - name: Capture exact generated patch
         shell: bash
@@ -79,6 +86,6 @@ jobs:
       - name: Upload projection evidence
         uses: actions/upload-artifact@v4
         with:
-          name: agent-loop-projection-443f6e0
+          name: agent-loop-projection-7e31c2f
           path: build/agent-loop-projection
           if-no-files-found: error
