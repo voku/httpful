@@ -1,4 +1,4 @@
-name: Agent-loop projection replay
+name: Apply agent-loop projection replay
 
 on:
   push:
@@ -7,16 +7,17 @@ on:
       - '.github/workflows/agent-loop-projection-replay.yml'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  replay:
+  apply:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
         with:
-          persist-credentials: false
+          ref: claude/agent-loop-query-workflow-bhqeaw
+          fetch-depth: 0
 
       - uses: shivammathur/setup-php@v2
         with:
@@ -54,12 +55,12 @@ jobs:
           }
           JSON
 
-      - name: Regenerate package-owned Claude assets
+      - name: Regenerate and verify package-owned Claude assets
         shell: bash
         run: |
           set -euo pipefail
-          composer agent-loop -- init install-assets --agent=claude --force --skip-git-config | tee /tmp/agent-loop-install-assets.log
-          composer agent-loop -- init validate --kind=all --agent=claude | tee /tmp/agent-loop-validate.log
+          composer agent-loop -- init install-assets --agent=claude --force --skip-git-config
+          composer agent-loop -- init validate --kind=all --agent=claude
           composer agent-loop -- init status | tee /tmp/agent-loop-status.log
 
           ! grep -Fq '[WARN] claude skills: stale managed entries:' /tmp/agent-loop-status.log
@@ -69,23 +70,16 @@ jobs:
           grep -Fq '[OK] claude subagents: current:' /tmp/agent-loop-status.log
           grep -Fq '[OK] claude hooks: current:' /tmp/agent-loop-status.log
 
-      - name: Capture exact generated patch
+      - name: Commit exact generated projection
         shell: bash
         run: |
           set -euo pipefail
+          rm .github/workflows/agent-loop-projection-replay.yml
           git diff --check
-          mkdir -p build/agent-loop-projection
-          git status --short > build/agent-loop-projection/status.txt
-          git diff --stat > build/agent-loop-projection/stat.txt
-          git diff --binary > build/agent-loop-projection/projection.patch
-          cp /tmp/agent-loop-install-assets.log build/agent-loop-projection/install-assets.log
-          cp /tmp/agent-loop-validate.log build/agent-loop-projection/validate.log
-          cp /tmp/agent-loop-status.log build/agent-loop-projection/status-command.log
-          test -s build/agent-loop-projection/projection.patch
-
-      - name: Upload projection evidence
-        uses: actions/upload-artifact@v4
-        with:
-          name: agent-loop-projection-7e31c2f
-          path: build/agent-loop-projection
-          if-no-files-found: error
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git status --short
+          git diff --cached --check
+          git commit -m 'chore: regenerate agent-loop projection from current candidate'
+          git push origin HEAD:claude/agent-loop-query-workflow-bhqeaw
