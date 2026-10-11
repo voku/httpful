@@ -6,6 +6,10 @@
         ]
     },
     "threads": "max",
+    "logs": {
+        "json": "build/logs/infection.json",
+        "text": "build/logs/infection.txt"
+    },
     "timeout": 60,
     "minMsi": 99.5,
     "minCoveredMsi": 99.5,
