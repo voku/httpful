@@ -1574,6 +1574,7 @@ class Request implements \IteratorAggregate, RequestInterface
     public function getIterator(): \ArrayObject
     {
         // init
+        /** @var \ArrayObject<string, mixed> $elements */
         $elements = new \ArrayObject();
 
         foreach (\get_object_vars($this) as $f => $v) {
