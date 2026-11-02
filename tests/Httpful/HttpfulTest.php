@@ -201,6 +201,19 @@ Transfer-Encoding: chunked\r\n";
         static::assertSame('Bar', $r->getHeaders()['Foo'][0]);
     }
 
+    public function testHeaderArrayValuesStripOptionalWhitespace(): void
+    {
+        $headers = new Headers(['X-List' => [' first ', "\tsecond\t"]]);
+
+        static::assertSame(['first', 'second'], $headers['X-List']);
+    }
+
+    public function testHttpReasonPhrasesForRateLimitingAndStorage(): void
+    {
+        static::assertSame('Too Many Requests', Http::reason(429));
+        static::assertSame('Insufficient Storage', Http::reason(507));
+    }
+
     public function testCustomHeader()
     {
         $r = Request::get('http://example.com/')
