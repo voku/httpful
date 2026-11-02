@@ -27,6 +27,24 @@ final class ClientTest extends TestCase
         return 'http://' . \TEST_SERVER . '/' . ltrim($path, '/');
     }
 
+    /**
+     * The mandatory CI TLS fixture is loopback-only. Non-CI local runs skip these
+     * two tests explicitly rather than depending on an external TLS service.
+     */
+    private static function localTlsFixtureUrl(): string
+    {
+        $url = \getenv('TEST_SELF_SIGNED_HTTPS_URL');
+        if ($url === false || $url === '') {
+            static::markTestSkipped('The local self-signed HTTPS fixture is not configured.');
+        }
+
+        if ($url !== 'https://127.0.0.1:18443/') {
+            throw new \RuntimeException('TLS test fixture must use the configured loopback URL.');
+        }
+
+        return $url;
+    }
+
     public function testGetDom()
     {
         $dom = Client::get_dom('http://google.com?a=b');
@@ -354,47 +372,46 @@ final class ClientTest extends TestCase
         );
     }
 
-    public function testSelfSignedCertificate()
+    public function testSelfSignedCertificate(): void
     {
         $this->expectException(NetworkExceptionInterface::class);
         if (\method_exists(__CLASS__, 'expectExceptionMessageRegExp')) {
-            $this->expectExceptionMessageRegExp('/.*certificat.*/');
+            $this->expectExceptionMessageRegExp('/certificat/i');
         } else {
-            $this->expectExceptionMessageMatches('/.*certificat.*/');
+            $this->expectExceptionMessageMatches('/certificat/i');
         }
 
-        $client = new Client();
-        $request = (new Request('GET'))->withUriFromString('https://self-signed.badssl.com/')->enableStrictSSL();
-        /** @noinspection UnusedFunctionResultInspection */
-        $client->sendRequest($request);
+        // The local test endpoint is intentionally self-signed and must fail verification.
+        $request = (new Request('GET'))
+            ->withUriFromString(self::localTlsFixtureUrl())
+            ->enableStrictSSL();
+
+        (new Client())->sendRequest($request);
     }
 
-    public function testIgnoreCertificateErrors()
+    public function testIgnoreCertificateErrors(): void
     {
-        $client = new Client();
-        $request = (new Request('GET', Mime::PLAIN))
-            ->withUriFromString('https://self-signed.badssl.com/')
-            ->disableStrictSSL();
-        $response = $client->sendRequest($request);
+        $url = self::localTlsFixtureUrl();
 
-        static::assertEquals(200, $response->getStatusCode());
+        $request = (new Request('GET', Mime::PLAIN))
+            ->withUriFromString($url)
+            ->disableStrictSSL();
+        $response = (new Client())->sendRequest($request);
+
+        static::assertSame(200, $response->getStatusCode());
         if (\method_exists(__CLASS__, 'assertStringContainsString')) {
-            static::assertStringContainsString('self-signed.<br>badssl.com', (string) $response);
+            static::assertStringContainsString('<HTML>', (string) $response);
         } else {
-            static::assertContains('self-signed.<br>badssl.com', (string) $response);
+            static::assertContains('<HTML>', (string) $response);
         }
 
-        // ---
-
-        $client = new Client();
-        $request = (new Request('GET', Mime::HTML))
-            ->withUriFromString('https://self-signed.badssl.com/')
+        $htmlRequest = (new Request('GET', Mime::HTML))
+            ->withUriFromString($url)
             ->disableStrictSSL();
-        $response = $client->sendRequest($request);
+        $htmlResponse = (new Client())->sendRequest($htmlRequest);
 
-        static::assertEquals(200, $response->getStatusCode());
-        \assert($response instanceof Response);
-        static::assertInstanceOf(DomParserInterface::class, $response->getRawBody());
+        static::assertSame(200, $htmlResponse->getStatusCode());
+        static::assertInstanceOf(DomParserInterface::class, $htmlResponse->getRawBody());
     }
 
     public function testPageNotFound()
