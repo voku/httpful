@@ -20,6 +20,8 @@ defaults:
 
 jobs:
   tests:
+    env:
+      TEST_SELF_SIGNED_HTTPS_URL: https://127.0.0.1:18443/
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -113,8 +115,6 @@ jobs:
           }
 
       - name: Run tests
-        env:
-          TEST_SELF_SIGNED_HTTPS_URL: https://127.0.0.1:18443/
         run: |
           mkdir -p build/logs
           if [[ "${{ matrix.php }}" == '8.5' ]]; then
