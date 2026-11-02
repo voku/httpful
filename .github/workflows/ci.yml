@@ -85,8 +85,11 @@ jobs:
           set -euo pipefail
           mkdir -p build/tls-fixture
           openssl req -x509 -newkey rsa:2048 -sha256 -nodes -days 1 \
-            -subj '/CN=localhost' \
+            -subj '/CN=127.0.0.1' -addext 'subjectAltName=IP:127.0.0.1' \
             -keyout build/tls-fixture/key.pem -out build/tls-fixture/cert.pem >/dev/null 2>&1
+          # Host identity must match, so strict TLS fails for trust, not hostname mismatch.
+          openssl x509 -in build/tls-fixture/cert.pem -noout -ext subjectAltName \
+            | grep -Fq 'IP Address:127.0.0.1'
           openssl s_server -accept 127.0.0.1:18443 \
             -cert build/tls-fixture/cert.pem -key build/tls-fixture/key.pem \
             -www > build/tls-fixture/server.log 2>&1 &
