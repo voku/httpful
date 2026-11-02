@@ -39,6 +39,24 @@ final class FactoryTest extends TestCase
         static::assertEquals('Perfect', $r->getReasonPhrase());
     }
 
+    public function testCreateResponseDefaultsToHttp200(): void
+    {
+        $response = (new Factory())->createResponse();
+
+        static::assertSame(200, $response->getStatusCode());
+        static::assertSame('OK', $response->getReasonPhrase());
+    }
+
+    public function testCreateStreamFromMissingFileIncludesPathInError(): void
+    {
+        $missingPath = __DIR__ . '/missing-factory-stream-fixture.txt';
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('The file ' . $missingPath . ' cannot be opened.');
+
+        (new Factory())->createStreamFromFile($missingPath);
+    }
+
     public function testCreateStream()
     {
         $factory = new Factory();
