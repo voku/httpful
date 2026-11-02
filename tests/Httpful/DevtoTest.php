@@ -17,6 +17,10 @@ final class DevtoTest extends TestCase
 {
     public function testSimpleCall(): void
     {
+        if (\defined('WITHOUT_SERVER') && \WITHOUT_SERVER) {
+            $this->markTestSkipped('The local HTTP fixture server is unavailable on this platform.');
+        }
+
         // Use the existing loopback test server rather than an unreliable remote API.
         $fixtureBaseUrl = 'http://' . \TEST_SERVER . '/';
 
