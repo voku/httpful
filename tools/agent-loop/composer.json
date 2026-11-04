@@ -1,7 +1,7 @@
 {
     "//": "Isolated tool project. agent-loop requires PHP ^8.3, while httpful itself still supports PHP ^8.0, so it must not become a root require-dev dependency. Use the released 0.16 line for normal consumer evidence; candidate pins belong only to bounded pre-release dogfood replays.",
     "require": {
-        "voku/agent-loop": "^0.16.5"
+        "voku/agent-loop": "^0.20.0"
     },
     "config": {
         "allow-plugins": false,
