@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Httpful\tests;
 
+use Httpful\ClientPromise;
+use Httpful\Mime;
+use Httpful\Request;
+use Httpful\Response;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -11,37 +15,49 @@ use PHPUnit\Framework\TestCase;
  */
 final class DevtoTest extends TestCase
 {
-    public function testSimpleCall()
+    public function testSimpleCall(): void
     {
-        // init
-        $user = 'suckup_de';
-        $ARTICLES_ENDPOINT = 'https://dev.to/api/articles?page=1&per_page=2';
+        // Exercise real synchronous and asynchronous HTTP requests without
+        // relying on dev.to rate limits, availability, or response content.
+        $endpoint = 'http://' . \TEST_SERVER . '/devto-api.php';
 
-        // Prepare client-side promise handling.
-        $client = new \Httpful\ClientPromise();
+        $articles = Request::get($endpoint . '?page=1&per_page=2&username=suckup_de')
+            ->withExpectedType(Mime::JSON)
+            ->send()
+            ->getRawBody();
 
-        // Send a simple client-side request. (non async)
-        $articles = ((\Httpful\Request::get($ARTICLES_ENDPOINT . '?username=' . $user)->withExpectedType(\Httpful\Mime::JSON))->send())->getRawBody();
+        self::assertIsArray($articles);
+        self::assertCount(2, $articles);
+
+        $client = new ClientPromise();
+
         foreach ($articles as $article) {
-            // Representation of an outgoing, client-side request.
-            $request = \Httpful\Request::get($ARTICLES_ENDPOINT . '/' . $article['id'])->withExpectedType(\Httpful\Mime::JSON);
+            self::assertIsArray($article);
+            self::assertArrayHasKey('id', $article);
 
-            // Sends a PSR-7 request in an asynchronous way.
-            $client->sendAsyncRequest($request);
+            $client->sendAsyncRequest(
+                Request::get($endpoint . '?id=' . $article['id'])->withExpectedType(Mime::JSON)
+            );
         }
 
-        $promise = $client->getPromise();
+        /** @var list<int> $receivedIds */
+        $receivedIds = [];
 
-        // Add behavior for when the promise is resolved or rejected.
-        /** @var \Httpful\Response[] $results */
-        $results = [];
-        $promise->then(static function (\Httpful\Response $response, \Httpful\Request $request) use (&$results) {
-            $results[] = $response;
-        });
+        $client->getPromise()->then(
+            static function (Response $response, Request $request) use (&$receivedIds): void {
+                self::assertSame(200, $response->getStatusCode());
 
-        // Wait for the promise to be fulfilled or rejected.
-        $promise->wait();
+                $body = $response->getRawBody();
+                self::assertIsArray($body);
+                self::assertArrayHasKey('id', $body);
 
-        static::assertTrue(\count($results) === 2);
+                $receivedIds[] = $body['id'];
+            }
+        );
+
+        $client->getPromise()->wait();
+
+        \sort($receivedIds);
+        self::assertSame([101, 102], $receivedIds);
     }
 }
