@@ -354,7 +354,7 @@ final class ClientTest extends TestCase
         );
     }
 
-    public function testSelfSignedCertificate()
+    public function testSelfSignedCertificate(): void
     {
         $this->expectException(NetworkExceptionInterface::class);
         if (\method_exists(__CLASS__, 'expectExceptionMessageRegExp')) {
@@ -363,38 +363,34 @@ final class ClientTest extends TestCase
             $this->expectExceptionMessageMatches('/.*certificat.*/');
         }
 
-        $client = new Client();
-        $request = (new Request('GET'))->withUriFromString('https://self-signed.badssl.com/')->enableStrictSSL();
-        /** @noinspection UnusedFunctionResultInspection */
-        $client->sendRequest($request);
+        LocalSelfSignedTlsServer::withServer(static function (string $url): void {
+            $request = (new Request('GET'))->withUriFromString($url)->enableStrictSSL();
+            (new Client())->sendRequest($request);
+        });
     }
 
-    public function testIgnoreCertificateErrors()
+    public function testIgnoreCertificateErrors(): void
     {
-        $client = new Client();
-        $request = (new Request('GET', Mime::PLAIN))
-            ->withUriFromString('https://self-signed.badssl.com/')
-            ->disableStrictSSL();
-        $response = $client->sendRequest($request);
+        LocalSelfSignedTlsServer::withServer(static function (string $url): void {
+            $client = new Client();
 
-        static::assertEquals(200, $response->getStatusCode());
-        if (\method_exists(__CLASS__, 'assertStringContainsString')) {
-            static::assertStringContainsString('self-signed.<br>badssl.com', (string) $response);
-        } else {
-            static::assertContains('self-signed.<br>badssl.com', (string) $response);
-        }
+            $plain = (new Request('GET', Mime::PLAIN))
+                ->withUriFromString($url)
+                ->disableStrictSSL();
+            $response = $client->sendRequest($plain);
 
-        // ---
+            self::assertSame(200, $response->getStatusCode());
+            self::assertStringContainsString('s_server', (string) $response);
 
-        $client = new Client();
-        $request = (new Request('GET', Mime::HTML))
-            ->withUriFromString('https://self-signed.badssl.com/')
-            ->disableStrictSSL();
-        $response = $client->sendRequest($request);
+            $html = (new Request('GET', Mime::HTML))
+                ->withUriFromString($url)
+                ->disableStrictSSL();
+            $htmlResponse = $client->sendRequest($html);
 
-        static::assertEquals(200, $response->getStatusCode());
-        \assert($response instanceof Response);
-        static::assertInstanceOf(DomParserInterface::class, $response->getRawBody());
+            self::assertSame(200, $htmlResponse->getStatusCode());
+            \assert($htmlResponse instanceof Response);
+            self::assertInstanceOf(DomParserInterface::class, $htmlResponse->getRawBody());
+        });
     }
 
     public function testPageNotFound()
