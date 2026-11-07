@@ -27,6 +27,22 @@ final class CurlFeatureApiTest extends TestCase
         $reflection->setValue($object, $value);
     }
 
+    /**
+     * A HEAD request must tell libcurl that no response body is expected.
+     * CURLOPT_CUSTOMREQUEST=HEAD alone can wait for the static fixture's
+     * Content-Length forever when CURLOPT_NOBODY is accidentally removed.
+     */
+    public function testHeadRequestCompletesWithoutWaitingForResponseBody(): void
+    {
+        $request = Request::head(self::localFixtureUrl('foo.txt'))
+            ->withTimeout(2);
+
+        $response = $request->send();
+
+        static::assertSame(200, $response->getStatusCode());
+        static::assertSame('', (string) $response->getBody());
+    }
+
     public function testWithBearerToken(): void
     {
         $req = Request::get('http://example.com/')->withBearerToken('abc123');
