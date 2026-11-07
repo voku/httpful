@@ -20,6 +20,8 @@ defaults:
 
 jobs:
   tests:
+    env:
+      TEST_SELF_SIGNED_HTTPS_URL: https://127.0.0.1:18443/
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -77,6 +79,43 @@ jobs:
 
       - name: Audit dependencies
         run: COMPOSER=composer.ci.json composer audit
+
+      - name: Start isolated self-signed HTTPS fixture
+        run: |
+          set -euo pipefail
+          mkdir -p build/tls-fixture
+          openssl req -x509 -newkey rsa:2048 -sha256 -nodes -days 1 \
+            -subj '/CN=127.0.0.1' -addext 'subjectAltName=IP:127.0.0.1' \
+            -keyout build/tls-fixture/key.pem -out build/tls-fixture/cert.pem >/dev/null 2>&1
+          # Host identity must match, so strict TLS fails for trust, not hostname mismatch.
+          openssl x509 -in build/tls-fixture/cert.pem -noout -ext subjectAltName \
+            | grep -Fq 'IP Address:127.0.0.1'
+          openssl s_server -accept 127.0.0.1:18443 \
+            -cert build/tls-fixture/cert.pem -key build/tls-fixture/key.pem \
+            -www > build/tls-fixture/server.log 2>&1 &
+          echo $! > build/tls-fixture/server.pid
+          ready=0
+          for attempt in {1..30}; do
+            if curl --fail --silent --show-error --insecure --max-time 2 \
+              https://127.0.0.1:18443/ >/dev/null 2>&1; then
+              ready=1
+              break
+            fi
+            sleep 0.2
+          done
+          test "$ready" -eq 1 || { cat build/tls-fixture/server.log; exit 1; }
+
+          # curl exit 60 proves that strict certificate verification rejects this fixture.
+          set +e
+          curl --fail --silent --show-error --max-time 3 \
+            https://127.0.0.1:18443/ >/dev/null 2>build/tls-fixture/strict-curl.log
+          strict_exit=$?
+          set -e
+          test "$strict_exit" -eq 60 || {
+            echo "Expected certificate error 60, got $strict_exit" >&2
+            cat build/tls-fixture/strict-curl.log >&2
+            exit 1
+          }
 
       - name: Run tests
         run: |
