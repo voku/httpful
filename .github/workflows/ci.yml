@@ -143,5 +143,8 @@ jobs:
       - name: Install the actual isolated tool dependency graph
         run: composer update --working-dir=tools/agent-loop --no-interaction --prefer-dist --no-progress --prefer-stable
 
+      - name: Verify installed PHP platform requirements
+        run: composer check-platform-reqs --working-dir=tools/agent-loop --no-interaction
+
       - name: Smoke-test installed agent-loop CLI
         run: tools/agent-loop/vendor/bin/agent-loop help >/dev/null
