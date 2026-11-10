@@ -119,3 +119,29 @@ jobs:
           path: |
             build/logs
           if-no-files-found: ignore
+
+
+  agent-loop-tooling:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout tool project
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup PHP for isolated agent-loop
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+          tools: composer:v2
+
+      - name: Validate isolated Composer manifest
+        run: composer validate --working-dir=tools/agent-loop --no-check-publish --strict
+
+      - name: Install the actual isolated tool dependency graph
+        run: composer update --working-dir=tools/agent-loop --no-interaction --prefer-dist --no-progress --prefer-stable
+
+      - name: Smoke-test installed agent-loop CLI
+        run: tools/agent-loop/vendor/bin/agent-loop help >/dev/null
